@@ -1,0 +1,13 @@
+{
+  "tool": "dsh-game-studio",
+  "version": 1,
+  "games": {
+    "gem-blast": {
+      "title": "宝石消消乐",
+      "source": "e690347e3fb23a5d",
+      "publishedAt": "2026-11-08T08:25:35.737Z",
+      "buildId": "1fdd8dd2c72f"
+    }
+  },
+  "wall": null
+}
