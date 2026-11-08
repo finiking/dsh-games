@@ -5,36 +5,96 @@
     "gem-blast": {
       "title": "宝石消消乐",
       "source": "e690347e3fb23a5d",
-      "publishedAt": "2026-11-08T08:44:31.819Z",
-      "buildId": "1fdd8dd2c72f"
+      "publishedAt": "2026-11-08T10:34:45.648Z",
+      "buildId": "fd3e3336caed",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "cover": "gem-blast/cover.jpg"
     },
     "fox-adventure": {
       "title": "小狐狸闯关",
       "source": "594d9a1c7cda1802",
-      "publishedAt": "2026-11-08T08:45:48.979Z",
-      "buildId": "a21b4096345e"
+      "publishedAt": "2026-11-08T10:34:45.648Z",
+      "buildId": "4073cba82c2c",
+      "dimension": "2d",
+      "orientation": "landscape",
+      "cover": "fox-adventure/cover.jpg"
     },
     "kitchen-cat-fish": {
       "title": "厨房猫偷鱼记",
       "source": "7c0cba7ff3a6f6a8",
-      "publishedAt": "2026-11-08T08:47:04.801Z",
-      "buildId": "920c2fa0673d"
+      "publishedAt": "2026-11-08T10:34:45.648Z",
+      "buildId": "751b48049639",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "cover": "kitchen-cat-fish/cover.jpg"
     },
     "penguin-berg": {
       "title": "企鹅冰山寻鱼记",
       "source": "22c746e83cec377b",
-      "publishedAt": "2026-11-08T08:48:20.673Z",
-      "buildId": "70e265aa051f"
+      "publishedAt": "2026-11-08T10:34:45.648Z",
+      "buildId": "d3c7cfe086f4",
+      "dimension": "3d",
+      "orientation": "portrait",
+      "cover": "penguin-berg/cover.jpg"
     },
     "red-panda-bamboo": {
       "title": "竹影小熊猫",
       "source": "985f1ea8b8625c20",
-      "publishedAt": "2026-11-08T08:49:39.031Z",
-      "buildId": "0c192b9904aa"
+      "publishedAt": "2026-11-08T10:34:45.648Z",
+      "buildId": "828b82a95cef",
+      "dimension": "3d",
+      "orientation": "portrait",
+      "cover": "red-panda-bamboo/cover.jpg"
+    },
+    "hoop-rush": {
+      "title": "60秒投篮",
+      "source": "c021429bd278ff91",
+      "publishedAt": "2026-11-08T10:34:45.648Z",
+      "buildId": "403d43ec661b",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "cover": "hoop-rush/cover.jpg"
+    },
+    "slime-king-cards": {
+      "title": "史莱姆王讨伐战",
+      "source": "d82af1d66f3597e8",
+      "publishedAt": "2026-11-08T10:34:45.648Z",
+      "buildId": "6c969d5c68c3",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "cover": "slime-king-cards/cover.jpg"
+    },
+    "apex-rush": {
+      "title": "弯道狂飙",
+      "source": "e52212f273e83cde",
+      "publishedAt": "2026-11-08T10:34:45.648Z",
+      "buildId": "d45bbba83af9",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "cover": "apex-rush/cover.jpg"
+    },
+    "slime-gate-defense": {
+      "title": "森林箭塔：史莱姆攻城",
+      "source": "9b258886645b64df",
+      "publishedAt": "2026-11-08T10:34:45.648Z",
+      "buildId": "87565c1a6e9a",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "cover": "slime-gate-defense/cover.jpg"
+    },
+    "dino-volcano-eggs": {
+      "title": "火山岛 · 小恐龙捡蛋记",
+      "source": "883ac07ef9a8964c",
+      "publishedAt": "2026-11-08T10:34:45.648Z",
+      "buildId": "62de0b21eb04",
+      "dimension": "3d",
+      "orientation": "portrait",
+      "cover": "dino-volcano-eggs/cover.jpg"
     }
   },
   "wall": {
-    "publishedAt": "2026-11-08T08:56:41.615Z",
+    "publishedAt": "2026-11-08T10:34:45.648Z",
     "games": 10
   }
 }

@@ -1,0 +1,100 @@
+{
+  "format": "dsh-games-feed",
+  "version": 1,
+  "name": "finiking 的小游戏",
+  "author": "finiking",
+  "updatedAt": "2026-11-08T10:34:45.648Z",
+  "games": [
+    {
+      "slug": "gem-blast",
+      "title": "宝石消消乐",
+      "url": "gem-blast/",
+      "cover": "gem-blast/cover.jpg",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-08T10:34:45.648Z"
+    },
+    {
+      "slug": "fox-adventure",
+      "title": "小狐狸闯关",
+      "url": "fox-adventure/",
+      "cover": "fox-adventure/cover.jpg",
+      "dimension": "2d",
+      "orientation": "landscape",
+      "publishedAt": "2026-11-08T10:34:45.648Z"
+    },
+    {
+      "slug": "kitchen-cat-fish",
+      "title": "厨房猫偷鱼记",
+      "url": "kitchen-cat-fish/",
+      "cover": "kitchen-cat-fish/cover.jpg",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-08T10:34:45.648Z"
+    },
+    {
+      "slug": "penguin-berg",
+      "title": "企鹅冰山寻鱼记",
+      "url": "penguin-berg/",
+      "cover": "penguin-berg/cover.jpg",
+      "dimension": "3d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-08T10:34:45.648Z"
+    },
+    {
+      "slug": "red-panda-bamboo",
+      "title": "竹影小熊猫",
+      "url": "red-panda-bamboo/",
+      "cover": "red-panda-bamboo/cover.jpg",
+      "dimension": "3d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-08T10:34:45.648Z"
+    },
+    {
+      "slug": "hoop-rush",
+      "title": "60秒投篮",
+      "url": "hoop-rush/",
+      "cover": "hoop-rush/cover.jpg",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-08T10:34:45.648Z"
+    },
+    {
+      "slug": "slime-king-cards",
+      "title": "史莱姆王讨伐战",
+      "url": "slime-king-cards/",
+      "cover": "slime-king-cards/cover.jpg",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-08T10:34:45.648Z"
+    },
+    {
+      "slug": "apex-rush",
+      "title": "弯道狂飙",
+      "url": "apex-rush/",
+      "cover": "apex-rush/cover.jpg",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-08T10:34:45.648Z"
+    },
+    {
+      "slug": "slime-gate-defense",
+      "title": "森林箭塔：史莱姆攻城",
+      "url": "slime-gate-defense/",
+      "cover": "slime-gate-defense/cover.jpg",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-08T10:34:45.648Z"
+    },
+    {
+      "slug": "dino-volcano-eggs",
+      "title": "火山岛 · 小恐龙捡蛋记",
+      "url": "dino-volcano-eggs/",
+      "cover": "dino-volcano-eggs/cover.jpg",
+      "dimension": "3d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-08T10:34:45.648Z"
+    }
+  ],
+  "wall": "wall/"
+}
