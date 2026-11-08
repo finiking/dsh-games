@@ -172,18 +172,38 @@
   var view = { cssW: 1280, cssH: 720, dpr: 1, fit: 1, ox: 0, oy: 0 };
   var floorRect = { x: 0, y: 0, w: 1, h: 1 };
   var kitchen = { counterY: 0, potX: 0, potY: 0, sinkX: 0, boardX: 0 };
+  var boxSpot = { x: 120, y: 290, r: 54 };
   var bgCanvas = null;
+
+  var STAGE_NAMES = ['午夜料理台', '冷藏室突袭', '厨师长盛宴'];
+  function getStageThresholds() {
+    var q = Math.max(3, R.quota);
+    var t1 = Math.max(1, Math.round(q / 3));
+    var t2 = Math.max(t1 + 1, Math.round((q * 2) / 3));
+    return [t1, t2];
+  }
+  function computeStageIndex(sc) {
+    var th = getStageThresholds();
+    if (sc >= th[1]) return 3;
+    if (sc >= th[0]) return 2;
+    return 1;
+  }
 
   function computeLayout() {
     var landscape = world.w >= world.h;
     var side = landscape ? clamp(Math.round(world.w * 0.038), 26, 52) : clamp(Math.round(world.w * 0.045), 22, 38);
-    var top = landscape ? clamp(Math.round(world.h * 0.24), 154, 196) : clamp(Math.round(world.h * 0.17), 196, 238);
-    var bottom = landscape ? clamp(Math.round(world.h * 0.045), 24, 40) : clamp(Math.round(world.h * 0.028), 24, 38);
+    var top = landscape ? clamp(Math.round(world.h * 0.24), 154, 196) : clamp(Math.round(world.h * 0.175), 204, 242);
+    var bottom = landscape ? clamp(Math.round(world.h * 0.092), 58, 74) : clamp(Math.round(world.h * 0.072), 82, 100);
     floorRect = {
       x: side,
       y: top,
       w: Math.max(180, world.w - side * 2),
       h: Math.max(180, world.h - top - bottom)
+    };
+    boxSpot = {
+      x: floorRect.x + 84,
+      y: floorRect.y + 92,
+      r: 54
     };
     var counterH = clamp(Math.round(world.h * 0.115), 72, 96);
     kitchen = {
@@ -214,9 +234,16 @@
   var time = R.duration;
   var elapsed = 0;
   var score = 0;
+  var stageIndex = 1;
   var hearts = R.hearts;
   var shield = 0;
   var shieldCount = 0;
+  var speedBoost = 0;
+  var pounceTimer = 0;
+  var pounceCooldown = 0;
+  var pounceDX = 1;
+  var pounceDY = 0;
+  var tunaTimer = 5.5;
   var invuln = 0;
   var shake = 0;
   var hurtFlash = 0;
@@ -237,7 +264,8 @@
 
   var hero = {
     x: 0, y: 0, vx: 0, vy: 0,
-    facing: 1, walk: 0, move: 0, stepTimer: 0
+    facing: 1, walk: 0, move: 0, stepTimer: 0,
+    inBox: false
   };
   var enemies = [];
   var pickups = [];
@@ -246,6 +274,12 @@
   var footprints = [];
   var joystick = null;
   var keys = Object.create(null);
+  var autoPilot = { x: 0, y: 0, timer: 0 };
+  var hudButtons = {
+    mute: { x: 0, y: 0, w: 0, h: 0 },
+    pause: { x: 0, y: 0, w: 0, h: 0 },
+    pounce: { x: 0, y: 0, w: 0, h: 0 }
+  };
 
   /* 5. CUSTOM ART SUPPORT -------------------------------------------------- */
   var images = { hero: null, enemy: null, pickup: null, background: null };
@@ -345,6 +379,20 @@
       tone(392, 0.22, 'triangle', 0.05, 294);
       tone(294, 0.32, 'triangle', 0.04, 196, 0.16);
     },
+    pounce: function () {
+      tone(360, 0.09, 'triangle', 0.05, 680);
+      tone(680, 0.12, 'sine', 0.04, 880, 0.05);
+    },
+    tuna: function () {
+      tone(587, 0.1, 'sine', 0.05, 784);
+      tone(784, 0.12, 'sine', 0.045, 1046, 0.07);
+      tone(1046, 0.18, 'triangle', 0.04, 1318, 0.14);
+    },
+    stage: function () {
+      [523, 659, 784, 987].forEach(function (f, i) {
+        tone(f, 0.16, 'sine', 0.04, f * 1.04, i * 0.08);
+      });
+    },
     click: function () { tone(480, 0.05, 'sine', 0.025, 620); }
   };
   function toggleMute() {
@@ -382,8 +430,9 @@
       var x = rand(floorRect.x + 70, floorRect.x + floorRect.w - 70);
       var y = rand(floorRect.y + 100, floorRect.y + floorRect.h - 70);
       var dh = dist(x, y, hero.x, hero.y);
+      var db = dist(x, y, boxSpot.x, boxSpot.y);
       var score = dh;
-      var ok = dh >= minHero;
+      var ok = dh >= minHero && db >= boxSpot.r + 36;
       var j;
       for (j = 0; j < enemies.length; j++) {
         var de = dist(x, y, enemies[j].x, enemies[j].y);
@@ -404,11 +453,24 @@
     };
   }
 
-  function spawnPickup(initial) {
+  function countTunaPickups() {
+    var n = 0;
+    for (var i = 0; i < pickups.length; i++) {
+      if (pickups[i].kind === 'tuna') n++;
+    }
+    return n;
+  }
+
+  function spawnPickup(initial, forceKind) {
     var p = pickSafePoint(initial ? 235 : 170, 105, 95);
+    var kind = forceKind || 'fish';
+    if (!forceKind && !initial && stageIndex >= 2 && countTunaPickups() < 2 && Math.random() < 0.38) {
+      kind = 'tuna';
+    }
     pickups.push({
       x: p.x,
       y: p.y,
+      kind: kind,
       phase: rand(0, TAU),
       age: 0,
       bob: rand(0, TAU)
@@ -429,7 +491,8 @@
       var x = rand(floorRect.x + 90, floorRect.x + floorRect.w - 90);
       var y = rand(floorRect.y + 100, floorRect.y + floorRect.h - 80);
       var dh = dist(x, y, hero.x, hero.y);
-      var farEnough = dh > (initial ? 430 : 330);
+      var db = dist(x, y, boxSpot.x, boxSpot.y);
+      var farEnough = dh > (initial ? 430 : 330) && db > boxSpot.r + 70;
       if (farEnough) {
         for (var j = 0; j < enemies.length; j++) {
           if (dist(x, y, enemies[j].x, enemies[j].y) < 160) { farEnough = false; break; }
@@ -467,7 +530,7 @@
       addParticles(point.x, point.y, C.cyan, 12, 'spark');
       addFloater(point.x, point.y - 56, '新来的！', C.cyan, 22);
       sfx.robotIn();
-      setToast('第 ' + enemies.length + ' 台扫地机器人出动了', '留意它冲撞前的红色预警', 3.1);
+      setToast('🤖 第 ' + enemies.length + ' 台扫地机器人出动！', '留意前方的扇形探测区与红线冲撞预警', 2.8);
     }
     return true;
   }
@@ -476,9 +539,16 @@
     time = R.duration;
     elapsed = 0;
     score = 0;
+    stageIndex = 1;
     hearts = R.hearts;
     shield = 0;
     shieldCount = 0;
+    speedBoost = 0;
+    pounceTimer = 0;
+    pounceCooldown = 0;
+    pounceDX = 1;
+    pounceDY = 0;
+    tunaTimer = 5.5;
     invuln = 0;
     shake = 0;
     hurtFlash = 0;
@@ -491,6 +561,7 @@
     endReason = '';
     toast = null;
     joystick = null;
+    autoPilot.timer = 0;
     enemies.length = 0;
     pickups.length = 0;
     particles.length = 0;
@@ -505,12 +576,13 @@
     hero.walk = 0;
     hero.move = 0;
     hero.stepTimer = 0;
+    hero.inBox = false;
 
     var i;
     for (i = 0; i < R.maxPickups; i++) spawnPickup(true);
     var initialRobots = Math.min(2, R.maxEnemies);
     for (i = 0; i < initialRobots; i++) spawnEnemy(true);
-    setToast('偷满 ' + R.quota + ' 条小鱼干！', '躲开扫地机器人，别被撞到', 3.2);
+    setToast('🌙 第一阶：午夜料理台 · 偷满 ' + R.quota + ' 条鱼！', '空格飞扑冲刺 · 躲进左上纸箱隐身', 3.0);
   }
 
   function startGame() {
@@ -539,7 +611,7 @@
     if (score > best.fish) { best.fish = score; recordChanged = true; }
     if (maxCombo > best.combo) { best.combo = maxCombo; recordChanged = true; }
     if (won) {
-      var runSeconds = Math.max(0.1, Math.round((R.duration - time) * 10) / 10);
+      var runSeconds = Math.max(0.1, Math.round(elapsed * 10) / 10);
       if (!best.time || runSeconds < best.time) { best.time = runSeconds; recordChanged = true; }
     }
     if (recordChanged) saveBest();
@@ -603,6 +675,52 @@
   /* 10. INPUT -------------------------------------------------------------- */
   var MOVE_KEYS = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'];
 
+  function hitBox(b, cx, cy) {
+    return b && b.w > 0 && cx >= b.x && cx <= b.x + b.w && cy >= b.y && cy <= b.y + b.h;
+  }
+
+  function triggerPounce(optDX, optDY) {
+    if (phase !== 'playing' || paused || pounceCooldown > 0) return false;
+    var dx = 0, dy = 0;
+    if (typeof optDX === 'number' && typeof optDY === 'number' && (optDX !== 0 || optDY !== 0)) {
+      dx = optDX;
+      dy = optDY;
+    } else {
+      var inp = readInput();
+      if (inp.len > 0.05) {
+        dx = inp.x;
+        dy = inp.y;
+      } else if (pickups.length > 0) {
+        var bestP = pickups[0];
+        var bestD = dist(hero.x, hero.y, bestP.x, bestP.y);
+        for (var i = 1; i < pickups.length; i++) {
+          var d = dist(hero.x, hero.y, pickups[i].x, pickups[i].y);
+          if (d < bestD) { bestD = d; bestP = pickups[i]; }
+        }
+        dx = bestP.x - hero.x;
+        dy = bestP.y - hero.y;
+      } else {
+        dx = hero.facing || 1;
+        dy = 0;
+      }
+    }
+    var len = Math.sqrt(dx * dx + dy * dy) || 1;
+    pounceDX = dx / len;
+    pounceDY = dy / len;
+    if (Math.abs(pounceDX) > 0.1) hero.facing = pounceDX > 0 ? 1 : -1;
+    pounceTimer = 0.26;
+    pounceCooldown = 2.2;
+    invuln = Math.max(invuln, 0.34);
+    sfx.pounce();
+    addParticles(hero.x, hero.y + 10, C.goldPale, 14, 'spark');
+    addRing(hero.x, hero.y + 8, 'rgba(255,228,163,0.85)', 38, 0.32);
+    addFloater(hero.x, hero.y - 58, '🐾 喵星飞扑！', C.goldPale, 21);
+    for (var p = 0; p < 3; p++) {
+      addFootprint(hero.x - pounceDX * p * 14, hero.y + 30 - pounceDY * p * 14, hero.facing, hero.walk + p);
+    }
+    return true;
+  }
+
   document.addEventListener('keydown', function (e) {
     var key = (e.key || '').toLowerCase();
     ensureAudio();
@@ -627,6 +745,10 @@
       paused = !paused;
       joystick = null;
       sfx.click();
+      return;
+    }
+    if (phase === 'playing' && (key === ' ' || key === 'spacebar')) {
+      triggerPounce();
       return;
     }
     if (MOVE_KEYS.indexOf(key) >= 0) {
@@ -655,6 +777,28 @@
   function beginPointer(e) {
     ensureAudio();
     if (canvas.focus) canvas.focus();
+    var rect = canvas.getBoundingClientRect();
+    var cx = e ? e.clientX - rect.left : 0;
+    var cy = e ? e.clientY - rect.top : 0;
+
+    if (phase !== 'title' && e && hitBox(hudButtons.mute, cx, cy)) {
+      e.preventDefault();
+      toggleMute();
+      return;
+    }
+    if (phase === 'playing' && e && hitBox(hudButtons.pause, cx, cy)) {
+      e.preventDefault();
+      paused = !paused;
+      joystick = null;
+      sfx.click();
+      return;
+    }
+    if (phase === 'playing' && !paused && e && hitBox(hudButtons.pounce, cx, cy)) {
+      e.preventDefault();
+      triggerPounce();
+      return;
+    }
+
     if (phase === 'title') {
       if (e) e.preventDefault();
       startGame();
@@ -713,6 +857,11 @@
       }
     }
     var len = Math.sqrt(x * x + y * y);
+    if (len === 0 && autoPilot.timer > 0) {
+      x = autoPilot.x;
+      y = autoPilot.y;
+      len = Math.sqrt(x * x + y * y);
+    }
     if (len > 1) { x /= len; y /= len; }
     return { x: x, y: y, len: Math.min(1, len) };
   }
@@ -736,6 +885,25 @@
       return;
     }
     elapsed += dt;
+    if (autoPilot.timer > 0) autoPilot.timer = Math.max(0, autoPilot.timer - dt);
+    if (pounceCooldown > 0) pounceCooldown = Math.max(0, pounceCooldown - dt);
+    if (pounceTimer > 0) pounceTimer = Math.max(0, pounceTimer - dt);
+    if (speedBoost > 0) speedBoost = Math.max(0, speedBoost - dt);
+
+    // Periodic Golden Tuna Nigiri spawns in Phase 2 & 3 (and a teaser in Phase 1).
+    tunaTimer -= dt;
+    if (tunaTimer <= 0) {
+      tunaTimer = stageIndex >= 2 ? 6.5 : 9.0;
+      if (countTunaPickups() < (stageIndex >= 2 ? 2 : 1) && pickups.length > 0) {
+        for (var ti = 0; ti < pickups.length; ti++) {
+          if (pickups[ti].kind !== 'tuna') {
+            pickups[ti].kind = 'tuna';
+            addParticles(pickups[ti].x, pickups[ti].y, C.goldPale, 10, 'spark');
+            break;
+          }
+        }
+      }
+    }
 
     updateHero(dt);
     if (phase !== 'playing') return;
@@ -760,32 +928,56 @@
 
   function updateHero(dt) {
     var input = readInput();
-    var moving = input.len > 0.02;
-    if (input.x !== 0) hero.facing = input.x > 0 ? 1 : -1;
+    var pouncing = pounceTimer > 0;
+    var moving = pouncing || input.len > 0.02;
+    if (!pouncing && input.x !== 0) hero.facing = input.x > 0 ? 1 : -1;
 
-    var speed = R.heroSpeed;
-    hero.vx = input.x * speed;
-    hero.vy = input.y * speed;
+    var speed = R.heroSpeed * (speedBoost > 0 ? 1.34 : 1);
+    if (pouncing) {
+      var dashSpeed = R.heroSpeed * 2.45;
+      hero.vx = pounceDX * dashSpeed;
+      hero.vy = pounceDY * dashSpeed;
+      if (Math.random() < 0.65) {
+        particles.push({
+          x: hero.x + rand(-14, 14), y: hero.y + 22 + rand(-8, 8),
+          vx: -pounceDX * rand(25, 70), vy: -pounceDY * rand(15, 50),
+          age: 0, life: rand(0.2, 0.4), size: rand(3, 6),
+          color: C.goldPale, kind: 'spark', rot: 0, vr: 0
+        });
+      }
+    } else {
+      hero.vx = input.x * speed;
+      hero.vy = input.y * speed;
+    }
     var prevX = hero.x, prevY = hero.y;
     hero.x += hero.vx * dt;
     hero.y += hero.vy * dt;
     clampHero();
+
+    var wasInBox = hero.inBox;
+    hero.inBox = dist(hero.x, hero.y, boxSpot.x, boxSpot.y) <= boxSpot.r;
+    if (hero.inBox && !wasInBox) {
+      addFloater(boxSpot.x, boxSpot.y - 48, '📦 纸箱隐身中', C.mint, 20);
+      addRing(boxSpot.x, boxSpot.y, 'rgba(148,189,168,0.85)', boxSpot.r, 0.4);
+      sfx.click();
+    }
+
     var displacement = dist(prevX, prevY, hero.x, hero.y);
     hero.move = lerp(hero.move, moving ? clamp(displacement / (speed * dt + 0.0001), 0, 1) : 0, 1 - Math.exp(-dt * 11));
     hero.walk += dt * (6.8 + hero.move * 6.5);
     if (moving) {
       hero.stepTimer -= dt;
       if (hero.stepTimer <= 0) {
-        hero.stepTimer = 0.22;
+        hero.stepTimer = pouncing ? 0.09 : 0.22;
         addFootprint(hero.x, hero.y + 34, hero.facing, hero.walk);
-        if (phase === 'playing') sfx.step();
+        if (phase === 'playing' && !pouncing) sfx.step();
       }
     } else {
       hero.stepTimer = Math.min(hero.stepTimer, 0.08);
     }
 
-    // Fish collection.
-    var collectRadius = R.pickupSize * 0.42 + R.heroSize * 0.25;
+    // Fish & Golden Tuna collection.
+    var collectRadius = R.pickupSize * 0.44 + R.heroSize * (pouncing ? 0.34 : 0.26);
     for (var i = pickups.length - 1; i >= 0; i--) {
       var p = pickups[i];
       p.age += dt;
@@ -810,31 +1002,56 @@
   function collectPickup(index) {
     var p = pickups[index];
     pickups.splice(index, 1);
-    score += 1;
+    var isTuna = p.kind === 'tuna';
+    var gain = isTuna ? 2 : 1;
+    score += gain;
     if (comboTimer > 0) combo += 1; else combo = 1;
-    comboTimer = 2.7;
+    comboTimer = 2.9;
     maxCombo = Math.max(maxCombo, combo);
-    shieldCount += 1;
-    sfx.pickup(combo);
-    addParticles(p.x, p.y, C.gold, 15, 'scale');
-    addRing(p.x, p.y, 'rgba(255,225,150,0.85)', 30, 0.4);
-    addFloater(p.x, p.y - 28, '+1', C.cream, 23);
+    shieldCount += gain;
+
+    if (isTuna) {
+      speedBoost = 2.5;
+      sfx.tuna();
+      addParticles(p.x, p.y, '#ff8e72', 18, 'spark');
+      addParticles(p.x, p.y, C.goldPale, 10, 'star');
+      addRing(p.x, p.y, 'rgba(255,220,115,0.95)', 44, 0.48);
+      addFloater(p.x, p.y - 30, '🍣 金枪鱼 +2 · 加速!', '#ffe596', 23);
+    } else {
+      sfx.pickup(combo);
+      addParticles(p.x, p.y, C.gold, 15, 'scale');
+      addRing(p.x, p.y, 'rgba(255,225,150,0.85)', 30, 0.4);
+      addFloater(p.x, p.y - 28, '+1', C.cream, 23);
+    }
 
     if (R.shield.enabled && shieldCount >= R.shield.every) {
-      shieldCount = 0;
+      shieldCount = shieldCount % R.shield.every;
       shield = R.shield.seconds;
       sfx.shield();
       addParticles(hero.x, hero.y, C.cyan, 18, 'spark');
       addRing(hero.x, hero.y, 'rgba(144,232,215,0.9)', R.heroSize * 0.7, 0.7);
-      addFloater(hero.x, hero.y - 78, '毛线护盾！', C.cyan, 24);
-      setToast('毛线护盾启动 ' + R.shield.seconds.toFixed(1) + ' 秒', '这段时间机器人的冲撞不会伤到你', 2.7);
+      addFloater(hero.x, hero.y - 78, '🧶 毛线护盾！', C.cyan, 24);
     }
     if (score >= R.quota) {
       addParticles(p.x, p.y, C.goldPale, 24, 'spark');
       endGame(true, 'quota');
       return;
     }
-    spawnPickup(false);
+
+    var newStage = computeStageIndex(score);
+    if (newStage > stageIndex) {
+      stageIndex = newStage;
+      time = Math.min(R.duration + 15, time + 5);
+      sfx.stage();
+      addRing(hero.x, hero.y, 'rgba(255,218,120,0.9)', 74, 0.65);
+      var bannerTitle = stageIndex === 2
+        ? '🎉 进入第二阶：冷藏室突袭！时间 +5 秒'
+        : '🎉 进入第三阶：厨师长盛宴！时间 +5 秒';
+      setToast(bannerTitle, '特供「金枪鱼寿司」刷新：+2 鱼干 · +2 护盾充能 · 2.5秒加速', 3.4);
+      spawnPickup(false, 'tuna');
+    } else {
+      spawnPickup(false);
+    }
   }
 
   function steerEnemy(e, tx, ty, speed, dt) {
@@ -854,6 +1071,14 @@
         pushX += (sx / sd) * force;
         pushY += (sy / sd) * force;
       }
+    }
+    // Keep robots out of the cardboard box safe zone during patrol/chase.
+    var bx = e.x - boxSpot.x, by = e.y - boxSpot.y;
+    var bd = Math.max(1, Math.sqrt(bx * bx + by * by));
+    if (bd < boxSpot.r + 42) {
+      var bForce = (boxSpot.r + 42 - bd) * 3.2;
+      pushX += (bx / bd) * bForce;
+      pushY += (by / bd) * bForce;
     }
     desiredX += pushX;
     desiredY += pushY;
@@ -905,7 +1130,6 @@
       var d = Math.max(1, Math.sqrt(dx * dx + dy * dy));
       var nx = dx / d, ny = dy / d;
 
-      var bob = Math.sin(e.wob * 3) * 1.2;
       // Vacuum dust puffs.
       e.dust = (e.dust || 0) - dt;
       if (e.dust <= 0 && (e.mode === 'patrol' || e.mode === 'chase' || e.mode === 'charge')) {
@@ -927,7 +1151,7 @@
         e.x += e.vx * dt;
         e.y += e.vy * dt;
         if (e.timer <= 0) {
-          e.mode = 'chase';
+          e.mode = hero.inBox ? 'patrol' : 'chase';
           e.cooldown = Math.max(e.cooldown, 1.4);
         }
       } else if (e.mode === 'windup') {
@@ -961,15 +1185,15 @@
         if (clampRobot(e)) endCharge(e);
       } else if (e.mode === 'recover') {
         e.timer -= dt;
-        steerEnemy(e, hero.x, hero.y, chaseSpeed * 0.35, dt);
+        steerEnemy(e, hero.inBox ? e.tx : hero.x, hero.inBox ? e.ty : hero.y, chaseSpeed * 0.35, dt);
         if (clampRobot(e)) {
           e.vx *= 0.4;
           e.vy *= 0.4;
         }
-        if (e.timer <= 0) e.mode = 'chase';
+        if (e.timer <= 0) e.mode = hero.inBox ? 'patrol' : 'chase';
       } else if (e.mode === 'patrol') {
-        var detect = hero.move > 0.35 ? 365 : 280;
-        if (d < detect && invuln <= 0) {
+        var detect = hero.move > 0.35 ? 355 : 270;
+        if (!hero.inBox && d < detect && invuln <= 0) {
           e.mode = 'chase';
           e.alert = 1.25;
           e.flash = 0.3;
@@ -980,7 +1204,7 @@
           if (clampRobot(e)) chooseWaypoint(e);
         }
       } else if (e.mode === 'chase') {
-        if (d > 610) {
+        if (hero.inBox || d > 610) {
           e.mode = 'patrol';
           chooseWaypoint(e);
         } else if (e.cooldown <= 0 && d < 360 && d > 110) {
@@ -989,6 +1213,8 @@
           e.cooldown = 7.5;
           e.aimX = hero.x;
           e.aimY = hero.y;
+          e.chargeDX = nx;
+          e.chargeDY = ny;
           e.flash = 0.3;
           sfx.alert();
           addRing(e.x, e.y, 'rgba(255,180,100,0.7)', 40, 0.3);
@@ -2483,6 +2709,164 @@
     g.restore();
   }
 
+  function drawTunaNigiri(g, x, y, size, opt) {
+    opt = opt || {};
+    var t = opt.time || 0;
+    var wobble = opt.wobble || 0;
+    var sc = size / 100;
+    g.save();
+    // Golden sparkle ring.
+    var ringR = size * 0.62;
+    var aura = g.createRadialGradient(x, y, 4, x, y, size * 0.9);
+    aura.addColorStop(0, 'rgba(255,215,90,0.42)');
+    aura.addColorStop(0.55, 'rgba(255,165,70,0.16)');
+    aura.addColorStop(1, 'rgba(255,165,70,0)');
+    g.fillStyle = aura;
+    g.beginPath();
+    g.arc(x, y, size * 0.9, 0, TAU);
+    g.fill();
+
+    g.strokeStyle = 'rgba(255,222,115,0.75)';
+    g.lineWidth = 2;
+    g.setLineDash([8, 6]);
+    g.lineDashOffset = -t * 24;
+    g.beginPath();
+    g.arc(x, y, ringR, 0, TAU);
+    g.stroke();
+    g.setLineDash([]);
+
+    // Shadow.
+    g.fillStyle = 'rgba(61,40,24,0.24)';
+    g.beginPath();
+    g.ellipse(x, y + 24 * sc, 30 * sc, 8 * sc, 0, 0, TAU);
+    g.fill();
+
+    g.translate(x, y);
+    g.rotate(Math.sin(t * 2.1 + wobble) * 0.06);
+    g.scale(sc, sc);
+
+    // Rice base (shari).
+    fillRound(g, -28, -4, 56, 26, 12, '#fbf5e6');
+    strokeRound(g, -28, -4, 56, 26, 12, C.ink, 3);
+
+    // Tuna topping (maguro).
+    var tunaGrad = g.createLinearGradient(-34, -20, 34, 8);
+    tunaGrad.addColorStop(0, '#ff8e75');
+    tunaGrad.addColorStop(0.5, '#e85349');
+    tunaGrad.addColorStop(1, '#c53832');
+    g.fillStyle = tunaGrad;
+    g.strokeStyle = C.ink;
+    g.lineWidth = 3.2;
+    g.beginPath();
+    g.moveTo(-34, 2);
+    g.bezierCurveTo(-28, -22, 28, -22, 34, 2);
+    g.bezierCurveTo(24, 10, -24, 10, -34, 2);
+    g.closePath();
+    g.fill();
+    g.stroke();
+
+    // Fat marbling stripes on tuna.
+    g.strokeStyle = 'rgba(255,228,214,0.68)';
+    g.lineWidth = 2;
+    g.beginPath();
+    g.moveTo(-18, -12); g.quadraticCurveTo(-8, -4, -12, 4);
+    g.moveTo(0, -15); g.quadraticCurveTo(8, -5, 4, 4);
+    g.moveTo(16, -11); g.quadraticCurveTo(22, -4, 18, 3);
+    g.stroke();
+
+    // Nori seaweed wrap band.
+    fillRound(g, -9, -17, 18, 39, 4, '#243326');
+    strokeRound(g, -9, -17, 18, 39, 4, C.ink, 2.4);
+
+    // Golden caviar / leaf garnish on top.
+    g.fillStyle = '#ffd55a';
+    g.beginPath();
+    g.arc(-2, -17, 4.2, 0, TAU);
+    g.arc(3, -16, 3.6, 0, TAU);
+    g.fill();
+    g.restore();
+
+    // Orbiting sparkles + '+2' tag.
+    drawSparkle(g, x + Math.cos(t * 3 + wobble) * ringR, y + Math.sin(t * 3 + wobble) * ringR, size * 0.12, '#ffe999');
+    drawSparkle(g, x - Math.cos(t * 2.4 + wobble) * ringR * 0.85, y - Math.sin(t * 2.4 + wobble) * ringR * 0.85, size * 0.09, '#ffffff');
+    g.save();
+    setFont(g, Math.max(11, size * 0.22), '800');
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.fillStyle = '#ffe694';
+    g.strokeStyle = 'rgba(42,27,18,0.85)';
+    g.lineWidth = 3;
+    g.strokeText('🍣+2', x, y - size * 0.56);
+    g.fillText('🍣+2', x, y - size * 0.56);
+    g.restore();
+  }
+
+  function drawCardboardBox() {
+    var bx = boxSpot.x, by = boxSpot.y, br = boxSpot.r;
+    var active = hero.inBox && phase === 'playing';
+    ctx.save();
+    // Safe zone ring on the kitchen tiles.
+    ctx.strokeStyle = active ? 'rgba(145,232,215,0.88)' : 'rgba(198,158,108,0.48)';
+    ctx.lineWidth = active ? 3 : 2;
+    ctx.setLineDash([9, 7]);
+    ctx.lineDashOffset = -clock * 18;
+    ctx.beginPath();
+    ctx.arc(bx, by, br, 0, TAU);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = active ? 'rgba(145,232,215,0.14)' : 'rgba(198,158,108,0.08)';
+    ctx.beginPath();
+    ctx.arc(bx, by, br, 0, TAU);
+    ctx.fill();
+
+    // Box shadow.
+    ctx.fillStyle = 'rgba(42,28,18,0.24)';
+    ctx.beginPath();
+    ctx.ellipse(bx, by + 22, 42, 14, 0, 0, TAU);
+    ctx.fill();
+
+    // Open back flaps.
+    ctx.translate(bx, by);
+    fillRound(ctx, -38, -28, 76, 16, 4, '#b58352');
+    strokeRound(ctx, -38, -28, 76, 16, 4, C.ink, 2.2);
+
+    // Inside dark cozy cavity.
+    fillRound(ctx, -32, -16, 64, 28, 5, '#4c3423');
+
+    // Side flaps.
+    ctx.save();
+    ctx.rotate(-0.18);
+    fillRound(ctx, -44, -14, 14, 28, 3, '#d4a36d');
+    strokeRound(ctx, -44, -14, 14, 28, 3, C.ink, 2);
+    ctx.restore();
+    ctx.save();
+    ctx.rotate(0.18);
+    fillRound(ctx, 30, -14, 14, 28, 3, '#d4a36d');
+    strokeRound(ctx, 30, -14, 14, 28, 3, C.ink, 2);
+    ctx.restore();
+
+    // Front cardboard wall.
+    fillRound(ctx, -34, -2, 68, 28, 6, '#c99762');
+    strokeRound(ctx, -34, -2, 68, 28, 6, C.ink, 2.6);
+
+    // Cute paw & fish doodle on front of box.
+    drawPawIcon(ctx, -12, 12, 13, 'rgba(74,48,31,0.55)', 1);
+    drawFishIcon(ctx, 11, 12, 16, '#e7b65c', 'rgba(74,48,31,0.65)', 0.85);
+
+    // Label below box.
+    setFont(ctx, 12, '800');
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var tagText = active ? '📦 隐身安全区' : '📦 猫咪纸箱';
+    var tagW = 86;
+    fillRound(ctx, -tagW / 2, 31, tagW, 19, 9.5, active ? 'rgba(54,108,90,0.92)' : 'rgba(54,39,29,0.78)');
+    strokeRound(ctx, -tagW / 2, 31, tagW, 19, 9.5, active ? 'rgba(176,247,225,0.7)' : 'rgba(240,220,186,0.3)', 1.2);
+    ctx.fillStyle = active ? '#eafff7' : C.cream;
+    ctx.fillText(tagText, 0, 40.5);
+    ctx.restore();
+  }
+
   function drawSparkle(g, x, y, size, color) {
     g.save();
     g.translate(x, y);
@@ -2611,11 +2995,17 @@
   }
 
   function drawPickups() {
+    drawCardboardBox();
     for (var i = 0; i < pickups.length; i++) {
       var p = pickups[i];
       var bob = Math.sin(clock * 2.7 + p.bob) * 4.2;
       var pulse = 1 + Math.sin(clock * 3 + p.phase) * 0.035;
-      if (custom.pickup && images.pickup) {
+      if (p.kind === 'tuna') {
+        drawTunaNigiri(ctx, p.x, p.y + bob, R.pickupSize * 1.12 * pulse, {
+          time: clock,
+          wobble: p.phase
+        });
+      } else if (custom.pickup && images.pickup) {
         drawCustomSprite('pickup', p.x, p.y + bob, R.pickupSize * pulse, 0, 1);
       } else {
         drawFish(ctx, p.x, p.y + bob, R.pickupSize * pulse, {
@@ -2643,8 +3033,13 @@
     var blink = false;
     var cycle = clock % 4.9;
     if (cycle > 4.72 && cycle < 4.86) blink = true;
-    var alpha = 1;
-    if (invuln > 0) alpha = Math.floor(invuln * 12) % 2 === 0 ? 0.4 : 1;
+    var alpha = hero.inBox ? 0.65 : 1;
+    if (invuln > 0 && pounceTimer <= 0) alpha = Math.floor(invuln * 12) % 2 === 0 ? 0.45 : alpha;
+    if (speedBoost > 0) {
+      ctx.save();
+      drawRingDashed(hero.x, hero.y + 6, R.heroSize * 0.56, 'rgba(255,222,112,0.75)');
+      ctx.restore();
+    }
     ctx.save();
     ctx.globalAlpha = alpha;
     if (custom.hero && images.hero) {
@@ -2660,7 +3055,7 @@
     }
     ctx.restore();
     if (shield > 0) drawShield(hero.x, hero.y);
-    if (invuln > 0 && hearts > 0) {
+    if (invuln > 0 && hearts > 0 && pounceTimer <= 0) {
       ctx.save();
       ctx.globalAlpha = 0.7;
       drawRingDashed(hero.x, hero.y + 2, R.heroSize * 0.62 + Math.sin(clock * 10) * 2, 'rgba(255,221,186,0.5)');
@@ -2719,7 +3114,50 @@
     ctx.setLineDash([]);
   }
 
+  function drawRobotSensorCone(e) {
+    if (e.mode === 'stunned') return;
+    var dirX = e.vx, dirY = e.vy;
+    if (e.mode === 'windup' || e.mode === 'charge') {
+      dirX = e.chargeDX;
+      dirY = e.chargeDY;
+    } else if (Math.abs(dirX) + Math.abs(dirY) < 8) {
+      dirX = (e.tx || e.x + 1) - e.x;
+      dirY = (e.ty || e.y) - e.y;
+    }
+    var angle = Math.atan2(dirY, dirX);
+    var spread = e.mode === 'windup' || e.mode === 'charge' ? 0.36 : 0.54;
+    var coneLen = e.mode === 'chase' ? 168 : 145;
+    ctx.save();
+    var grad = ctx.createRadialGradient(e.x, e.y, 12, e.x, e.y, coneLen);
+    if (e.mode === 'windup' || e.mode === 'charge') {
+      grad.addColorStop(0, 'rgba(255,105,82,0.34)');
+      grad.addColorStop(1, 'rgba(255,105,82,0.02)');
+    } else if (e.mode === 'chase') {
+      grad.addColorStop(0, 'rgba(255,188,88,0.26)');
+      grad.addColorStop(1, 'rgba(255,188,88,0.02)');
+    } else {
+      grad.addColorStop(0, 'rgba(255,210,120,0.18)');
+      grad.addColorStop(1, 'rgba(145,232,215,0.02)');
+    }
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(e.x, e.y);
+    ctx.arc(e.x, e.y, coneLen, angle - spread, angle + spread);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = e.mode === 'chase' || e.mode === 'windup'
+      ? 'rgba(255,160,96,0.35)'
+      : 'rgba(255,220,150,0.24)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, coneLen * 0.92, angle - spread * 0.85, angle + spread * 0.85);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   function drawRobotEntity(e) {
+    drawRobotSensorCone(e);
     // Charge telegraph: a dashed warning line, drawn before the body.
     if (e.mode === 'windup') {
       var pulse = 0.45 + Math.sin(clock * 20) * 0.2;
@@ -2922,58 +3360,95 @@
     }
   }
 
-  /* 16. HUD ---------------------------------------------------------------- */
+  /* 16. HUD & BOTTOM ACTION BAR ------------------------------------------- */
   function drawHUD() {
     if (phase === 'title') return;
     var cw = view.cssW, ch = view.cssH;
-    var s = clamp(cw / 580, 0.78, 1.08);
-    var panelW = Math.min(cw - 20, 760);
-    var panelH = 56 * s;
+    var s = clamp(cw / 560, 0.72, 1.05);
+    var panelW = Math.min(cw - 16, 760);
+    var panelH = 44 * s;
     var x = (cw - panelW) / 2;
-    var y = 12;
+    var y = 8;
     ctx.save();
-    // Panel shadow and body.
-    fillRound(ctx, x + 2, y + 6, panelW, panelH, 17 * s, 'rgba(13,9,7,0.3)');
-    fillRound(ctx, x, y, panelW, panelH, 17 * s, 'rgba(34,26,21,0.86)');
-    strokeRound(ctx, x, y, panelW, panelH, 17 * s, 'rgba(246,231,200,0.2)', 1.4);
-    // Inner warm highlight.
-    ctx.strokeStyle = 'rgba(255,245,220,0.06)';
-    ctx.lineWidth = 1;
-    roundPath(ctx, x + 4, y + 4, panelW - 8, panelH - 8, 13 * s);
-    ctx.stroke();
 
-    // Hearts.
-    var heartSize = 22 * s;
-    var heartX = x + 21 * s;
+    // Main header bar shadow and body.
+    fillRound(ctx, x + 2, y + 4, panelW, panelH, 14 * s, 'rgba(13,9,7,0.32)');
+    fillRound(ctx, x, y, panelW, panelH, 14 * s, 'rgba(34,26,21,0.90)');
+    strokeRound(ctx, x, y, panelW, panelH, 14 * s, 'rgba(246,231,200,0.22)', 1.3);
+
+    // 1. Left: Hearts.
+    var heartSize = 18 * s;
+    var heartX = x + 18 * s;
     var heartY = y + panelH * 0.5;
     for (var i = 0; i < R.hearts; i++) {
-      drawHeartIcon(ctx, heartX + i * 26 * s, heartY, heartSize, i < hearts);
+      drawHeartIcon(ctx, heartX + i * 21 * s, heartY, heartSize, i < hearts);
     }
-    // Divider.
-    var dividerX = x + 104 * s;
+
+    var div1X = x + (16 + R.hearts * 21 + 6) * s;
     ctx.strokeStyle = 'rgba(247,232,204,0.14)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(dividerX, y + 13 * s);
-    ctx.lineTo(dividerX, y + panelH - 13 * s);
+    ctx.moveTo(div1X, y + 9 * s);
+    ctx.lineTo(div1X, y + panelH - 9 * s);
     ctx.stroke();
 
-    // Fish progress in the middle.
-    var centerX = x + panelW * 0.5;
-    var fishSize = 24 * s;
-    var fishX = centerX - 59 * s;
-    drawFishIcon(ctx, fishX, y + panelH * 0.41, fishSize, C.gold, C.ink);
-    ctx.textAlign = 'left';
+    // 2. Right: Mute + Pause buttons & Timer.
+    var btnSize = 28 * s;
+    var pauseX = x + panelW - btnSize - 8 * s;
+    var muteX = pauseX - btnSize - 5 * s;
+    var btnY = y + (panelH - btnSize) / 2;
+
+    hudButtons.mute = { x: muteX, y: btnY, w: btnSize, h: btnSize };
+    hudButtons.pause = { x: pauseX, y: btnY, w: btnSize, h: btnSize };
+
+    fillRound(ctx, muteX, btnY, btnSize, btnSize, 8 * s, muted ? 'rgba(166,82,63,0.75)' : 'rgba(255,244,222,0.1)');
+    strokeRound(ctx, muteX, btnY, btnSize, btnSize, 8 * s, 'rgba(246,231,200,0.22)', 1);
+    ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    setFont(ctx, 19 * s, '800');
+    setFont(ctx, 13 * s, '700');
     ctx.fillStyle = C.cream;
-    ctx.fillText(score + ' / ' + R.quota, fishX + 21 * s, y + panelH * 0.39);
-    // Progress bar.
-    var barW = 112 * s;
+    ctx.fillText(muted ? '🔇' : '🔊', muteX + btnSize / 2, btnY + btnSize / 2 + 1);
+
+    fillRound(ctx, pauseX, btnY, btnSize, btnSize, 8 * s, paused ? 'rgba(223,126,104,0.82)' : 'rgba(255,244,222,0.1)');
+    strokeRound(ctx, pauseX, btnY, btnSize, btnSize, 8 * s, 'rgba(246,231,200,0.22)', 1);
+    ctx.fillStyle = C.cream;
+    ctx.fillText(paused ? '▶' : '⏸', pauseX + btnSize / 2, btnY + btnSize / 2 + 1);
+
+    // Timer to the left of Mute button.
+    var warn = time <= 10 && phase === 'playing';
+    var timerColor = warn ? C.red : C.cream;
+    var timeRightX = muteX - 8 * s;
+    ctx.textAlign = 'right';
+    setFont(ctx, 15.5 * s, '800');
+    ctx.fillStyle = timerColor;
+    var timeLabel = '⏱ ' + formatTime(time);
+    ctx.fillText(timeLabel, timeRightX, heartY + 1);
+
+    var div2X = timeRightX - ctx.measureText(timeLabel).width - 9 * s;
+    ctx.strokeStyle = 'rgba(247,232,204,0.14)';
+    ctx.beginPath();
+    ctx.moveTo(div2X, y + 9 * s);
+    ctx.lineTo(div2X, y + panelH - 9 * s);
+    ctx.stroke();
+
+    // 3. Center: Stage & Fish Quota + 3-phase progress bar.
+    var centerLeft = div1X + 6 * s;
+    var centerRight = div2X - 6 * s;
+    var centerX = (centerLeft + centerRight) * 0.5;
+    var centerW = Math.max(80 * s, centerRight - centerLeft);
+
+    var quotaLabel = '第 ' + stageIndex + '/3 阶 · 🐟 ' + score + ' / ' + R.quota;
+    fitFont(ctx, quotaLabel, centerW - 6 * s, 14 * s, '800');
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = C.cream;
+    ctx.fillText(quotaLabel, centerX, y + panelH * 0.36);
+
+    var barW = Math.min(centerW - 12 * s, 148 * s);
     var barH = 4.5 * s;
     var barX = centerX - barW / 2;
-    var barY = y + panelH * 0.69;
-    fillRound(ctx, barX, barY, barW, barH, barH / 2, 'rgba(246,233,208,0.16)');
+    var barY = y + panelH * 0.72;
+    fillRound(ctx, barX, barY, barW, barH, barH / 2, 'rgba(246,233,208,0.18)');
     var progress = clamp(score / R.quota, 0, 1);
     if (progress > 0) {
       var grad = ctx.createLinearGradient(barX, barY, barX + barW, barY);
@@ -2981,99 +3456,164 @@
       grad.addColorStop(1, '#ffe0a0');
       fillRound(ctx, barX, barY, Math.max(barH, barW * progress), barH, barH / 2, grad);
     }
-    // Divider.
-    var divider2X = x + panelW - 104 * s;
-    ctx.strokeStyle = 'rgba(247,232,204,0.14)';
-    ctx.beginPath();
-    ctx.moveTo(divider2X, y + 13 * s);
-    ctx.lineTo(divider2X, y + panelH - 13 * s);
-    ctx.stroke();
-
-    // Timer.
-    var warn = time <= 10 && phase === 'playing';
-    var timerColor = warn ? C.red : C.cream;
-    var clockX = x + panelW - 87 * s;
-    drawClockIcon(ctx, clockX, heartY, 22 * s, timerColor);
-    ctx.textAlign = 'right';
-    setFont(ctx, 19 * s, '800');
-    ctx.fillStyle = timerColor;
-    var timeLabel = formatTime(time);
-    if (warn) {
-      var pulse = 1 + Math.sin(clock * 9) * 0.05;
-      ctx.save();
-      ctx.translate(x + panelW - 15 * s, heartY);
-      ctx.scale(pulse, pulse);
-      ctx.fillText(timeLabel, 0, 1);
-      ctx.restore();
-    } else {
-      ctx.fillText(timeLabel, x + panelW - 15 * s, heartY + 1);
+    // Stage divider ticks on progress bar.
+    var th = getStageThresholds();
+    ctx.fillStyle = 'rgba(34,26,21,0.85)';
+    for (var ti = 0; ti < th.length; ti++) {
+      var tx = barX + clamp(th[ti] / R.quota, 0, 1) * barW;
+      ctx.fillRect(tx - 1, barY - 1, 2, barH + 2);
     }
 
-    // Shield pill.
-    var underY = y + panelH + 9 * s;
+    // Sub-bar (y ~ 58): 3 aligned status pills (Shield charge/active, Stealth/Stage, Combo).
+    var subY = y + panelH + 5 * s;
+    var subH = 24 * s;
+    var gap = 6 * s;
+    var pillW = (panelW - gap * 2) / 3;
+
+    // Pill 1 (Left): Shield active or charge counter.
+    var p1X = x;
     if (shield > 0) {
-      var pw = 142 * s;
-      fillRound(ctx, x, underY, pw, 27 * s, 13.5 * s, 'rgba(58,104,88,0.91)');
-      strokeRound(ctx, x, underY, pw, 27 * s, 13.5 * s, 'rgba(183,247,226,0.55)', 1.2);
-      drawYarnIcon(ctx, x + 18 * s, underY + 13.5 * s, 18 * s, '#c8ffef');
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      setFont(ctx, 13 * s, '700');
-      ctx.fillStyle = '#e8fff7';
-      ctx.fillText('毛线护盾 ' + shield.toFixed(1) + 's', x + 32 * s, underY + 14 * s);
-      underY += 34 * s;
+      fillRound(ctx, p1X, subY, pillW, subH, subH / 2, 'rgba(48,108,88,0.92)');
+      strokeRound(ctx, p1X, subY, pillW, subH, subH / 2, 'rgba(176,247,225,0.65)', 1.2);
+      ctx.fillStyle = '#eafff7';
+      fitFont(ctx, '🧶 毛线护盾 ' + shield.toFixed(1) + 's', pillW - 12 * s, 11.5 * s, '800');
+      ctx.fillText('🧶 毛线护盾 ' + shield.toFixed(1) + 's', p1X + pillW / 2, subY + subH * 0.52);
+    } else {
+      fillRound(ctx, p1X, subY, pillW, subH, subH / 2, 'rgba(34,26,21,0.82)');
+      strokeRound(ctx, p1X, subY, pillW, subH, subH / 2, 'rgba(246,231,200,0.18)', 1);
+      ctx.fillStyle = 'rgba(247,236,215,0.88)';
+      var chargeTxt = '🧶 护盾充能 ' + shieldCount + '/' + R.shield.every;
+      fitFont(ctx, chargeTxt, pillW - 12 * s, 11.5 * s, '700');
+      ctx.fillText(chargeTxt, p1X + pillW / 2, subY + subH * 0.52);
     }
-    // Combo pill.
-    if (combo >= 2 && comboTimer > 0 && phase === 'playing') {
-      var comboW = 114 * s;
-      var combX = x + panelW - comboW;
-      var pop = 1 + Math.max(0, comboTimer - 2.45) * 0.5;
-      ctx.save();
-      ctx.translate(combX + comboW / 2, y + panelH + 9 * s + 13.5 * s);
-      ctx.scale(pop, pop);
-      fillRound(ctx, -comboW / 2, -13.5 * s, comboW, 27 * s, 13.5 * s, 'rgba(166,82,63,0.95)');
-      strokeRound(ctx, -comboW / 2, -13.5 * s, comboW, 27 * s, 13.5 * s, 'rgba(255,203,154,0.55)', 1.2);
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      setFont(ctx, 13.5 * s, '800');
+
+    // Pill 2 (Center): Stealth status or Speed Boost.
+    var p2X = x + pillW + gap;
+    if (hero.inBox) {
+      fillRound(ctx, p2X, subY, pillW, subH, subH / 2, 'rgba(54,106,90,0.92)');
+      strokeRound(ctx, p2X, subY, pillW, subH, subH / 2, 'rgba(178,248,225,0.65)', 1.2);
+      ctx.fillStyle = '#eafff7';
+      fitFont(ctx, '📦 纸箱隐身中', pillW - 12 * s, 11.5 * s, '800');
+      ctx.fillText('📦 纸箱隐身中', p2X + pillW / 2, subY + subH * 0.52);
+    } else if (speedBoost > 0) {
+      fillRound(ctx, p2X, subY, pillW, subH, subH / 2, 'rgba(176,118,38,0.92)');
+      strokeRound(ctx, p2X, subY, pillW, subH, subH / 2, 'rgba(255,228,148,0.65)', 1.2);
+      ctx.fillStyle = '#fff5cf';
+      fitFont(ctx, '🍣 寿司加速 ' + speedBoost.toFixed(1) + 's', pillW - 12 * s, 11.5 * s, '800');
+      ctx.fillText('🍣 寿司加速 ' + speedBoost.toFixed(1) + 's', p2X + pillW / 2, subY + subH * 0.52);
+    } else {
+      fillRound(ctx, p2X, subY, pillW, subH, subH / 2, 'rgba(34,26,21,0.82)');
+      strokeRound(ctx, p2X, subY, pillW, subH, subH / 2, 'rgba(246,231,200,0.18)', 1);
+      ctx.fillStyle = 'rgba(235,218,190,0.85)';
+      var stageTxt = '📦 纸箱可隐身 · ' + STAGE_NAMES[stageIndex - 1];
+      fitFont(ctx, stageTxt, pillW - 12 * s, 11 * s, '700');
+      ctx.fillText(stageTxt, p2X + pillW / 2, subY + subH * 0.52);
+    }
+
+    // Pill 3 (Right): Combo badge.
+    var p3X = x + (pillW + gap) * 2;
+    if (combo >= 2 && comboTimer > 0) {
+      fillRound(ctx, p3X, subY, pillW, subH, subH / 2, 'rgba(166,82,63,0.94)');
+      strokeRound(ctx, p3X, subY, pillW, subH, subH / 2, 'rgba(255,203,154,0.6)', 1.2);
       ctx.fillStyle = '#ffe9c8';
-      ctx.fillText('连偷 ×' + combo, 0, 1);
+      fitFont(ctx, '🔥 连偷 ×' + combo, pillW - 12 * s, 12 * s, '800');
+      ctx.fillText('🔥 连偷 ×' + combo, p3X + pillW / 2, subY + subH * 0.52);
+    } else {
+      fillRound(ctx, p3X, subY, pillW, subH, subH / 2, 'rgba(34,26,21,0.82)');
+      strokeRound(ctx, p3X, subY, pillW, subH, subH / 2, 'rgba(246,231,200,0.18)', 1);
+      ctx.fillStyle = 'rgba(235,218,190,0.82)';
+      var recCombo = '🔥 连偷 ×' + Math.max(1, combo) + (maxCombo > 1 ? ' (最高×' + maxCombo + ')' : '');
+      fitFont(ctx, recCombo, pillW - 12 * s, 11 * s, '700');
+      ctx.fillText(recCombo, p3X + pillW / 2, subY + subH * 0.52);
+    }
+
+    ctx.restore();
+  }
+
+  function drawBottomBar() {
+    if (phase !== 'playing') {
+      hudButtons.pounce = { x: 0, y: 0, w: 0, h: 0 };
+      return;
+    }
+    var cw = view.cssW, ch = view.cssH;
+    var s = clamp(cw / 560, 0.72, 1.04);
+    var panelW = Math.min(cw - 16, 760);
+    var x = (cw - panelW) / 2;
+    var barH = 38 * s;
+    var y = ch - barH - 8;
+
+    ctx.save();
+    // Right: Interactive Pounce skill button ('🐾 飞扑 SPACE').
+    var btnW = 138 * s;
+    var btnX = x + panelW - btnW;
+    hudButtons.pounce = { x: btnX, y: y, w: btnW, h: barH };
+
+    var ready = pounceCooldown <= 0;
+    var cdRatio = ready ? 1 : clamp(1 - pounceCooldown / 2.2, 0, 1);
+
+    fillRound(ctx, btnX, y + 2, btnW, barH, 12 * s, 'rgba(12,8,6,0.35)');
+    fillRound(ctx, btnX, y, btnW, barH, 12 * s, ready ? 'rgba(218,118,92,0.94)' : 'rgba(42,32,25,0.9)');
+    if (!ready && cdRatio > 0) {
+      ctx.save();
+      roundPath(ctx, btnX, y, btnW, barH, 12 * s);
+      ctx.clip();
+      ctx.fillStyle = 'rgba(218,118,92,0.38)';
+      ctx.fillRect(btnX, y, btnW * cdRatio, barH);
       ctx.restore();
     }
+    strokeRound(ctx, btnX, y, btnW, barH, 12 * s, ready ? 'rgba(255,228,176,0.75)' : 'rgba(246,231,200,0.22)', 1.5);
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    setFont(ctx, 13 * s, '800');
+    ctx.fillStyle = ready ? '#fff8ea' : 'rgba(247,236,215,0.75)';
+    var btnLabel = ready ? '🐾 飞扑 SPACE' : '🐾 冷却 ' + pounceCooldown.toFixed(1) + 's';
+    fitFont(ctx, btnLabel, btnW - 14 * s, 13 * s, '800');
+    ctx.fillText(btnLabel, btnX + btnW / 2, y + barH * 0.52);
+
+    // Left: Control & stealth hint bar.
+    var hintW = panelW - btnW - 8 * s;
+    fillRound(ctx, x, y, hintW, barH, 12 * s, 'rgba(34,26,21,0.84)');
+    strokeRound(ctx, x, y, hintW, barH, 12 * s, 'rgba(246,231,200,0.18)', 1.1);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var hintText = 'WASD / 拖动移动 · 空格飞扑 · 躲进纸箱隐身';
+    fitFont(ctx, hintText, hintW - 16 * s, 12 * s, '650');
+    ctx.fillStyle = 'rgba(247,236,215,0.88)';
+    ctx.fillText(hintText, x + hintW / 2, y + barH * 0.52);
     ctx.restore();
   }
 
   function drawToast() {
     if (!toast || phase !== 'playing') return;
-    var cw = view.cssW, ch = view.cssH;
-    var alpha = Math.min(1, Math.min(toast.age / 0.22, (toast.life - toast.age) / 0.3));
+    var cw = view.cssW;
+    var alpha = Math.min(1, Math.min(toast.age / 0.2, (toast.life - toast.age) / 0.28));
     if (alpha <= 0) return;
-    var s = clamp(cw / 640, 0.76, 1.05);
+    var s = clamp(cw / 580, 0.74, 1.02);
     ctx.save();
     ctx.globalAlpha = clamp(alpha, 0, 1);
-    setFont(ctx, 15.5 * s, '700');
-    var subSize = 11.5 * s;
-    setFont(ctx, subSize, '500');
+    setFont(ctx, 14 * s, '800');
+    var subSize = 11 * s;
+    setFont(ctx, subSize, '600');
     var textW = ctx.measureText(toast.sub || '').width;
-    setFont(ctx, 15.5 * s, '700');
+    setFont(ctx, 14 * s, '800');
     textW = Math.max(textW, ctx.measureText(toast.text).width);
-    var w = Math.min(cw - 32, Math.max(220 * s, textW + 42 * s));
-    var h = toast.sub ? 48 * s : 34 * s;
+    var w = Math.min(cw - 24, Math.max(210 * s, textW + 34 * s));
+    var h = toast.sub ? 42 * s : 28 * s;
     var x = (cw - w) / 2;
-    var y = ch - h - 24 * s;
-    if (joystick) y -= 45;
-    fillRound(ctx, x, y + 3, w, h, 12 * s, 'rgba(14,10,8,0.22)');
-    fillRound(ctx, x, y, w, h, 12 * s, 'rgba(37,28,22,0.88)');
-    strokeRound(ctx, x, y, w, h, 12 * s, 'rgba(243,224,188,0.24)', 1.2);
+    var y = 8 + 76 * s;
+    fillRound(ctx, x, y + 3, w, h, 11 * s, 'rgba(14,10,8,0.28)');
+    fillRound(ctx, x, y, w, h, 11 * s, 'rgba(42,30,22,0.92)');
+    strokeRound(ctx, x, y, w, h, 11 * s, 'rgba(255,222,158,0.42)', 1.3);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    setFont(ctx, 15.5 * s, '700');
-    ctx.fillStyle = C.cream;
-    ctx.fillText(toast.text, cw / 2, y + (toast.sub ? h * 0.33 : h * 0.52));
+    fitFont(ctx, toast.text, w - 18 * s, 14 * s, '800');
+    ctx.fillStyle = '#ffe9b8';
+    ctx.fillText(toast.text, cw / 2, y + (toast.sub ? h * 0.36 : h * 0.52));
     if (toast.sub) {
-      setFont(ctx, subSize, '500');
-      ctx.fillStyle = 'rgba(237,218,184,0.72)';
-      ctx.fillText(toast.sub, cw / 2, y + h * 0.68);
+      fitFont(ctx, toast.sub, w - 18 * s, subSize, '600');
+      ctx.fillStyle = 'rgba(247,236,215,0.82)';
+      ctx.fillText(toast.sub, cw / 2, y + h * 0.72);
     }
     ctx.restore();
   }
@@ -3091,10 +3631,10 @@
   /* 17. OVERLAYS ----------------------------------------------------------- */
   function drawTitleOverlay() {
     var cw = view.cssW, ch = view.cssH;
-    var W = Math.min(cw - 28, 560);
-    var u = clamp(Math.min(W / 560, (ch - 28) / 560), 0.58, 1.12);
-    var cardW = 560 * u;
-    var cardH = 560 * u;
+    var W = Math.min(cw - 32, 540);
+    var u = clamp(Math.min(W / 540, (ch - 64) / 530), 0.56, 1.08);
+    var cardW = 540 * u;
+    var cardH = 524 * u;
     var x = (cw - cardW) / 2;
     var y = (ch - cardH) / 2;
 
@@ -3111,123 +3651,127 @@
     ctx.fillStyle = halo;
     ctx.fillRect(0, 0, cw, ch);
 
-    // A full-colour mascot in the breathing room outside the card.
-    drawTitleMascot(cw, ch, x, y, cardW, cardH);
-
-    // Card shadow and paper.
+    // Card shadow and paper (no overlapping giant cat below card!).
     ctx.save();
-    fillRound(ctx, x + 7 * u, y + 10 * u, cardW, cardH, 28 * u, 'rgba(9,6,5,0.35)');
+    fillRound(ctx, x + 7 * u, y + 10 * u, cardW, cardH, 26 * u, 'rgba(9,6,5,0.35)');
     var paper = ctx.createLinearGradient(x, y, x, y + cardH);
     paper.addColorStop(0, '#fbf2df');
     paper.addColorStop(0.68, '#f7ecd7');
     paper.addColorStop(1, '#f0dfc2');
-    fillRound(ctx, x, y, cardW, cardH, 28 * u, paper);
-    strokeRound(ctx, x, y, cardW, cardH, 28 * u, C.ink, 4.2 * u);
+    fillRound(ctx, x, y, cardW, cardH, 26 * u, paper);
+    strokeRound(ctx, x, y, cardW, cardH, 26 * u, C.ink, 4 * u);
     ctx.save();
-    roundPath(ctx, x + 3 * u, y + 3 * u, cardW - 6 * u, cardH - 6 * u, 25 * u);
+    roundPath(ctx, x + 3 * u, y + 3 * u, cardW - 6 * u, cardH - 6 * u, 23 * u);
     ctx.clip();
-    // Subtle paper texture: tiny warm flecks and paw prints.
-    for (var i = 0; i < 26; i++) {
+    for (var i = 0; i < 24; i++) {
       ctx.fillStyle = 'rgba(153,112,74,' + (0.03 + (i % 3) * 0.012) + ')';
       ctx.beginPath();
       ctx.arc(x + hash01(i * 4.1) * cardW, y + hash01(i * 9.3 + 2) * cardH, 1 + hash01(i) * 2.4, 0, TAU);
       ctx.fill();
     }
-    drawPawIcon(ctx, x + 38 * u, y + 52 * u, 38 * u, 'rgba(156,111,76,0.1)', 1);
-    drawPawIcon(ctx, x + cardW - 43 * u, y + cardH - 44 * u, 48 * u, 'rgba(156,111,76,0.09)', 1);
-    drawPawIcon(ctx, x + cardW - 30 * u, y + 34 * u, 27 * u, 'rgba(156,111,76,0.09)', 1);
+    drawPawIcon(ctx, x + 36 * u, y + 48 * u, 34 * u, 'rgba(156,111,76,0.1)', 1);
+    drawPawIcon(ctx, x + cardW - 40 * u, y + cardH - 42 * u, 44 * u, 'rgba(156,111,76,0.09)', 1);
     ctx.restore();
 
-    // Small top badge.
-    var badgeW = 236 * u, badgeH = 28 * u;
-    fillRound(ctx, x + (cardW - badgeW) / 2, y + 28 * u, badgeW, badgeH, 14 * u, C.coral);
-    strokeRound(ctx, x + (cardW - badgeW) / 2, y + 28 * u, badgeW, badgeH, 14 * u, C.ink, 2 * u);
+    // Small top badge + neat mini cat emblem inside the card.
+    var badgeW = 248 * u, badgeH = 26 * u;
+    fillRound(ctx, x + (cardW - badgeW) / 2, y + 22 * u, badgeW, badgeH, 13 * u, C.coral);
+    strokeRound(ctx, x + (cardW - badgeW) / 2, y + 22 * u, badgeW, badgeH, 13 * u, C.ink, 2 * u);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    setFont(ctx, 14 * u, '700');
+    setFont(ctx, 13 * u, '700');
     ctx.fillStyle = '#fff0d7';
-    ctx.fillText('深 夜 厨 房  ·  偷 吃 行 动', x + cardW / 2, y + 42.5 * u);
+    ctx.fillText('深 夜 厨 房  ·  三 阶 潜 行 行 动', x + cardW / 2, y + 35.5 * u);
+
+    // Neat mini cat portrait medallion inside the card beside the title.
+    var blinkCycle = clock % 5.3;
+    var blinking = blinkCycle > 5.12 && blinkCycle < 5.26;
+    drawCat(ctx, x + 64 * u, y + 104 * u, 54 * u, {
+      facing: 1, walk: 1.5, move: 0.15, time: clock, blink: blinking
+    });
+    drawTunaNigiri(ctx, x + cardW - 64 * u, y + 104 * u, 46 * u, {
+      time: clock, wobble: 1.2
+    });
 
     // Title.
-    var titleSize = fitFont(ctx, TITLE, cardW - 82 * u, 61 * u, '800', true);
+    var titleSize = fitFont(ctx, TITLE, cardW - 170 * u, 52 * u, '800', true);
     setFont(ctx, titleSize, '800', true);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = C.ink;
-    ctx.fillText(TITLE, x + cardW / 2, y + 108 * u);
+    ctx.fillText(TITLE, x + cardW / 2, y + 96 * u);
     // Brush underline.
     ctx.strokeStyle = 'rgba(223,126,104,0.8)';
-    ctx.lineWidth = 4.5 * u;
+    ctx.lineWidth = 4 * u;
     ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(x + cardW / 2 - 82 * u, y + 142 * u);
-    ctx.quadraticCurveTo(x + cardW / 2, y + 151 * u, x + cardW / 2 + 82 * u, y + 141 * u);
+    ctx.moveTo(x + cardW / 2 - 76 * u, y + 128 * u);
+    ctx.quadraticCurveTo(x + cardW / 2, y + 136 * u, x + cardW / 2 + 76 * u, y + 127 * u);
     ctx.stroke();
+
     // Subtitle.
-    setFont(ctx, 17 * u, '500');
+    setFont(ctx, 15.5 * u, '600');
     ctx.fillStyle = C.inkSoft;
-    ctx.fillText('趁铲屎官睡着，60 秒内把小鱼干偷个够。', x + cardW / 2, y + 169 * u);
+    ctx.fillText('闯过三阶深夜厨房，巧用飞扑与纸箱把鱼偷个够！', x + cardW / 2, y + 156 * u);
     ctx.strokeStyle = 'rgba(91,66,49,0.16)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(x + 62 * u, y + 192 * u);
-    ctx.lineTo(x + cardW - 62 * u, y + 192 * u);
+    ctx.moveTo(x + 52 * u, y + 178 * u);
+    ctx.lineTo(x + cardW - 52 * u, y + 178 * u);
     ctx.stroke();
 
     // Three objective rows.
-    var rowX = x + 72 * u;
-    var iconX = x + 92 * u;
-    var textX = x + 120 * u;
+    var iconX = x + 76 * u;
+    var textX = x + 106 * u;
     var rows = [
-      { icon: 'fish', title: '偷满 ' + R.quota + ' 条小鱼干', color: C.gold },
-      { icon: 'robot', title: '躲开扫地机器人的冲撞', color: C.mintDeep },
-      { icon: 'shield', title: '每偷 ' + R.shield.every + ' 条获得毛线护盾', color: C.cyan }
+      { icon: 'fish', title: '三阶目标：偷满 ' + R.quota + ' 条鱼（金枪鱼寿司 +2 鱼 & 加速）' },
+      { icon: 'robot', title: '避开扫地机扇形探测，躲进角落纸箱可隐身' },
+      { icon: 'shield', title: '空格「喵星飞扑」冲刺，每 ' + R.shield.every + ' 鱼获毛线护盾' }
     ];
     for (var r = 0; r < rows.length; r++) {
-      var ry = y + (232 + r * 49) * u;
-      fillRound(ctx, iconX - 17 * u, ry - 17 * u, 34 * u, 34 * u, 11 * u, 'rgba(255,249,233,0.64)');
-      strokeRound(ctx, iconX - 17 * u, ry - 17 * u, 34 * u, 34 * u, 11 * u, 'rgba(91,66,49,0.13)', 1.2 * u);
-      if (rows[r].icon === 'fish') drawFishIcon(ctx, iconX, ry, 27 * u, C.gold, C.ink);
-      else if (rows[r].icon === 'robot') drawRobotIcon(ctx, iconX, ry + 2 * u, 27 * u, C.mintDeep);
-      else drawYarnIcon(ctx, iconX, ry, 24 * u, C.mintDeep);
+      var ry = y + (214 + r * 46) * u;
+      fillRound(ctx, iconX - 16 * u, ry - 16 * u, 32 * u, 32 * u, 10 * u, 'rgba(255,249,233,0.7)');
+      strokeRound(ctx, iconX - 16 * u, ry - 16 * u, 32 * u, 32 * u, 10 * u, 'rgba(91,66,49,0.14)', 1.2 * u);
+      if (rows[r].icon === 'fish') drawFishIcon(ctx, iconX, ry, 25 * u, C.gold, C.ink);
+      else if (rows[r].icon === 'robot') drawRobotIcon(ctx, iconX, ry + 2 * u, 25 * u, C.mintDeep);
+      else drawYarnIcon(ctx, iconX, ry, 22 * u, C.mintDeep);
       ctx.textAlign = 'left';
-      setFont(ctx, 17 * u, '650');
+      fitFont(ctx, rows[r].title, cardW - 142 * u, 15.5 * u, '650');
       ctx.fillStyle = C.ink;
       ctx.fillText(rows[r].title, textX, ry + 1);
     }
 
     // Best record.
     ctx.textAlign = 'center';
-    setFont(ctx, 12.5 * u, '500');
+    setFont(ctx, 12 * u, '500');
     ctx.fillStyle = C.inkSoft;
     if (best.time > 0) {
       var recordText = '最快通关：' + trimSeconds(best.time) + ' 秒';
       if (best.combo > 0) recordText += '  ·  最高连偷 ×' + best.combo;
-      fitFont(ctx, recordText, cardW - 100 * u, 12.5 * u, '500');
-      ctx.fillText(recordText, x + cardW / 2, y + 382 * u);
+      fitFont(ctx, recordText, cardW - 100 * u, 12 * u, '500');
+      ctx.fillText(recordText, x + cardW / 2, y + 356 * u);
     } else {
-      ctx.fillText('第一次来？脚步轻一点，扫地机器人可没睡。', x + cardW / 2, y + 382 * u);
+      ctx.fillText('提示：进阶每阶段奖励 +5 秒，留意金枪鱼寿司！', x + cardW / 2, y + 356 * u);
     }
 
     // Start button.
-    var btnW = 232 * u, btnH = 54 * u;
+    var btnW = 228 * u, btnH = 50 * u;
     var btnX = x + (cardW - btnW) / 2;
-    var btnY = y + 401 * u;
+    var btnY = y + 376 * u;
     var pulse = 1 + Math.sin(clock * 3.1) * 0.018;
     ctx.save();
     ctx.translate(btnX + btnW / 2, btnY + btnH / 2);
     ctx.scale(pulse, pulse);
-    fillRound(ctx, -btnW / 2 + 3 * u, -btnH / 2 + 5 * u, btnW, btnH, 16 * u, 'rgba(89,48,38,0.32)');
-    fillRound(ctx, -btnW / 2, -btnH / 2, btnW, btnH, 16 * u, C.coral);
-    strokeRound(ctx, -btnW / 2, -btnH / 2, btnW, btnH, 16 * u, C.ink, 2.8 * u);
-    // Glint.
+    fillRound(ctx, -btnW / 2 + 3 * u, -btnH / 2 + 5 * u, btnW, btnH, 15 * u, 'rgba(89,48,38,0.32)');
+    fillRound(ctx, -btnW / 2, -btnH / 2, btnW, btnH, 15 * u, C.coral);
+    strokeRound(ctx, -btnW / 2, -btnH / 2, btnW, btnH, 15 * u, C.ink, 2.8 * u);
     ctx.strokeStyle = 'rgba(255,236,203,0.4)';
     ctx.lineWidth = 1.6 * u;
     ctx.beginPath();
     ctx.moveTo(-btnW / 2 + 24 * u, -btnH / 2 + 10 * u);
     ctx.quadraticCurveTo(0, -btnH / 2 + 4 * u, btnW / 2 - 24 * u, -btnH / 2 + 10 * u);
     ctx.stroke();
-    setFont(ctx, 21 * u, '800');
+    setFont(ctx, 20 * u, '800');
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#fff8e8';
@@ -3235,63 +3779,13 @@
     ctx.restore();
 
     // Input hints.
-    setFont(ctx, 13.5 * u, '650');
+    setFont(ctx, 13 * u, '650');
     ctx.fillStyle = C.ink;
-    ctx.fillText('点击任意处 / 按任意键开始', x + cardW / 2, y + 478 * u);
-    fitFont(ctx, 'WASD / 方向键 / 拖动移动   ·   P 暂停   ·   M 静音', cardW - 66 * u, 11 * u, '500');
+    ctx.fillText('点击任意处 / 按任意键开始', x + cardW / 2, y + 450 * u);
+    fitFont(ctx, 'WASD / 拖动移动  ·  空格 飞扑  ·  P 暂停  ·  M 静音', cardW - 66 * u, 11 * u, '500');
     ctx.fillStyle = 'rgba(109,81,65,0.8)';
-    ctx.fillText('WASD / 方向键 / 拖动移动   ·   P 暂停   ·   M 静音', x + cardW / 2, y + 506 * u);
-    // Footer paw.
-    drawPawIcon(ctx, x + cardW / 2, y + 533 * u, 16 * u, 'rgba(109,81,65,0.45)', 1);
-    ctx.restore();
-  }
-
-  function drawTitleMascot(cw, ch, cardX, cardY, cardW, cardH) {
-    var below = ch - (cardY + cardH);
-    var blinkCycle = clock % 5.3;
-    var blinking = blinkCycle > 5.12 && blinkCycle < 5.26;
-    ctx.save();
-    if (below > 120) {
-      var size = Math.min(132, below * 0.7, cardW * 0.38);
-      var mx = cw * 0.5;
-      var my = cardY + cardH + below * 0.43;
-      // A soft halo so the mascot sits in its own little pool of light.
-      var glow = ctx.createRadialGradient(mx, my - size * 0.15, 4, mx, my - size * 0.15, size * 1.3);
-      glow.addColorStop(0, 'rgba(255,219,151,0.12)');
-      glow.addColorStop(1, 'rgba(255,219,151,0)');
-      ctx.fillStyle = glow;
-      ctx.fillRect(mx - size * 1.4, my - size * 1.5, size * 2.8, size * 2.8);
-      drawFish(ctx, mx + size * 0.82, my + size * 0.23, size * 0.6, {
-        time: clock, wobble: 1.7
-      });
-      drawCat(ctx, mx, my, size, {
-        facing: 1,
-        walk: 1.8,
-        move: 0.18,
-        time: clock,
-        blink: blinking
-      });
-    } else if (cardX > 120) {
-      var sideSize = Math.min(122, cardX - 42, cardH * 0.3);
-      var sx = cardX - sideSize * 0.76;
-      var sy = cardY + cardH * 0.61;
-      drawCat(ctx, sx, sy, sideSize, {
-        facing: 1,
-        walk: 1.2,
-        move: 0.1,
-        time: clock,
-        blink: blinking
-      });
-    } else if (cw - (cardX + cardW) > 120) {
-      var rightSize = Math.min(118, cw - (cardX + cardW) - 30, cardH * 0.28);
-      drawCat(ctx, cardX + cardW + rightSize * 0.76, cardY + cardH * 0.61, rightSize, {
-        facing: -1,
-        walk: 1.2,
-        move: 0.1,
-        time: clock,
-        blink: blinking
-      });
-    }
+    ctx.fillText('WASD / 拖动移动  ·  空格 飞扑  ·  P 暂停  ·  M 静音', x + cardW / 2, y + 476 * u);
+    drawPawIcon(ctx, x + cardW / 2, y + 501 * u, 15 * u, 'rgba(109,81,65,0.45)', 1);
     ctx.restore();
   }
 
@@ -3368,7 +3862,7 @@
     setFont(ctx, 15.5 * u, '500');
     ctx.fillStyle = C.inkSoft;
     var reason = won
-      ? '今天的夜宵，稳稳到手。'
+      ? '三阶深夜厨房大丰收，夜宵稳稳到手！'
       : (endReason === 'time' ? '还差 ' + Math.max(0, R.quota - score) + ' 条小鱼干，下次快一点！' : '扫地机器人把你逮了个正着。');
     fitFont(ctx, reason, cardW - 56 * u, 15.5 * u, '500');
     ctx.fillText(reason, mx, y + 152 * u);
@@ -3389,9 +3883,8 @@
 
     // Stats.
     var statY = y + 285 * u;
-    var statW = cardW * 0.25;
     var stats = [
-      ['用时', trimSeconds(Math.max(0, R.duration - time)) + ' 秒'],
+      ['用时', trimSeconds(Math.max(0.1, elapsed)) + ' 秒'],
       ['本局连偷', '×' + maxCombo],
       ['最快通关', best.time > 0 ? trimSeconds(best.time) + ' 秒' : '—']
     ];
@@ -3459,7 +3952,6 @@
 
   /* 18. MAIN RENDER LOOP --------------------------------------------------- */
   function render() {
-    var cw = view.cssW, ch = view.cssH;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = '#17100c';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -3481,11 +3973,11 @@
     drawParticles();
     drawSteam();
     drawFloaters();
-    // Light edge darkening is drawn in screen space below.
 
     ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
     drawScreenVignette();
     drawHUD();
+    drawBottomBar();
     drawToast();
     drawJoystick();
     if (phase === 'title') {
@@ -3564,8 +4056,12 @@
       elapsed: round(elapsed),
       score: round(score),
       quota: R.quota,
+      stage: stageIndex,
       hearts: round(hearts),
       shield: round(shield),
+      speedBoost: round(speedBoost),
+      pounceCooldown: round(pounceCooldown),
+      inBox: !!hero.inBox,
       combo: combo,
       comboTime: round(comboTimer),
       best: best.fish,
@@ -3574,11 +4070,88 @@
         return { x: round(e.x), y: round(e.y), mode: e.mode };
       }),
       pickups: pickups.map(function (p) {
-        return { x: round(p.x), y: round(p.y) };
+        return { x: round(p.x), y: round(p.y), kind: p.kind || 'fish' };
       }),
       world: { w: round(world.w), h: round(world.h) },
       fps: round(fps)
     };
+  };
+
+  window.__autoplay = function () {
+    if (phase === 'title') {
+      startGame();
+      return;
+    }
+    if (phase !== 'playing') return;
+    if (paused) {
+      paused = false;
+      return;
+    }
+    var bestTarget = null;
+    var bestVal = -1e9;
+    for (var i = 0; i < pickups.length; i++) {
+      var p = pickups[i];
+      var d = dist(hero.x, hero.y, p.x, p.y);
+      var val = (p.kind === 'tuna' ? 280 : 0) - d;
+      for (var j = 0; j < enemies.length; j++) {
+        var er = enemies[j];
+        if (er.mode === 'stunned') continue;
+        var de = dist(p.x, p.y, er.x, er.y);
+        if (de < 170) val -= (170 - de) * 2.2;
+      }
+      if (val > bestVal) {
+        bestVal = val;
+        bestTarget = p;
+      }
+    }
+
+    var vx = 0, vy = 0;
+    var targetDist = 999;
+    if (bestTarget) {
+      var dx = bestTarget.x - hero.x;
+      var dy = bestTarget.y - hero.y;
+      targetDist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+      vx = dx / targetDist;
+      vy = dy / targetDist;
+    }
+
+    var dangerNear = false;
+    if (shield <= 0) {
+      for (var k = 0; k < enemies.length; k++) {
+        var e = enemies[k];
+        if (e.mode === 'stunned') continue;
+        var ex = hero.x - e.x;
+        var ey = hero.y - e.y;
+        var ed = Math.max(1, Math.sqrt(ex * ex + ey * ey));
+        var threatR = (e.mode === 'windup' || e.mode === 'charge') ? 270 : 195;
+        if (ed < threatR) {
+          dangerNear = true;
+          var w = ((threatR - ed) / threatR) * 2.8;
+          if (e.mode === 'windup' || e.mode === 'charge') {
+            // Sidestep perpendicular to the robot's charge line.
+            var perpX = -e.chargeDY;
+            var perpY = e.chargeDX;
+            var side = (ex * perpX + ey * perpY) >= 0 ? 1 : -1;
+            vx += perpX * side * w * 1.5 + (ex / ed) * w;
+            vy += perpY * side * w * 1.5 + (ey / ed) * w;
+          } else {
+            vx += (ex / ed) * w;
+            vy += (ey / ed) * w;
+          }
+        }
+      }
+    }
+
+    var vLen = Math.sqrt(vx * vx + vy * vy) || 1;
+    vx /= vLen;
+    vy /= vLen;
+    autoPilot.x = vx;
+    autoPilot.y = vy;
+    autoPilot.timer = 0.25;
+
+    if (pounceCooldown <= 0 && (dangerNear || (targetDist > 85 && targetDist < 280))) {
+      triggerPounce(vx, vy);
+    }
   };
 
   /* 20. SIDEBAR / PLAYTEST CHARACTER RENDERS ------------------------------ */

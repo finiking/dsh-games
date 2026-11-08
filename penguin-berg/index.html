@@ -4232,7 +4232,7 @@ void main() {
 }`,Jd=class{constructor(){this.texture=null,this.mesh=null,this.depthNear=0,this.depthFar=0}init(t,e){if(this.texture===null){let n=new or(t.texture);(t.depthNear!==e.depthNear||t.depthFar!==e.depthFar)&&(this.depthNear=t.depthNear,this.depthFar=t.depthFar),this.texture=n}}getMesh(t){if(this.texture!==null&&this.mesh===null){let e=t.cameras[0].viewport,n=new Mn({vertexShader:YS,fragmentShader:ZS,uniforms:{depthColor:{value:this.texture},depthWidth:{value:e.z},depthHeight:{value:e.w}}});this.mesh=new Ae(new hs(20,20),n)}return this.mesh}reset(){this.texture=null,this.mesh=null}getDepthTexture(){return this.texture}},$d=class extends un{constructor(t,e){super();let n=this,i=null,r=1,a=null,o="local-floor",l=1,c=null,h=null,d=null,u=null,f=null,p=null,_=typeof XRWebGLBinding<"u",m=new Jd,g={},v=e.getContextAttributes(),S=null,y=null,A=[],E=[],x=new et,b=null,I=null,R=new Le;R.viewport=new ue;let L=new Le;L.viewport=new ue;let F=[R,L],H=new So,D=null,k=null;this.cameraAutoUpdate=!0,this.enabled=!1,this.isPresenting=!1,this.getController=function(Y){let xt=A[Y];return xt===void 0&&(xt=new rs,A[Y]=xt),xt.getTargetRaySpace()},this.getControllerGrip=function(Y){let xt=A[Y];return xt===void 0&&(xt=new rs,A[Y]=xt),xt.getGripSpace()},this.getHand=function(Y){let xt=A[Y];return xt===void 0&&(xt=new rs,A[Y]=xt),xt.getHandSpace()};function X(Y){let xt=E.indexOf(Y.inputSource);if(xt===-1)return;let wt=A[xt];wt!==void 0&&(wt.update(Y.inputSource,Y.frame,c||a),wt.dispatchEvent({type:Y.type,data:Y.inputSource}))}function G(){i.removeEventListener("select",X),i.removeEventListener("selectstart",X),i.removeEventListener("selectend",X),i.removeEventListener("squeeze",X),i.removeEventListener("squeezestart",X),i.removeEventListener("squeezeend",X),i.removeEventListener("end",G),i.removeEventListener("inputsourceschange",nt);for(let Y=0;Y<A.length;Y++){let xt=E[Y];xt!==null&&(E[Y]=null,A[Y].disconnect(xt))}D=null,k=null,m.reset();for(let Y in g)delete g[Y];if(t.setRenderTarget(S),f=null,u=null,d=null,i=null,y=null,zt.stop(),n.isPresenting=!1,t.setPixelRatio(b),t.setSize(x.width,x.height,!1),I!==null){let Y=I.camera;Y.fov=I.fov,Y.zoom=I.zoom,Y.updateProjectionMatrix(),I=null}n.dispatchEvent({type:"sessionend"})}this.setFramebufferScaleFactor=function(Y){r=Y,n.isPresenting===!0&&gt("WebXRManager: Cannot change framebuffer scale while presenting.")},this.setReferenceSpaceType=function(Y){o=Y,n.isPresenting===!0&&gt("WebXRManager: Cannot change reference space type while presenting.")},this.getReferenceSpace=function(){return c||a},this.setReferenceSpace=function(Y){c=Y},this.getBaseLayer=function(){return u!==null?u:f},this.getBinding=function(){return d===null&&_&&(d=new XRWebGLBinding(i,e)),d},this.getFrame=function(){return p},this.getSession=function(){return i},this.setSession=async function(Y){if(i=Y,i!==null){if(S=t.getRenderTarget(),i.addEventListener("select",X),i.addEventListener("selectstart",X),i.addEventListener("selectend",X),i.addEventListener("squeeze",X),i.addEventListener("squeezestart",X),i.addEventListener("squeezeend",X),i.addEventListener("end",G),i.addEventListener("inputsourceschange",nt),v.xrCompatible!==!0&&await e.makeXRCompatible(),b=t.getPixelRatio(),t.getSize(x),_&&"createProjectionLayer"in XRWebGLBinding.prototype){let wt=null,Ft=null,vt=null;v.depth&&(vt=v.stencil?e.DEPTH24_STENCIL8:e.DEPTH_COMPONENT24,wt=v.stencil?Jn:Vn,Ft=v.stencil?Oi:_n);let Ot={colorFormat:e.RGBA8,depthFormat:vt,scaleFactor:r};d=this.getBinding(),u=d.createProjectionLayer(Ot),i.updateRenderState({layers:[u]}),t.setPixelRatio(1),t.setSize(u.textureWidth,u.textureHeight,!1),y=new $e(u.textureWidth,u.textureHeight,{format:rn,type:on,depthTexture:new Xn(u.textureWidth,u.textureHeight,Ft,void 0,void 0,void 0,void 0,void 0,void 0,wt),stencilBuffer:v.stencil,colorSpace:t.outputColorSpace,samples:v.antialias?4:0,resolveDepthBuffer:u.ignoreDepthValues===!1,resolveStencilBuffer:u.ignoreDepthValues===!1,storeMultisampledDepthBuffer:u.ignoreDepthValues===!1,storeMultisampledStencilBuffer:u.ignoreDepthValues===!1})}else{let wt={antialias:v.antialias,alpha:!0,depth:v.depth,stencil:v.stencil,framebufferScaleFactor:r};f=new XRWebGLLayer(i,e,wt),i.updateRenderState({baseLayer:f}),t.setPixelRatio(1),t.setSize(f.framebufferWidth,f.framebufferHeight,!1),y=new $e(f.framebufferWidth,f.framebufferHeight,{format:rn,type:on,colorSpace:t.outputColorSpace,stencilBuffer:v.stencil,resolveDepthBuffer:f.ignoreDepthValues===!1,resolveStencilBuffer:f.ignoreDepthValues===!1,storeMultisampledDepthBuffer:f.ignoreDepthValues===!1,storeMultisampledStencilBuffer:f.ignoreDepthValues===!1})}y.isXRRenderTarget=!0,this.setFoveation(l),c=null,a=await i.requestReferenceSpace(o),zt.setContext(i),zt.start(),n.isPresenting=!0,n.dispatchEvent({type:"sessionstart"})}},this.getEnvironmentBlendMode=function(){if(i!==null)return i.environmentBlendMode},this.getDepthTexture=function(){return m.getDepthTexture()};function nt(Y){for(let xt=0;xt<Y.removed.length;xt++){let wt=Y.removed[xt],Ft=E.indexOf(wt);Ft>=0&&(E[Ft]=null,A[Ft].disconnect(wt))}for(let xt=0;xt<Y.added.length;xt++){let wt=Y.added[xt],Ft=E.indexOf(wt);if(Ft===-1){for(let Ot=0;Ot<A.length;Ot++)if(Ot>=E.length){E.push(wt),Ft=Ot;break}else if(E[Ot]===null){E[Ot]=wt,Ft=Ot;break}if(Ft===-1)break}let vt=A[Ft];vt&&vt.connect(wt)}}function W(Y,xt){xt===null?Y.matrixWorld.copy(Y.matrix):Y.matrixWorld.multiplyMatrices(xt.matrixWorld,Y.matrix),Y.matrixWorldInverse.copy(Y.matrixWorld).invert()}this.updateCamera=function(Y){if(i===null)return;let xt=Y.near,wt=Y.far;m.texture!==null&&(m.depthNear>0&&(xt=m.depthNear),m.depthFar>0&&(wt=m.depthFar)),H.near=L.near=R.near=xt,H.far=L.far=R.far=wt,(D!==H.near||k!==H.far)&&(i.updateRenderState({depthNear:H.near,depthFar:H.far}),D=H.near,k=H.far),H.layers.mask=Y.layers.mask|6,R.layers.mask=H.layers.mask&-5,L.layers.mask=H.layers.mask&-3;let Ft=Y.parent,vt=H.cameras;W(H,Ft);for(let Ot=0;Ot<vt.length;Ot++)W(vt[Ot],Ft);H.projectionMatrix.copy(R.projectionMatrix),H.projectionMatrixInverse.copy(R.projectionMatrixInverse),I===null&&Y.isPerspectiveCamera&&(I={camera:Y,fov:Y.fov,zoom:Y.zoom}),Q(Y,H,Ft)};function Q(Y,xt,wt){wt===null?Y.matrix.copy(xt.matrixWorld):(Y.matrix.copy(wt.matrixWorld),Y.matrix.invert(),Y.matrix.multiply(xt.matrixWorld)),Y.matrix.decompose(Y.position,Y.quaternion,Y.scale),Y.updateMatrixWorld(!0),Y.projectionMatrix.copy(xt.projectionMatrix),Y.projectionMatrixInverse.copy(xt.projectionMatrixInverse),Y.isPerspectiveCamera&&(Y.fov=es*2*Math.atan(1/Y.projectionMatrix.elements[5]),Y.zoom=1)}this.getCamera=function(){return H},this.getFoveation=function(){if(!(u===null&&f===null))return l},this.setFoveation=function(Y){l=Y,u!==null&&(u.fixedFoveation=Y),f!==null&&f.fixedFoveation!==void 0&&(f.fixedFoveation=Y)},this.hasDepthSensing=function(){return m.texture!==null},this.getDepthSensingMesh=function(){return m.getMesh(H)},this.getCameraTexture=function(Y){return g[Y]};let tt=null;function At(Y,xt){if(h=xt.getViewerPose(c||a),p=xt,h!==null){let wt=h.views;f!==null&&(t.setRenderTargetFramebuffer(y,f.framebuffer),t.setRenderTarget(y));let Ft=!1;wt.length!==H.cameras.length&&(H.cameras.length=0,Ft=!0);for(let kt=0;kt<wt.length;kt++){let Kt=wt[kt],te=null;if(f!==null)te=f.getViewport(Kt);else{let ct=d.getViewSubImage(u,Kt);te=ct.viewport,kt===0&&(t.setRenderTargetTextures(y,ct.colorTexture,ct.depthStencilTexture),t.setRenderTarget(y))}let j=F[kt];j===void 0&&(j=new Le,j.layers.enable(kt),j.viewport=new ue,F[kt]=j),j.matrix.fromArray(Kt.transform.matrix),j.matrix.decompose(j.position,j.quaternion,j.scale),j.projectionMatrix.fromArray(Kt.projectionMatrix),j.projectionMatrixInverse.copy(j.projectionMatrix).invert(),j.viewport.set(te.x,te.y,te.width,te.height),kt===0&&(H.matrix.copy(j.matrix),H.matrix.decompose(H.position,H.quaternion,H.scale)),Ft===!0&&H.cameras.push(j)}let vt=i.enabledFeatures;if(vt&&vt.includes("depth-sensing")&&i.depthUsage=="gpu-optimized"&&_){d=n.getBinding();let kt=d.getDepthInformation(wt[0]);kt&&kt.isValid&&kt.texture&&m.init(kt,i.renderState)}if(vt&&vt.includes("camera-access")&&_){t.state.unbindTexture(),d=n.getBinding();for(let kt=0;kt<wt.length;kt++){let Kt=wt[kt].camera;if(Kt){let te=g[Kt];te||(te=new or,g[Kt]=te);let j=d.getCameraImage(Kt);te.sourceTexture=j}}}}for(let wt=0;wt<A.length;wt++){let Ft=E[wt],vt=A[wt];Ft!==null&&vt!==void 0&&vt.update(Ft,xt,c||a)}tt&&tt(Y,xt),xt.detectedPlanes&&n.dispatchEvent({type:"planesdetected",data:xt}),p=null}let zt=new ng;zt.setAnimationLoop(At),this.setAnimationLoop=function(Y){tt=Y},this.dispose=function(){}}},JS=new Vt,fg=new Wt;fg.set(-1,0,0,0,1,0,0,0,1);function $S(s,t){function e(m,g){m.matrixAutoUpdate===!0&&m.updateMatrix(),g.value.copy(m.matrix)}function n(m,g){g.color.getRGB(m.fogColor.value,Pd(s)),g.isFog?(m.fogNear.value=g.near,m.fogFar.value=g.far):g.isFogExp2&&(m.fogDensity.value=g.density)}function i(m,g,v,S,y){g.isNodeMaterial?g.uniformsNeedUpdate=!1:g.isMeshBasicMaterial?r(m,g):g.isMeshLambertMaterial?(r(m,g),g.envMap&&(m.envMapIntensity.value=g.envMapIntensity)):g.isMeshToonMaterial?(r(m,g),d(m,g)):g.isMeshPhongMaterial?(r(m,g),h(m,g),g.envMap&&(m.envMapIntensity.value=g.envMapIntensity)):g.isMeshStandardMaterial?(r(m,g),u(m,g),g.isMeshPhysicalMaterial&&f(m,g,y)):g.isMeshMatcapMaterial?(r(m,g),p(m,g)):g.isMeshDepthMaterial?r(m,g):g.isMeshDistanceMaterial?(r(m,g),_(m,g)):g.isMeshNormalMaterial?r(m,g):g.isLineBasicMaterial?(a(m,g),g.isLineDashedMaterial&&o(m,g)):g.isPointsMaterial?l(m,g,v,S):g.isSpriteMaterial?c(m,g):g.isShadowMaterial?(m.color.value.copy(g.color),m.opacity.value=g.opacity):g.isShaderMaterial&&(g.uniformsNeedUpdate=!1)}function r(m,g){m.opacity.value=g.opacity,g.color&&m.diffuse.value.copy(g.color),g.emissive&&m.emissive.value.copy(g.emissive).multiplyScalar(g.emissiveIntensity),g.map&&(m.map.value=g.map,e(g.map,m.mapTransform)),g.alphaMap&&(m.alphaMap.value=g.alphaMap,e(g.alphaMap,m.alphaMapTransform)),g.bumpMap&&(m.bumpMap.value=g.bumpMap,e(g.bumpMap,m.bumpMapTransform),m.bumpScale.value=g.bumpScale,g.side===Ke&&(m.bumpScale.value*=-1)),g.normalMap&&(m.normalMap.value=g.normalMap,e(g.normalMap,m.normalMapTransform),m.normalScale.value.copy(g.normalScale),g.side===Ke&&m.normalScale.value.negate()),g.displacementMap&&(m.displacementMap.value=g.displacementMap,e(g.displacementMap,m.displacementMapTransform),m.displacementScale.value=g.displacementScale,m.displacementBias.value=g.displacementBias),g.emissiveMap&&(m.emissiveMap.value=g.emissiveMap,e(g.emissiveMap,m.emissiveMapTransform)),g.specularMap&&(m.specularMap.value=g.specularMap,e(g.specularMap,m.specularMapTransform)),g.alphaTest>0&&(m.alphaTest.value=g.alphaTest);let v=t.get(g),S=v.envMap,y=v.envMapRotation;S&&(m.envMap.value=S,m.envMapRotation.value.setFromMatrix4(JS.makeRotationFromEuler(y)).transpose(),S.isCubeTexture&&S.isRenderTargetTexture===!1&&m.envMapRotation.value.premultiply(fg),m.reflectivity.value=g.reflectivity,m.ior.value=g.ior,m.refractionRatio.value=g.refractionRatio),g.lightMap&&(m.lightMap.value=g.lightMap,m.lightMapIntensity.value=g.lightMapIntensity,e(g.lightMap,m.lightMapTransform)),g.aoMap&&(m.aoMap.value=g.aoMap,m.aoMapIntensity.value=g.aoMapIntensity,e(g.aoMap,m.aoMapTransform))}function a(m,g){m.diffuse.value.copy(g.color),m.opacity.value=g.opacity,g.map&&(m.map.value=g.map,e(g.map,m.mapTransform))}function o(m,g){m.dashSize.value=g.dashSize,m.totalSize.value=g.dashSize+g.gapSize,m.scale.value=g.scale}function l(m,g,v,S){m.diffuse.value.copy(g.color),m.opacity.value=g.opacity,m.size.value=g.size*v,m.scale.value=S*.5,g.map&&(m.map.value=g.map,e(g.map,m.uvTransform)),g.alphaMap&&(m.alphaMap.value=g.alphaMap,e(g.alphaMap,m.alphaMapTransform)),g.alphaTest>0&&(m.alphaTest.value=g.alphaTest)}function c(m,g){m.diffuse.value.copy(g.color),m.opacity.value=g.opacity,m.rotation.value=g.rotation,g.map&&(m.map.value=g.map,e(g.map,m.mapTransform)),g.alphaMap&&(m.alphaMap.value=g.alphaMap,e(g.alphaMap,m.alphaMapTransform)),g.alphaTest>0&&(m.alphaTest.value=g.alphaTest)}function h(m,g){m.specular.value.copy(g.specular),m.shininess.value=Math.max(g.shininess,1e-4)}function d(m,g){g.gradientMap&&(m.gradientMap.value=g.gradientMap)}function u(m,g){m.metalness.value=g.metalness,g.metalnessMap&&(m.metalnessMap.value=g.metalnessMap,e(g.metalnessMap,m.metalnessMapTransform)),m.roughness.value=g.roughness,g.roughnessMap&&(m.roughnessMap.value=g.roughnessMap,e(g.roughnessMap,m.roughnessMapTransform)),g.envMap&&(m.envMapIntensity.value=g.envMapIntensity)}function f(m,g,v){m.ior.value=g.ior,g.diffuseRoughness>0&&(m.diffuseRoughness.value=g.diffuseRoughness,g.diffuseRoughnessMap&&(m.diffuseRoughnessMap.value=g.diffuseRoughnessMap,e(g.diffuseRoughnessMap,m.diffuseRoughnessMapTransform))),g.sheen>0&&(m.sheenColor.value.copy(g.sheenColor).multiplyScalar(g.sheen),m.sheenRoughness.value=g.sheenRoughness,g.sheenColorMap&&(m.sheenColorMap.value=g.sheenColorMap,e(g.sheenColorMap,m.sheenColorMapTransform)),g.sheenRoughnessMap&&(m.sheenRoughnessMap.value=g.sheenRoughnessMap,e(g.sheenRoughnessMap,m.sheenRoughnessMapTransform))),g.clearcoat>0&&(m.clearcoat.value=g.clearcoat,m.clearcoatRoughness.value=g.clearcoatRoughness,g.clearcoatMap&&(m.clearcoatMap.value=g.clearcoatMap,e(g.clearcoatMap,m.clearcoatMapTransform)),g.clearcoatRoughnessMap&&(m.clearcoatRoughnessMap.value=g.clearcoatRoughnessMap,e(g.clearcoatRoughnessMap,m.clearcoatRoughnessMapTransform)),g.clearcoatNormalMap&&(m.clearcoatNormalMap.value=g.clearcoatNormalMap,e(g.clearcoatNormalMap,m.clearcoatNormalMapTransform),m.clearcoatNormalScale.value.copy(g.clearcoatNormalScale),g.side===Ke&&m.clearcoatNormalScale.value.negate())),g.dispersion>0&&(m.dispersion.value=g.dispersion),g.retroreflectivity>0&&(m.retroreflectivity.value=g.retroreflectivity),g.iridescence>0&&(m.iridescence.value=g.iridescence,m.iridescenceIOR.value=g.iridescenceIOR,m.iridescenceThicknessMinimum.value=g.iridescenceThicknessMinimum,m.iridescenceThicknessMaximum.value=g.iridescenceThicknessMaximum,g.iridescenceMap&&(m.iridescenceMap.value=g.iridescenceMap,e(g.iridescenceMap,m.iridescenceMapTransform)),g.iridescenceThicknessMap&&(m.iridescenceThicknessMap.value=g.iridescenceThicknessMap,e(g.iridescenceThicknessMap,m.iridescenceThicknessMapTransform))),g.transmission>0&&(m.transmission.value=g.transmission,m.transmissionSamplerMap.value=v.texture,m.transmissionSamplerSize.value.set(v.width,v.height),g.transmissionMap&&(m.transmissionMap.value=g.transmissionMap,e(g.transmissionMap,m.transmissionMapTransform)),m.thickness.value=g.thickness,g.thicknessMap&&(m.thicknessMap.value=g.thicknessMap,e(g.thicknessMap,m.thicknessMapTransform)),m.attenuationDistance.value=g.attenuationDistance,m.attenuationColor.value.copy(g.attenuationColor)),g.anisotropy>0&&(m.anisotropyVector.value.set(g.anisotropy*Math.cos(g.anisotropyRotation),g.anisotropy*Math.sin(g.anisotropyRotation)),g.anisotropyMap&&(m.anisotropyMap.value=g.anisotropyMap,e(g.anisotropyMap,m.anisotropyMapTransform))),m.specularIntensity.value=g.specularIntensity,m.specularColor.value.copy(g.specularColor),g.specularColorMap&&(m.specularColorMap.value=g.specularColorMap,e(g.specularColorMap,m.specularColorMapTransform)),g.specularIntensityMap&&(m.specularIntensityMap.value=g.specularIntensityMap,e(g.specularIntensityMap,m.specularIntensityMapTransform))}function p(m,g){g.matcap&&(m.matcap.value=g.matcap)}function _(m,g){let v=t.get(g).light;m.referencePosition.value.setFromMatrixPosition(v.matrixWorld),m.nearDistance.value=v.shadow.camera.near,m.farDistance.value=v.shadow.camera.far}return{refreshFogUniforms:n,refreshMaterialUniforms:i}}function KS(s,t,e,n){let i={},r={};function a(v,S){let y=S.program;n.uniformBlockBinding(v,y,i[v.id])}function o(v,S){let y=i[v.id];y===void 0&&(p(v),y=l(v),i[v.id]=y,v.addEventListener("dispose",m));let A=S.program;n.updateUBOMapping(v,A);let E=t.render.frame;r[v.id]!==E&&(c(v),r[v.id]=E)}function l(v){let S=s.createBuffer(),y=v.__size,A=v.usage;return s.bindBuffer(s.UNIFORM_BUFFER,S),s.bufferData(s.UNIFORM_BUFFER,y,A),s.bindBuffer(s.UNIFORM_BUFFER,null),S}function c(v){let S=i[v.id],y=v.uniforms,A=v.__cache;s.bindBuffer(s.UNIFORM_BUFFER,S);for(let E=0,x=y.length;E<x;E++){let b=y[E];if(Array.isArray(b))for(let I=0,R=b.length;I<R;I++)h(b[I],E,I,A);else h(b,E,0,A)}s.bindBuffer(s.UNIFORM_BUFFER,null)}function h(v,S,y,A){if(u(v,S,y,A)===!0){let E=v.__offset,x=v.value;if(Array.isArray(x)){let b=0;for(let I=0;I<x.length;I++){let R=x[I],L=_(R,!0);d(R,v.__data,b),b+=L.storage/Float32Array.BYTES_PER_ELEMENT}}else d(x,v.__data,0);s.bufferSubData(s.UNIFORM_BUFFER,E,v.__data)}}function d(v,S,y){typeof v=="number"||typeof v=="boolean"?S[y]=v:v.isMatrix3?(S[y]=v.elements[0],S[y+1]=v.elements[1],S[y+2]=v.elements[2],S[y+3]=0,S[y+4]=v.elements[3],S[y+5]=v.elements[4],S[y+6]=v.elements[5],S[y+7]=0,S[y+8]=v.elements[6],S[y+9]=v.elements[7],S[y+10]=v.elements[8],S[y+11]=0):ArrayBuffer.isView(v)?S.set(v.subarray(0,S.length-y),y):v.toArray(S,y)}function u(v,S,y,A){let E=v.value,x=S+"_"+y;if(Array.isArray(E)){A[x]===void 0&&(A[x]=[]);let b=A[x],I=!1;for(let R=0;R<E.length;R++)f(E[R],b,R)===!0&&(I=!0);return I}return f(E,A,x)}function f(v,S,y){if(S[y]===void 0)return typeof v=="number"||typeof v=="boolean"?S[y]=v:ArrayBuffer.isView(v)?S[y]=v.slice():S[y]=v.clone(),!0;{let A=S[y];if(typeof v=="number"||typeof v=="boolean"){if(A!==v)return S[y]=v,!0}else{if(ArrayBuffer.isView(v))return!0;if(A.equals(v)===!1)return A.copy(v),!0}}return!1}function p(v){let S=v.uniforms,y=0,A=16;for(let x=0,b=S.length;x<b;x++){let I=Array.isArray(S[x])?S[x]:[S[x]];for(let R=0,L=I.length;R<L;R++){let F=I[R],H=Array.isArray(F.value)?F.value:[F.value],D=Array.isArray(S[x])||Array.isArray(F.value),k=y;for(let G=0,nt=H.length;G<nt;G++){let W=H[G],Q=_(W,D),tt=y%A,At=tt%Q.boundary,zt=tt+At;y+=At,zt!==0&&A-zt<Q.storage&&(y+=A-zt),G===0&&(k=y),y+=Q.storage}let X=F.type==="int"?Int32Array:F.type==="uint"?Uint32Array:Float32Array;F.__data=new X((y-k)/Float32Array.BYTES_PER_ELEMENT),F.__offset=k}}let E=y%A;return E>0&&(y+=A-E),v.__size=y,v.__cache={},this}function _(v,S){let y={boundary:0,storage:0};return typeof v=="number"||typeof v=="boolean"?(y.boundary=4,y.storage=4):v.isVector2?(y.boundary=8,y.storage=8):v.isVector3||v.isColor?(y.boundary=16,y.storage=12):v.isVector4?(y.boundary=16,y.storage=16):v.isMatrix3?(y.boundary=16,y.storage=48):v.isMatrix4?(y.boundary=16,y.storage=64):v.isTexture?gt("WebGLRenderer: Texture samplers can not be part of an uniforms group."):ArrayBuffer.isView(v)?(y.boundary=16,y.storage=v.byteLength):gt("WebGLRenderer: Unsupported uniform value type.",v),S===!0&&(y.boundary=16,y.storage=Math.ceil(y.storage/16)*16),y}function m(v){let S=v.target;S.removeEventListener("dispose",m),s.deleteBuffer(i[S.id]),delete i[S.id],delete r[S.id]}function g(){for(let v in i)s.deleteBuffer(i[v]);i={},r={}}return{bind:a,update:o,dispose:g}}var QS=new Uint16Array([12469,15057,12620,14925,13266,14620,13807,14376,14323,13990,14545,13625,14713,13328,14840,12882,14931,12528,14996,12233,15039,11829,15066,11525,15080,11295,15085,10976,15082,10705,15073,10495,13880,14564,13898,14542,13977,14430,14158,14124,14393,13732,14556,13410,14702,12996,14814,12596,14891,12291,14937,11834,14957,11489,14958,11194,14943,10803,14921,10506,14893,10278,14858,9960,14484,14039,14487,14025,14499,13941,14524,13740,14574,13468,14654,13106,14743,12678,14818,12344,14867,11893,14889,11509,14893,11180,14881,10751,14852,10428,14812,10128,14765,9754,14712,9466,14764,13480,14764,13475,14766,13440,14766,13347,14769,13070,14786,12713,14816,12387,14844,11957,14860,11549,14868,11215,14855,10751,14825,10403,14782,10044,14729,9651,14666,9352,14599,9029,14967,12835,14966,12831,14963,12804,14954,12723,14936,12564,14917,12347,14900,11958,14886,11569,14878,11247,14859,10765,14828,10401,14784,10011,14727,9600,14660,9289,14586,8893,14508,8533,15111,12234,15110,12234,15104,12216,15092,12156,15067,12010,15028,11776,14981,11500,14942,11205,14902,10752,14861,10393,14812,9991,14752,9570,14682,9252,14603,8808,14519,8445,14431,8145,15209,11449,15208,11451,15202,11451,15190,11438,15163,11384,15117,11274,15055,10979,14994,10648,14932,10343,14871,9936,14803,9532,14729,9218,14645,8742,14556,8381,14461,8020,14365,7603,15273,10603,15272,10607,15267,10619,15256,10631,15231,10614,15182,10535,15118,10389,15042,10167,14963,9787,14883,9447,14800,9115,14710,8665,14615,8318,14514,7911,14411,7507,14279,7198,15314,9675,15313,9683,15309,9712,15298,9759,15277,9797,15229,9773,15166,9668,15084,9487,14995,9274,14898,8910,14800,8539,14697,8234,14590,7790,14479,7409,14367,7067,14178,6621,15337,8619,15337,8631,15333,8677,15325,8769,15305,8871,15264,8940,15202,8909,15119,8775,15022,8565,14916,8328,14804,8009,14688,7614,14569,7287,14448,6888,14321,6483,14088,6171,15350,7402,15350,7419,15347,7480,15340,7613,15322,7804,15287,7973,15229,8057,15148,8012,15046,7846,14933,7611,14810,7357,14682,7069,14552,6656,14421,6316,14251,5948,14007,5528,15356,5942,15356,5977,15353,6119,15348,6294,15332,6551,15302,6824,15249,7044,15171,7122,15070,7050,14949,6861,14818,6611,14679,6349,14538,6067,14398,5651,14189,5311,13935,4958,15359,4123,15359,4153,15356,4296,15353,4646,15338,5160,15311,5508,15263,5829,15188,6042,15088,6094,14966,6001,14826,5796,14678,5543,14527,5287,14377,4985,14133,4586,13869,4257,15360,1563,15360,1642,15358,2076,15354,2636,15341,3350,15317,4019,15273,4429,15203,4732,15105,4911,14981,4932,14836,4818,14679,4621,14517,4386,14359,4156,14083,3795,13808,3437,15360,122,15360,137,15358,285,15355,636,15344,1274,15322,2177,15281,2765,15215,3223,15120,3451,14995,3569,14846,3567,14681,3466,14511,3305,14344,3121,14037,2800,13753,2467,15360,0,15360,1,15359,21,15355,89,15346,253,15325,479,15287,796,15225,1148,15133,1492,15008,1749,14856,1882,14685,1886,14506,1783,14324,1608,13996,1398,13702,1183]),Qn=null;function jS(){return Qn===null&&(Qn=new sn(QS,16,16,pi,En),Qn.name="DFG_LUT",Qn.minFilter=xe,Qn.magFilter=xe,Qn.wrapS=nn,Qn.wrapT=nn,Qn.generateMipmaps=!1,Qn.needsUpdate=!0),Qn}var Kd=class{constructor(t={}){let{canvas:e=wd(),context:n=null,depth:i=!0,stencil:r=!1,alpha:a=!1,antialias:o=!1,premultipliedAlpha:l=!0,preserveDrawingBuffer:c=!1,powerPreference:h="default",failIfMajorPerformanceCaveat:d=!1,reversedDepthBuffer:u=!1,outputBufferType:f=on}=t;this.isWebGLRenderer=!0;let p;if(n!==null){if(typeof WebGLRenderingContext<"u"&&n instanceof WebGLRenderingContext)throw new Error("THREE.WebGLRenderer: WebGL 1 is not supported since r163.");p=n.getContextAttributes().alpha}else p=a;let _=f,m=new Set([Do,Lo,Nr]),g=new Set([on,_n,ys,Oi,Co,Io]),v=new Uint32Array(4),S=new Int32Array(4),y={textures:[],min:[],max:[],resolution:[]},A=null,E=null,x=[],b=[],I=null;this.domElement=e,this.debug={checkShaderErrors:!0,diagnostics:{keywords:!1},onShaderError:null},this.autoClear=!0,this.autoClearColor=!0,this.autoClearDepth=!0,this.autoClearStencil=!0,this.sortObjects=!0,this.clippingPlanes=[],this.localClippingEnabled=!1,this.toneMapping=On,this.toneMappingExposure=1,this.transmissionResolutionScale=1;let R=this,L=!1,F=null,H=null,D=null,k=null;this._outputColorSpace=en;let X=0,G=0,nt=null,W=-1,Q=null,tt=new ue,At=new ue,zt=null,Y=new bt(0),xt=0,wt=e.width,Ft=e.height,vt=1,Ot=null,_e=null,kt=new ue(0,0,wt,Ft),Kt=new ue(0,0,wt,Ft),te=!1,j=new Wn,ct=new sr,at=!1,Et=!1,_t=new Vt,qt=new C,Dt=new ue,ee={background:null,fog:null,environment:null,overrideMaterial:null,isScene:!0},ne=!1;function ae(){return nt===null?vt:1}let U=n;function we(T,N){return e.getContext(T,N)}let Qt,pe,ft,Se,Bt,Ht,w,M,B,it,K,ot,pt,Z,J,ht,P,$,q,ut,rt,lt,Nt;try{let T={alpha:!0,depth:i,stencil:r,antialias:o,premultipliedAlpha:l,preserveDrawingBuffer:c,powerPreference:h,failIfMajorPerformanceCaveat:d};if("setAttribute"in e&&e.setAttribute("data-engine",`three.js r${"187"}`),e.addEventListener("webglcontextlost",Ut,!1),e.addEventListener("webglcontextrestored",Zt,!1),e.addEventListener("webglcontextcreationerror",St,!1),U===null){let N="webgl2";if(U=we(N,T),U===null)throw we(N)?new Error("THREE.WebGLRenderer: Error creating WebGL context with your selected attributes."):new Error("THREE.WebGLRenderer: Error creating WebGL context.")}$t()}catch(T){throw e.removeEventListener("webglcontextlost",Ut,!1),e.removeEventListener("webglcontextrestored",Zt,!1),e.removeEventListener("webglcontextcreationerror",St,!1),Lt("WebGLRenderer: "+T.message),T}function $t(){Qt=new uy(U),Qt.init(),rt=new dg(U,Qt),pe=new ty(U,Qt,t,rt),ft=new XS(U,Qt),pe.reversedDepthBuffer&&u&&ft.buffers.depth.setReversed(!0),H=U.createFramebuffer(),D=U.createFramebuffer(),k=U.createFramebuffer(),Se=new py(U),Bt=new PS,Ht=new qS(U,Qt,ft,Bt,pe,rt,Se),w=new hy(R),M=new g0(U),lt=new Qv(U,M),B=new dy(U,M,Se,lt),it=new gy(U,B,M,lt,Se),$=new my(U,pe,Ht),J=new ey(Bt),K=new IS(R,w,Qt,pe,lt,J),ot=new $S(R,Bt),pt=new DS,Z=new zS(Qt),P=new Kv(R,w,ft,it,p,l),ht=new WS(R,it,pe),Nt=new KS(U,Se,pe,ft),q=new jv(U,Qt,Se),ut=new fy(U,Qt,Se),Se.programs=K.programs,R.capabilities=pe,R.extensions=Qt,R.properties=Bt,R.renderLists=pt,R.shadowMap=ht,R.state=ft,R.info=Se}_!==on&&(I=new xy(_,e.width,e.height,o,i,r));let st=new $d(R,U);this.xr=st,this.getContext=function(){return U},this.getContextAttributes=function(){return U.getContextAttributes()},this.forceContextLoss=function(){let T=Qt.get("WEBGL_lose_context");T&&T.loseContext()},this.forceContextRestore=function(){let T=Qt.get("WEBGL_lose_context");T&&T.restoreContext()},this.getPixelRatio=function(){return vt},this.setPixelRatio=function(T){T!==void 0&&(vt=T,this.setSize(wt,Ft,!1))},this.getSize=function(T){return T.set(wt,Ft)},this.setSize=function(T,N,V=!0){if(st.isPresenting){gt("WebGLRenderer: Can't change size while VR device is presenting.");return}wt=T,Ft=N,e.width=Math.floor(T*vt),e.height=Math.floor(N*vt),V===!0&&(e.style.width=T+"px",e.style.height=N+"px"),I!==null&&I.setSize(e.width,e.height),this.setViewport(0,0,T,N)},this.getDrawingBufferSize=function(T){return T.set(wt*vt,Ft*vt).floor()},this.setDrawingBufferSize=function(T,N,V){wt=T,Ft=N,vt=V,e.width=Math.floor(T*V),e.height=Math.floor(N*V),this.setViewport(0,0,T,N)},this.setEffects=function(T){if(_===on){Lt("WebGLRenderer: setEffects() requires outputBufferType set to HalfFloatType or FloatType.");return}if(T){for(let N=0;N<T.length;N++)if(T[N].isOutputPass===!0){gt("WebGLRenderer: OutputPass is not needed in setEffects(). Tone mapping and color space conversion are applied automatically.");break}}I.setEffects(T||[])},this.getCurrentViewport=function(T){return T.copy(tt)},this.getViewport=function(T){return T.copy(kt)},this.setViewport=function(T,N,V,O){T.isVector4?kt.set(T.x,T.y,T.z,T.w):kt.set(T,N,V,O),ft.viewport(tt.copy(kt).multiplyScalar(ae()).round())},this.getScissor=function(T){return T.copy(Kt)},this.setScissor=function(T,N,V,O){T.isVector4?Kt.set(T.x,T.y,T.z,T.w):Kt.set(T,N,V,O),ft.scissor(At.copy(Kt).multiplyScalar(ae()).round())},this.getScissorTest=function(){return te},this.setScissorTest=function(T){ft.setScissorTest(te=T)},this.setOpaqueSort=function(T){Ot=T},this.setTransparentSort=function(T){_e=T},this.getClearColor=function(T){return T.copy(P.getClearColor())},this.setClearColor=function(){P.setClearColor(...arguments)},this.getClearAlpha=function(){return P.getClearAlpha()},this.setClearAlpha=function(){P.setClearAlpha(...arguments)},this.clear=function(T=!0,N=!0,V=!0){let O=0;if(T){let z=!1;if(nt!==null){let mt=nt.texture.format;z=m.has(mt)}if(z){let mt=nt.texture.type,Rt=g.has(mt),dt=P.getClearColor(),Mt=P.getClearAlpha(),Pt=dt.r,Xt=dt.g,ie=dt.b;Rt?(v[0]=Pt,v[1]=Xt,v[2]=ie,v[3]=Mt,U.clearBufferuiv(U.COLOR,0,v)):(S[0]=Pt,S[1]=Xt,S[2]=ie,S[3]=Mt,U.clearBufferiv(U.COLOR,0,S))}else O|=U.COLOR_BUFFER_BIT}N&&(O|=U.DEPTH_BUFFER_BIT,this.state.buffers.depth.setMask(!0)),V&&(O|=U.STENCIL_BUFFER_BIT,this.state.buffers.stencil.setMask(4294967295)),O!==0&&U.clear(O)},this.clearColor=function(){this.clear(!0,!1,!1)},this.clearDepth=function(){this.clear(!1,!0,!1)},this.clearStencil=function(){this.clear(!1,!1,!0)},this.setNodesHandler=function(T){T.setRenderer(this),F=T},this.dispose=function(){e.removeEventListener("webglcontextlost",Ut,!1),e.removeEventListener("webglcontextrestored",Zt,!1),e.removeEventListener("webglcontextcreationerror",St,!1),P.dispose(),pt.dispose(),Z.dispose(),Ht.dispose(),Bt.dispose(),w.dispose(),it.dispose(),B.dispose(),lt.dispose(),Nt.dispose(),K.dispose(),st.dispose(),st.removeEventListener("sessionstart",tf),st.removeEventListener("sessionend",ef),Bi.stop()};function Ut(T){T.preventDefault(),Qs("WebGLRenderer: Context Lost."),L=!0}function Zt(){Qs("WebGLRenderer: Context Restored."),L=!1;let T=Se.autoReset,N=ht.enabled,V=ht.autoUpdate,O=ht.needsUpdate,z=ht.type;$t(),Se.autoReset=T,ht.enabled=N,ht.autoUpdate=V,ht.needsUpdate=O,ht.type=z}function St(T){Lt("WebGLRenderer: A WebGL context could not be created. Reason: ",T.statusMessage)}function de(T){let N=T.target;N.removeEventListener("dispose",de),Fe(N)}function Fe(T){mi(T),Bt.remove(T)}function mi(T){let N=Bt.get(T).programs;N!==void 0&&(N.forEach(function(V){K.releaseProgram(V)}),T.isShaderMaterial&&K.releaseShaderCache(T))}this.renderBufferDirect=function(T,N,V,O,z,mt){N===null&&(N=ee);let Rt=z.isMesh&&z.matrixWorld.determinantAffine()<0,dt=gg(T,N,V,O,z);ft.setMaterial(O,Rt);let Mt=V.index,Pt=1;if(O.wireframe===!0){if(Mt=B.getWireframeAttribute(V),Mt===void 0)return;Pt=2}let Xt=V.drawRange,ie=V.attributes.position,Ct=Xt.start*Pt,se=(Xt.start+Xt.count)*Pt;mt!==null&&(Ct=Math.max(Ct,mt.start*Pt),se=Math.min(se,(mt.start+mt.count)*Pt)),Mt!==null?(Ct=Math.max(Ct,0),se=Math.min(se,Mt.count)):ie!=null&&(Ct=Math.max(Ct,0),se=Math.min(se,ie.count));let Re=se-Ct;if(Re<0||Re===1/0)return;lt.setup(z,O,dt,V,Mt);let ge,me=q;if(Mt!==null&&(ge=M.get(Mt),me=ut,me.setIndex(ge)),z.isMesh)O.wireframe===!0?(ft.setLineWidth(O.wireframeLinewidth*ae()),me.setMode(U.LINES)):me.setMode(U.TRIANGLES);else if(z.isLine){let He=O.linewidth;He===void 0&&(He=1),ft.setLineWidth(He*ae()),z.isLineSegments?me.setMode(U.LINES):z.isLineLoop?me.setMode(U.LINE_LOOP):me.setMode(U.LINE_STRIP)}else z.isPoints?me.setMode(U.POINTS):z.isSprite&&me.setMode(U.TRIANGLES);if(z.isBatchedMesh)if(Qt.get("WEBGL_multi_draw"))me.renderMultiDraw(z._multiDrawStarts,z._multiDrawCounts,z._multiDrawCount);else{let He=z._multiDrawStarts,It=z._multiDrawCounts,je=z._multiDrawCount,le=Mt?M.get(Mt).bytesPerElement:1,zi=Bt.get(O).currentProgram.getUniforms();for(let We=0;We<je;We++)zi.setValue(U,"_gl_DrawID",We),me.render(He[We]/le,It[We])}else if(z.isInstancedMesh)me.renderInstances(Ct,Re,z.count);else if(V.isInstancedBufferGeometry){let He=V._maxInstanceCount!==void 0?V._maxInstanceCount:1/0,It=Math.min(V.instanceCount,He);me.renderInstances(Ct,Re,It)}else me.render(Ct,Re)};function jd(T,N,V,O){F!==null&&T.isNodeMaterial&&F.setObject(O,T),at===!0&&J.setState(T,V,!1),T.transparent===!0&&T.side===Fn&&T.forceSinglePass===!1?(T.side=Ke,T.needsUpdate=!0,Wr(T,N,O),T.side=fi,T.needsUpdate=!0,Wr(T,N,O),T.side=Fn):Wr(T,N,O)}this.compile=function(T,N,V=null){V===null&&(V=T),F!==null&&F.renderStart(T,N,V),E=Z.get(V),E.init(N),b.push(E),V.traverseVisible(function(z){z.isLight&&z.layers.test(N.layers)&&(E.pushLight(z),z.castShadow&&E.pushShadow(z))}),T!==V&&T.traverseVisible(function(z){z.isLight&&z.layers.test(N.layers)&&(E.pushLight(z),z.castShadow&&E.pushShadow(z))}),E.setupLights(),F!==null&&F.updateLights(E.state.lightsArray),Et=this.localClippingEnabled,at=J.init(this.clippingPlanes,Et),at===!0&&J.setGlobalState(this.clippingPlanes,N),F!==null&&ht.render(E.state.shadowsArray,V,N);let O=new Set;return T.traverse(function(z){if(!(z.isMesh||z.isPoints||z.isLine||z.isSprite))return;let mt=z.material;if(mt)if(Array.isArray(mt))for(let Rt=0;Rt<mt.length;Rt++){let dt=mt[Rt];jd(dt,V,N,z),O.add(dt)}else jd(mt,V,N,z),O.add(mt)}),E=b.pop(),F!==null&&F.renderEnd(),O},this.compileAsync=function(T,N,V=null){let O=this.compile(T,N,V);return new Promise(z=>{function mt(){if(O.forEach(function(Rt){let Mt=Bt.get(Rt).currentProgram;(Mt===void 0||Mt.isReady())&&O.delete(Rt)}),O.size===0){z(T);return}setTimeout(mt,10)}Qt.get("KHR_parallel_shader_compile")!==null?mt():setTimeout(mt,10)})};let Zh=null;function pg(T){Zh&&Zh(T)}function tf(){Bi.stop()}function ef(){Bi.start()}let Bi=new ng;Bi.setAnimationLoop(pg),typeof self<"u"&&Bi.setContext(self),this.setAnimationLoop=function(T){Zh=T,st.setAnimationLoop(T),T===null?Bi.stop():Bi.start()},st.addEventListener("sessionstart",tf),st.addEventListener("sessionend",ef),this.render=function(T,N){if(N!==void 0&&N.isCamera!==!0){Lt("WebGLRenderer.render: camera is not an instance of THREE.Camera.");return}if(L===!0)return;F!==null&&F.renderStart(T,N);let V=st.enabled===!0&&st.isPresenting===!0,O=I!==null&&(nt===null||V)&&I.begin(R,nt);if(T.matrixWorldAutoUpdate===!0&&T.updateMatrixWorld(),N.parent===null&&N.matrixWorldAutoUpdate===!0&&N.updateMatrixWorld(),st.enabled===!0&&st.isPresenting===!0&&(I===null||I.isCompositing()===!1)&&(st.cameraAutoUpdate===!0&&st.updateCamera(N),N=st.getCamera()),T.isScene===!0&&T.onBeforeRender(R,T,N,nt),E=Z.get(T,b.length),E.init(N),E.state.textureUnits=Ht.getTextureUnits(),b.push(E),_t.multiplyMatrices(N.projectionMatrix,N.matrixWorldInverse),N.isArrayCamera?ct.setFromArrayCamera(N):j.setFromProjectionMatrix(_t,hn,N.reversedDepth),Et=this.localClippingEnabled,at=J.init(this.clippingPlanes,Et),A=pt.get(T,x.length),A.init(),x.push(A),this.info.render.frame++,st.enabled===!0&&st.isPresenting===!0){let Rt=R.xr.getDepthSensingMesh();Rt!==null&&Jh(Rt,N,-1/0,R.sortObjects)}Jh(T,N,0,R.sortObjects),A.finish(),F!==null&&F.updateLights(E.state.lightsArray),R.sortObjects===!0&&A.sort(Ot,_e),ne=st.enabled===!1||st.isPresenting===!1||st.hasDepthSensing()===!1,ne&&P.addToRenderList(A,T),this.info.autoReset===!0&&this.info.reset(),at===!0&&J.beginShadows();let z=E.state.shadowsArray;if(ht.render(z,T,N),at===!0&&J.endShadows(),(O&&I.hasRenderPass())===!1){let Rt=A.opaque,dt=A.transmissive;if(E.setupLights(),N.isArrayCamera){let Mt=N.cameras;if(dt.length>0)for(let Pt=0,Xt=Mt.length;Pt<Xt;Pt++){let ie=Mt[Pt];sf(Rt,dt,T,ie)}ne&&P.render(T);for(let Pt=0,Xt=Mt.length;Pt<Xt;Pt++){let ie=Mt[Pt];nf(A,T,ie,ie.viewport)}}else dt.length>0&&sf(Rt,dt,T,N),ne&&P.render(T),nf(A,T,N)}nt!==null&&G===0&&(Ht.updateMultisampleRenderTarget(nt),Ht.updateRenderTargetMipmap(nt)),O&&I.end(R),T.isScene===!0&&T.onAfterRender(R,T,N),lt.resetDefaultState(),W=-1,Q=null,b.pop(),b.length>0?(E=b[b.length-1],Ht.setTextureUnits(E.state.textureUnits),at===!0&&J.setGlobalState(R.clippingPlanes,E.state.camera)):E=null,x.pop(),x.length>0?A=x[x.length-1]:A=null,F!==null&&F.renderEnd()};function Jh(T,N,V,O){if(T.visible===!1)return;if(T.layers.test(N.layers)){if(T.isGroup)V=T.renderOrder;else if(T.isLOD)T.autoUpdate===!0&&T.update(N);else if(T.isLight)E.pushLight(T),T.castShadow&&E.pushShadow(T);else if(T.isSprite){let Rt=N.isArrayCamera?ct:j;if(!T.frustumCulled||T.intersectsFrustum(Rt)){O&&Dt.setFromMatrixPosition(T.matrixWorld).applyMatrix4(_t);let dt=it.update(T),Mt=T.material;Mt.visible&&A.push(T,dt,Mt,V,Dt.z,null,N)}}else if(T.isMesh||T.isLine||T.isPoints){let Rt=N.isArrayCamera?ct:j;if(!T.frustumCulled||T.intersectsFrustum(Rt)){let dt=it.update(T),Mt=T.material;if(O&&(T.boundingSphere!==void 0?(T.boundingSphere===null&&T.computeBoundingSphere(),Dt.copy(T.boundingSphere.center)):(dt.boundingSphere===null&&dt.computeBoundingSphere(),Dt.copy(dt.boundingSphere.center)),Dt.applyMatrix4(T.matrixWorld).applyMatrix4(_t)),Array.isArray(Mt)){let Pt=dt.groups;for(let Xt=0,ie=Pt.length;Xt<ie;Xt++){let Ct=Pt[Xt],se=Mt[Ct.materialIndex];se&&se.visible&&A.push(T,dt,se,V,Dt.z,Ct,N)}}else Mt.visible&&A.push(T,dt,Mt,V,Dt.z,null,N)}}}let mt=T.children;for(let Rt=0,dt=mt.length;Rt<dt;Rt++)Jh(mt[Rt],N,V,O)}function nf(T,N,V,O){let{opaque:z,transmissive:mt,transparent:Rt}=T;E.setupLightsView(V),at===!0&&J.setGlobalState(R.clippingPlanes,V),O&&ft.viewport(tt.copy(O)),z.length>0&&gl(z,N,V),mt.length>0&&gl(mt,N,V),Rt.length>0&&gl(Rt,N,V),ft.buffers.depth.setTest(!0),ft.buffers.depth.setMask(!0),ft.buffers.color.setMask(!0),ft.setPolygonOffset(!1)}function sf(T,N,V,O){if((V.isScene===!0?V.overrideMaterial:null)!==null)return;if(E.state.transmissionRenderTarget[O.id]===void 0){let Ct=Qt.has("EXT_color_buffer_half_float")||Qt.has("EXT_color_buffer_float");E.state.transmissionRenderTarget[O.id]=new $e(1,1,{generateMipmaps:!0,type:Ct?En:on,minFilter:Tn,samples:Math.max(4,pe.samples),stencilBuffer:r,resolveDepthBuffer:!1,resolveStencilBuffer:!1,storeMultisampledDepthBuffer:!1,storeMultisampledStencilBuffer:!1,colorSpace:jt.workingColorSpace})}let mt=E.state.transmissionRenderTarget[O.id],Rt=O.viewport||tt;mt.setSize(Rt.z*R.transmissionResolutionScale,Rt.w*R.transmissionResolutionScale);let dt=R.getRenderTarget(),Mt=R.getActiveCubeFace(),Pt=R.getActiveMipmapLevel();R.setRenderTarget(mt),R.getClearColor(Y),xt=R.getClearAlpha(),xt<1&&R.setClearColor(16777215,.5),R.clear(),ne&&P.render(V);let Xt=R.toneMapping;R.toneMapping=On;let ie=O.viewport;if(O.viewport!==void 0&&(O.viewport=void 0),E.setupLightsView(O),at===!0&&J.setGlobalState(R.clippingPlanes,O),gl(T,V,O),Ht.updateMultisampleRenderTarget(mt),Ht.updateRenderTargetMipmap(mt),Qt.has("WEBGL_multisampled_render_to_texture")===!1){let Ct=!1;for(let se=0,Re=N.length;se<Re;se++){let ge=N[se],{object:me,geometry:He,material:It,group:je}=ge;if(It.side===Fn&&me.layers.test(O.layers)){let le=It.side;It.side=Ke,It.needsUpdate=!0,rf(me,V,O,He,It,je),It.side=le,It.needsUpdate=!0,Ct=!0}}Ct===!0&&(Ht.updateMultisampleRenderTarget(mt),Ht.updateRenderTargetMipmap(mt))}R.setRenderTarget(dt,Mt,Pt),R.setClearColor(Y,xt),ie!==void 0&&(O.viewport=ie),R.toneMapping=Xt}function gl(T,N,V){let O=N.isScene===!0?N.overrideMaterial:null;for(let z=0,mt=T.length;z<mt;z++){let Rt=T[z],{object:dt,geometry:Mt,group:Pt}=Rt,Xt=Rt.material;Xt.allowOverride===!0&&O!==null&&(Xt=O),dt.layers.test(V.layers)&&rf(dt,N,V,Mt,Xt,Pt)}}function rf(T,N,V,O,z,mt){F!==null&&z.isNodeMaterial&&F.setObject(T,z),T.onBeforeRender(R,N,V,O,z,mt),T.modelViewMatrix.multiplyMatrices(V.matrixWorldInverse,T.matrixWorld),T.normalMatrix.getNormalMatrix(T.modelViewMatrix),z.onBeforeRender(R,N,V,O,T,mt),z.transparent===!0&&z.side===Fn&&z.forceSinglePass===!1?(z.side=Ke,z.needsUpdate=!0,R.renderBufferDirect(V,N,O,z,T,mt),z.side=fi,z.needsUpdate=!0,R.renderBufferDirect(V,N,O,z,T,mt),z.side=Fn):R.renderBufferDirect(V,N,O,z,T,mt),T.onAfterRender(R,N,V,O,z,mt)}function af(T){let N=0;for(let V of T)V.texture!==null&&N++;return N}function Wr(T,N,V){N.isScene!==!0&&(N=ee);let O=Bt.get(T),z=E.state.lights,mt=E.state.shadowsArray,Rt=z.state.version,dt=K.getParameters(T,z.state,mt,N,V,E.state.lightProbeGridArray),Mt=K.getProgramCacheKey(dt),Pt=O.programs;O.environment=T.isMeshStandardMaterial||T.isMeshLambertMaterial||T.isMeshPhongMaterial?N.environment:null,O.fog=N.fog;let Xt=T.isMeshStandardMaterial||T.isMeshLambertMaterial&&!T.envMap||T.isMeshPhongMaterial&&!T.envMap;O.envMap=w.get(T.envMap||O.environment,Xt),O.envMapRotation=O.environment!==null&&T.envMap===null?N.environmentRotation:T.envMapRotation,Pt===void 0&&(T.addEventListener("dispose",de),Pt=new Map,O.programs=Pt,O.programVariants=new Map);let ie=Pt.get(Mt);if(ie!==void 0){if(O.currentProgram===ie&&O.lightsStateVersion===Rt)return lf(T,dt),ie}else dt.uniforms=K.getUniforms(T),F!==null&&T.isNodeMaterial&&F.build(T,V,dt),T.onBeforeCompile(dt,R),ie=K.acquireProgram(dt,Mt),Pt.set(Mt,ie),O.uniforms=dt.uniforms;let Ct=O.uniforms;return(!T.isShaderMaterial&&!T.isRawShaderMaterial||T.clipping===!0)&&(Ct.clippingPlanes=J.uniform),lf(T,dt),O.needsLights=xg(T),O.lightsStateVersion=Rt,O.needsLights&&(Ct.ambientLightColor.value=z.state.ambient,Ct.lightProbe.value=z.state.probe,Ct.sunLights.value=z.state.sun,Ct.sunLightShadows.value=z.state.sunShadow,Ct.directionalLights.value=z.state.directional,Ct.directionalLightShadows.value=z.state.directionalShadow,Ct.spotLights.value=z.state.spot,Ct.spotLightShadows.value=z.state.spotShadow,Ct.rectAreaLights.value=z.state.rectArea,Ct.ltc_1.value=z.state.rectAreaLTC1,Ct.ltc_2.value=z.state.rectAreaLTC2,Ct.pointLights.value=z.state.point,Ct.pointLightShadows.value=z.state.pointShadow,Ct.hemisphereLights.value=z.state.hemi,Ct.sunShadowMatrix.value=z.state.sunShadowMatrix,Ct.sunShadowCascade.value=z.state.sunShadowCascade,Ct.directionalShadowMatrix.value=z.state.directionalShadowMatrix,Ct.spotLightMatrix.value=z.state.spotLightMatrix,Ct.spotLightMap.value=z.state.spotLightMap,Ct.pointShadowMatrix.value=z.state.pointShadowMatrix),O.numLightProbeGrids=af(E.state.lightProbeGridArray),O.currentProgram=ie,O.uniformsList=null,ie}function mg(T,N,V,O,z){let mt=Bt.get(T),Rt=mt.currentProgram.id+","+O+","+z,dt=mt.programVariants.get(Rt);return dt===void 0?(dt=Wr(T,N,V),mt.programVariants.set(Rt,dt)):(mt.currentProgram=dt,mt.uniformsList=null,mt.outputColorSpace=O,mt.toneMapping=z),dt}function of(T){if(T.uniformsList===null){let N=T.currentProgram.getUniforms();T.uniformsList=Gr.seqWithValue(N.seq,T.uniforms)}return T.uniformsList}function lf(T,N){let V=Bt.get(T);V.outputColorSpace=N.outputColorSpace,V.batching=N.batching,V.batchingColor=N.batchingColor,V.instancing=N.instancing,V.instancingColor=N.instancingColor,V.instancingMorph=N.instancingMorph,V.skinning=N.skinning,V.morphTargets=N.morphTargets,V.morphNormals=N.morphNormals,V.morphColors=N.morphColors,V.morphTargetsCount=N.morphTargetsCount,V.numClippingPlanes=N.numClippingPlanes,V.numIntersection=N.numClipIntersection,V.vertexAlphas=N.vertexAlphas,V.vertexTangents=N.vertexTangents,V.toneMapping=N.toneMapping}function gg(T,N,V,O,z){N.isScene!==!0&&(N=ee),Ht.resetTextureUnits();let mt=N.fog,Rt=O.isMeshStandardMaterial||O.isMeshLambertMaterial||O.isMeshPhongMaterial?N.environment:null,dt=nt===null?R.outputColorSpace:nt.isXRRenderTarget===!0?nt.texture.colorSpace:jt.workingColorSpace,Mt=O.isMeshStandardMaterial||O.isMeshLambertMaterial&&!O.envMap||O.isMeshPhongMaterial&&!O.envMap,Pt=w.get(O.envMap||Rt,Mt),Xt=O.vertexColors===!0&&!!V.attributes.color&&V.attributes.color.itemSize===4,ie=!!V.attributes.tangent&&(!!O.normalMap||O.anisotropy>0),Ct=!!V.morphAttributes.position,se=!!V.morphAttributes.normal,Re=!!V.morphAttributes.color,ge=On;O.toneMapped&&(nt===null||nt.isXRRenderTarget===!0)&&(ge=R.toneMapping);let me=V.morphAttributes.position||V.morphAttributes.normal||V.morphAttributes.color,He=me!==void 0?me.length:0,It=Bt.get(O),je=E.state.lights;if(at===!0&&(Et===!0||T!==Q)){let ve=T===Q&&O.id===W;J.setState(O,T,ve)}let le=!1,zi=!1;O.version===It.__version?It.needsLights&&It.lightsStateVersion!==je.state.version||z.isBatchedMesh&&It.batching===!1||!z.isBatchedMesh&&It.batching===!0||z.isBatchedMesh&&It.batchingColor===!0&&z._colorsTexture===null||z.isBatchedMesh&&It.batchingColor===!1&&z._colorsTexture!==null||z.isInstancedMesh&&It.instancing===!1||!z.isInstancedMesh&&It.instancing===!0||z.isSkinnedMesh&&It.skinning===!1||!z.isSkinnedMesh&&It.skinning===!0||z.isInstancedMesh&&It.instancingColor===!0&&z.instanceColor===null||z.isInstancedMesh&&It.instancingColor===!1&&z.instanceColor!==null||z.isInstancedMesh&&It.instancingMorph===!0&&z.morphTexture===null||z.isInstancedMesh&&It.instancingMorph===!1&&z.morphTexture!==null||It.envMap!==Pt||O.fog===!0&&It.fog!==mt||It.numClippingPlanes!==void 0&&(It.numClippingPlanes!==J.numPlanes||It.numIntersection!==J.numIntersection)||It.vertexAlphas!==Xt||It.vertexTangents!==ie||It.morphTargets!==Ct||It.morphNormals!==se||It.morphColors!==Re||It.morphTargetsCount!==He||It.numLightProbeGrids!==af(E.state.lightProbeGridArray)?le=!0:(It.outputColorSpace!==dt||It.toneMapping!==ge)&&(zi=!0):(le=!0,It.__version=O.version);let We=It.currentProgram;(le===!0||zi===!0)&&(We=zi===!0?mg(O,N,z,dt,ge):Wr(O,N,z),F&&O.isNodeMaterial&&F.onUpdateProgram(O,We,It));let _l=!1,gi=!1,ki=!1,re=We.getUniforms(),Ge=It.uniforms;if(ft.useProgram(We.program)&&(_l=!0,gi=!0,ki=!0),O.id!==W&&(W=O.id,gi=!0),_l||Q!==T){ft.buffers.depth.getReversed()&&T.reversedDepth!==!0&&(T._reversedDepth=!0,T.updateProjectionMatrix()),re.setValue(U,"projectionMatrix",T.projectionMatrix),re.setValue(U,"viewMatrix",T.matrixWorldInverse);let Oe=re.map.cameraPosition;Oe!==void 0&&Oe.setValue(U,qt.setFromMatrixPosition(T.matrixWorld)),pe.logarithmicDepthBuffer&&re.setValue(U,"logDepthBufFC",2/(Math.log(T.far+1)/Math.LN2)),(O.isMeshPhongMaterial||O.isMeshToonMaterial||O.isMeshLambertMaterial||O.isMeshBasicMaterial||O.isMeshStandardMaterial||O.isShaderMaterial)&&re.setValue(U,"isOrthographic",T.isOrthographicCamera===!0),Q!==T&&(Q=T,gi=!0,ki=!0)}if(It.needsLights&&(je.state.sunShadowMap.length>0&&re.setValue(U,"sunShadowMap",je.state.sunShadowMap,Ht),je.state.directionalShadowMap.length>0&&re.setValue(U,"directionalShadowMap",je.state.directionalShadowMap,Ht),je.state.spotShadowMap.length>0&&re.setValue(U,"spotShadowMap",je.state.spotShadowMap,Ht),je.state.pointShadowMap.length>0&&re.setValue(U,"pointShadowMap",je.state.pointShadowMap,Ht)),z.isSkinnedMesh){re.setOptional(U,z,"bindMatrix"),re.setOptional(U,z,"bindMatrixInverse");let ve=z.skeleton;ve&&(ve.boneTexture===null&&ve.computeBoneTexture(),re.setValue(U,"boneTexture",ve.boneTexture,Ht))}z.isBatchedMesh&&(re.setOptional(U,z,"batchingTexture"),re.setValue(U,"batchingTexture",z._matricesTexture,Ht),re.setOptional(U,z,"batchingIdTexture"),re.setValue(U,"batchingIdTexture",z._indirectTexture,Ht),re.setOptional(U,z,"batchingColorTexture"),z._colorsTexture!==null&&re.setValue(U,"batchingColorTexture",z._colorsTexture,Ht));let wn=V.morphAttributes;if((wn.position!==void 0||wn.normal!==void 0||wn.color!==void 0)&&$.update(z,V,We),(gi||It.receiveShadow!==z.receiveShadow)&&(It.receiveShadow=z.receiveShadow,re.setValue(U,"receiveShadow",z.receiveShadow)),(O.isMeshStandardMaterial||O.isMeshLambertMaterial||O.isMeshPhongMaterial)&&O.envMap===null&&N.environment!==null&&(Ge.envMapIntensity.value=N.environmentIntensity),Ge.dfgLUT!==void 0&&(Ge.dfgLUT.value=jS()),gi){if(re.setValue(U,"toneMappingExposure",R.toneMappingExposure),It.needsLights&&_g(Ge,ki),mt&&O.fog===!0&&ot.refreshFogUniforms(Ge,mt),ot.refreshMaterialUniforms(Ge,O,vt,Ft,E.state.transmissionRenderTarget[T.id]),It.needsLights&&It.numLightProbeGrids>0){let ve=y,Oe=0;for(let jn of E.state.lightProbeGridArray)jn.texture!==null&&(ve.textures[Oe]=jn.texture,ve.min[Oe]=jn.boundingBox.min,ve.max[Oe]=jn.boundingBox.max,ve.resolution[Oe]=jn.resolution,Oe++);for(let jn in ve)ve[jn].length=Oe;Ge.probesSH.value=ve.textures,Ge.probesMin.value=ve.min,Ge.probesMax.value=ve.max,Ge.probesResolution.value=ve.resolution}Gr.upload(U,of(It),Ge,Ht)}if(O.isShaderMaterial&&O.uniformsNeedUpdate===!0&&(Gr.upload(U,of(It),Ge,Ht),O.uniformsNeedUpdate=!1),O.isSpriteMaterial&&re.setValue(U,"center",z.center),re.setValue(U,"modelViewMatrix",z.modelViewMatrix),re.setValue(U,"normalMatrix",z.normalMatrix),re.setValue(U,"modelMatrix",z.matrixWorld),O.uniformsGroups!==void 0){let ve=O.uniformsGroups;for(let Oe=0,jn=ve.length;Oe<jn;Oe++){let hf=ve[Oe];Nt.update(hf,We),Nt.bind(hf,We)}}return We}function _g(T,N){T.ambientLightColor.needsUpdate=N,T.lightProbe.needsUpdate=N,T.sunLights.needsUpdate=N,T.sunLightShadows.needsUpdate=N,T.directionalLights.needsUpdate=N,T.directionalLightShadows.needsUpdate=N,T.pointLights.needsUpdate=N,T.pointLightShadows.needsUpdate=N,T.spotLights.needsUpdate=N,T.spotLightShadows.needsUpdate=N,T.rectAreaLights.needsUpdate=N,T.hemisphereLights.needsUpdate=N}function xg(T){return T.isMeshLambertMaterial||T.isMeshToonMaterial||T.isMeshPhongMaterial||T.isMeshStandardMaterial||T.isShadowMaterial||T.isShaderMaterial&&T.lights===!0}this.getActiveCubeFace=function(){return X},this.getActiveMipmapLevel=function(){return G},this.getRenderTarget=function(){return nt},this.setRenderTargetTextures=function(T,N,V){let O=Bt.get(T);O.__autoAllocateDepthBuffer=T.resolveDepthBuffer===!1,O.__autoAllocateDepthBuffer===!1&&(O.__useRenderToTexture=!1),Bt.get(T.texture).__webglTexture=N,Bt.get(T.depthTexture).__webglTexture=O.__autoAllocateDepthBuffer?void 0:V,O.__hasExternalTextures=!0},this.setRenderTargetFramebuffer=function(T,N){let V=Bt.get(T);V.__webglFramebuffer=N,V.__useDefaultFramebuffer=N===void 0},this.setRenderTarget=function(T,N=0,V=0){nt=T,X=N,G=V;let O=null,z=!1,mt=!1;if(T){let dt=Bt.get(T);if(dt.__useDefaultFramebuffer!==void 0){ft.bindFramebuffer(U.FRAMEBUFFER,dt.__webglFramebuffer),tt.copy(T.viewport),At.copy(T.scissor),zt=T.scissorTest,ft.viewport(tt),ft.scissor(At),ft.setScissorTest(zt),W=-1;return}else if(dt.__webglFramebuffer===void 0)Ht.setupRenderTarget(T);else if(dt.__hasExternalTextures)Ht.rebindTextures(T,Bt.get(T.texture).__webglTexture,Bt.get(T.depthTexture).__webglTexture);else if(T.depthBuffer){let Xt=T.depthTexture;if(dt.__boundDepthTexture!==Xt){if(Xt!==null&&Bt.has(Xt)&&(T.width!==Xt.image.width||T.height!==Xt.image.height))throw new Error("THREE.WebGLRenderer: Attached DepthTexture is initialized to the incorrect size.");Ht.setupDepthRenderbuffer(T)}}let Mt=T.texture;(Mt.isData3DTexture||Mt.isDataArrayTexture||Mt.isCompressedArrayTexture)&&(mt=!0);let Pt=Bt.get(T).__webglFramebuffer;T.isWebGLCubeRenderTarget?(Array.isArray(Pt[N])?O=Pt[N][V]:O=Pt[N],z=!0):T.samples>0&&Ht.useMultisampledRTT(T)===!1?O=Bt.get(T).__webglMultisampledFramebuffer:Array.isArray(Pt)?O=Pt[V]:O=Pt,tt.copy(T.viewport),At.copy(T.scissor),zt=T.scissorTest}else tt.copy(kt).multiplyScalar(vt).floor(),At.copy(Kt).multiplyScalar(vt).floor(),zt=te;if(V!==0&&(O=H),ft.bindFramebuffer(U.FRAMEBUFFER,O)&&ft.drawBuffers(T,O),ft.viewport(tt),ft.scissor(At),ft.setScissorTest(zt),z){let dt=Bt.get(T.texture);U.framebufferTexture2D(U.FRAMEBUFFER,U.COLOR_ATTACHMENT0,U.TEXTURE_CUBE_MAP_POSITIVE_X+N,dt.__webglTexture,V)}else if(mt){let dt=N;for(let Mt=0;Mt<T.textures.length;Mt++){let Pt=Bt.get(T.textures[Mt]);U.framebufferTextureLayer(U.FRAMEBUFFER,U.COLOR_ATTACHMENT0+Mt,Pt.__webglTexture,V,dt)}}else if(T!==null&&V!==0){let dt=Bt.get(T.texture);U.framebufferTexture2D(U.FRAMEBUFFER,U.COLOR_ATTACHMENT0,U.TEXTURE_2D,dt.__webglTexture,V)}W=-1};function cf(T){let N=Bt.get(T);return(N.__readFormat!==T.format||N.__readType!==T.type)&&(N.__readFormat=T.format,N.__readType=T.type,N.__formatReadable=pe.textureFormatReadable(T.format),N.__typeReadable=pe.textureTypeReadable(T.type)),N}this.readRenderTargetPixels=function(T,N,V,O,z,mt,Rt,dt=0){if(!(T&&T.isWebGLRenderTarget)){Lt("WebGLRenderer.readRenderTargetPixels: renderTarget is not THREE.WebGLRenderTarget.");return}let Mt=Bt.get(T).__webglFramebuffer;if(T.isWebGLCubeRenderTarget&&Rt!==void 0&&(Mt=Mt[Rt],Array.isArray(Mt)&&(Mt=Mt[0])),Mt){ft.bindFramebuffer(U.FRAMEBUFFER,Mt);try{let Pt=T.textures[dt],Xt=Pt.format,ie=Pt.type;T.textures.length>1&&U.readBuffer(U.COLOR_ATTACHMENT0+dt);let Ct=cf(Pt);if(Ct.__formatReadable===!1){Lt("WebGLRenderer.readRenderTargetPixels: renderTarget is not in RGBA or implementation defined format.");return}if(Ct.__typeReadable===!1){Lt("WebGLRenderer.readRenderTargetPixels: renderTarget is not in UnsignedByteType or implementation defined type.");return}N>=0&&N<=T.width-O&&V>=0&&V<=T.height-z&&U.readPixels(N,V,O,z,rt.convert(Xt),rt.convert(ie),mt)}finally{let Pt=nt!==null?Bt.get(nt).__webglFramebuffer:null;ft.bindFramebuffer(U.FRAMEBUFFER,Pt)}}},this.readRenderTargetPixelsAsync=async function(T,N,V,O,z,mt,Rt,dt=0){if(!(T&&T.isWebGLRenderTarget))throw new Error("THREE.WebGLRenderer.readRenderTargetPixels: renderTarget is not THREE.WebGLRenderTarget.");let Mt=Bt.get(T).__webglFramebuffer;if(T.isWebGLCubeRenderTarget&&Rt!==void 0&&(Mt=Mt[Rt],Array.isArray(Mt)&&(Mt=Mt[0])),Mt)if(N>=0&&N<=T.width-O&&V>=0&&V<=T.height-z){ft.bindFramebuffer(U.FRAMEBUFFER,Mt);let Pt=T.textures[dt],Xt=Pt.format,ie=Pt.type;T.textures.length>1&&U.readBuffer(U.COLOR_ATTACHMENT0+dt);let Ct=cf(Pt);if(Ct.__formatReadable===!1)throw new Error("THREE.WebGLRenderer.readRenderTargetPixelsAsync: renderTarget is not in RGBA or implementation defined format.");if(Ct.__typeReadable===!1)throw new Error("THREE.WebGLRenderer.readRenderTargetPixelsAsync: renderTarget is not in UnsignedByteType or implementation defined type.");let se=U.createBuffer();U.bindBuffer(U.PIXEL_PACK_BUFFER,se),U.bufferData(U.PIXEL_PACK_BUFFER,mt.byteLength,U.STREAM_READ),U.readPixels(N,V,O,z,rt.convert(Xt),rt.convert(ie),0),U.bindBuffer(U.PIXEL_PACK_BUFFER,null);let Re=nt!==null?Bt.get(nt).__webglFramebuffer:null;ft.bindFramebuffer(U.FRAMEBUFFER,Re);let ge=U.fenceSync(U.SYNC_GPU_COMMANDS_COMPLETE,0);return U.flush(),await Mm(U,ge,4),U.bindBuffer(U.PIXEL_PACK_BUFFER,se),U.getBufferSubData(U.PIXEL_PACK_BUFFER,0,mt),U.bindBuffer(U.PIXEL_PACK_BUFFER,null),U.deleteBuffer(se),U.deleteSync(ge),mt}else throw new Error("THREE.WebGLRenderer.readRenderTargetPixelsAsync: requested read bounds are out of range.")},this.copyFramebufferToTexture=function(T,N=null,V=0){let O=Math.pow(2,-V),z=Math.floor(T.image.width*O),mt=Math.floor(T.image.height*O),Rt=N!==null?N.x:0,dt=N!==null?N.y:0;Ht.setTexture2D(T,0),U.copyTexSubImage2D(U.TEXTURE_2D,V,0,0,Rt,dt,z,mt),ft.unbindTexture()},this.copyTextureToTexture=function(T,N,V=null,O=null,z=0,mt=0){let Rt,dt,Mt,Pt,Xt,ie,Ct,se,Re,ge=T.isCompressedTexture?T.mipmaps[mt]:T.image;if(V!==null)Rt=V.max.x-V.min.x,dt=V.max.y-V.min.y,Mt=V.isBox3?V.max.z-V.min.z:1,Pt=V.min.x,Xt=V.min.y,ie=V.isBox3?V.min.z:0;else{let re=Math.pow(2,-z);Rt=Math.floor(ge.width*re),dt=Math.floor(ge.height*re),T.isDataArrayTexture?Mt=ge.depth:T.isData3DTexture?Mt=Math.floor(ge.depth*re):Mt=1,Pt=0,Xt=0,ie=0}O!==null?(Ct=O.x,se=O.y,Re=O.z):(Ct=0,se=0,Re=0);let me=rt.convert(N.format),He=rt.convert(N.type),It;N.isData3DTexture?(Ht.setTexture3D(N,0),It=U.TEXTURE_3D):N.isDataArrayTexture||N.isCompressedArrayTexture?(Ht.setTexture2DArray(N,0),It=U.TEXTURE_2D_ARRAY):(Ht.setTexture2D(N,0),It=U.TEXTURE_2D),ft.activeTexture(U.TEXTURE0),ft.pixelStorei(U.UNPACK_FLIP_Y_WEBGL,N.flipY),ft.pixelStorei(U.UNPACK_PREMULTIPLY_ALPHA_WEBGL,N.premultiplyAlpha),ft.pixelStorei(U.UNPACK_ALIGNMENT,N.unpackAlignment);let je=ft.getParameter(U.UNPACK_ROW_LENGTH),le=ft.getParameter(U.UNPACK_IMAGE_HEIGHT),zi=ft.getParameter(U.UNPACK_SKIP_PIXELS),We=ft.getParameter(U.UNPACK_SKIP_ROWS),_l=ft.getParameter(U.UNPACK_SKIP_IMAGES);ft.pixelStorei(U.UNPACK_ROW_LENGTH,ge.width),ft.pixelStorei(U.UNPACK_IMAGE_HEIGHT,ge.height),ft.pixelStorei(U.UNPACK_SKIP_PIXELS,Pt),ft.pixelStorei(U.UNPACK_SKIP_ROWS,Xt),ft.pixelStorei(U.UNPACK_SKIP_IMAGES,ie);let gi=T.isDataArrayTexture||T.isData3DTexture,ki=N.isDataArrayTexture||N.isData3DTexture;if(T.isDepthTexture){let re=Bt.get(T),Ge=Bt.get(N),wn=Bt.get(re.__renderTarget),ve=Bt.get(Ge.__renderTarget);ft.bindFramebuffer(U.READ_FRAMEBUFFER,wn.__webglFramebuffer),ft.bindFramebuffer(U.DRAW_FRAMEBUFFER,ve.__webglFramebuffer);for(let Oe=0;Oe<Mt;Oe++)gi&&(U.framebufferTextureLayer(U.READ_FRAMEBUFFER,U.COLOR_ATTACHMENT0,Bt.get(T).__webglTexture,z,ie+Oe),U.framebufferTextureLayer(U.DRAW_FRAMEBUFFER,U.COLOR_ATTACHMENT0,Bt.get(N).__webglTexture,mt,Re+Oe)),U.blitFramebuffer(Pt,Xt,Pt+Rt,Xt+dt,Ct,se,Ct+Rt,se+dt,U.DEPTH_BUFFER_BIT,U.NEAREST);ft.bindFramebuffer(U.READ_FRAMEBUFFER,null),ft.bindFramebuffer(U.DRAW_FRAMEBUFFER,null)}else if(z!==0||T.isRenderTargetTexture||Bt.has(T)){let re=Bt.get(T),Ge=Bt.get(N);ft.bindFramebuffer(U.READ_FRAMEBUFFER,D),ft.bindFramebuffer(U.DRAW_FRAMEBUFFER,k);for(let wn=0;wn<Mt;wn++)gi?U.framebufferTextureLayer(U.READ_FRAMEBUFFER,U.COLOR_ATTACHMENT0,re.__webglTexture,z,ie+wn):U.framebufferTexture2D(U.READ_FRAMEBUFFER,U.COLOR_ATTACHMENT0,U.TEXTURE_2D,re.__webglTexture,z),ki?U.framebufferTextureLayer(U.DRAW_FRAMEBUFFER,U.COLOR_ATTACHMENT0,Ge.__webglTexture,mt,Re+wn):U.framebufferTexture2D(U.DRAW_FRAMEBUFFER,U.COLOR_ATTACHMENT0,U.TEXTURE_2D,Ge.__webglTexture,mt),z!==0?U.blitFramebuffer(Pt,Xt,Pt+Rt,Xt+dt,Ct,se,Ct+Rt,se+dt,U.COLOR_BUFFER_BIT,U.NEAREST):ki?U.copyTexSubImage3D(It,mt,Ct,se,Re+wn,Pt,Xt,Rt,dt):U.copyTexSubImage2D(It,mt,Ct,se,Pt,Xt,Rt,dt);ft.bindFramebuffer(U.READ_FRAMEBUFFER,null),ft.bindFramebuffer(U.DRAW_FRAMEBUFFER,null)}else ki?T.isDataTexture||T.isData3DTexture?U.texSubImage3D(It,mt,Ct,se,Re,Rt,dt,Mt,me,He,ge.data):N.isCompressedArrayTexture?U.compressedTexSubImage3D(It,mt,Ct,se,Re,Rt,dt,Mt,me,ge.data):U.texSubImage3D(It,mt,Ct,se,Re,Rt,dt,Mt,me,He,ge):T.isDataTexture?U.texSubImage2D(U.TEXTURE_2D,mt,Ct,se,Rt,dt,me,He,ge.data):T.isCompressedTexture?U.compressedTexSubImage2D(U.TEXTURE_2D,mt,Ct,se,ge.width,ge.height,me,ge.data):U.texSubImage2D(U.TEXTURE_2D,mt,Ct,se,Rt,dt,me,He,ge);ft.pixelStorei(U.UNPACK_ROW_LENGTH,je),ft.pixelStorei(U.UNPACK_IMAGE_HEIGHT,le),ft.pixelStorei(U.UNPACK_SKIP_PIXELS,zi),ft.pixelStorei(U.UNPACK_SKIP_ROWS,We),ft.pixelStorei(U.UNPACK_SKIP_IMAGES,_l),mt===0&&N.generateMipmaps===!0&&N.mipmapsAutoUpdate===!0&&U.generateMipmap(It),ft.unbindTexture()},this.initRenderTarget=function(T){Bt.get(T).__webglFramebuffer===void 0&&Ht.setupRenderTarget(T)},this.initTexture=function(T){T.isCubeTexture?Ht.setTextureCube(T,0):T.isData3DTexture?Ht.setTexture3D(T,0):T.isDataArrayTexture||T.isCompressedArrayTexture?Ht.setTexture2DArray(T,0):Ht.setTexture2D(T,0),ft.unbindTexture()},this.resetState=function(){X=0,G=0,nt=null,ft.reset(),lt.reset()},typeof __THREE_DEVTOOLS__<"u"&&__THREE_DEVTOOLS__.dispatchEvent(new CustomEvent("observe",{detail:this}))}get coordinateSystem(){return hn}get outputColorSpace(){return this._outputColorSpace}set outputColorSpace(t){this._outputColorSpace=t;let e=this.getContext();e.drawingBufferColorSpace=jt._getDrawingBufferColorSpace(t),e.unpackColorSpace=jt._getUnpackColorSpace()}};window.THREE=Qd;})();
 </script>
 <script>window.addEventListener("keydown",function(e){if(e.key==="Escape")try{parent.postMessage({type:"dsh-wall-escape"},"*")}catch(_){}});window.GAME={"title":"企鹅冰山寻鱼记","rules":{"duration":60,"hearts":3,"heroSpeed":6.8,"enemySpeed":2.85,"enemySpeedGrowth":0.045,"enemySpawnEvery":4.2,"maxEnemies":7,"maxPickups":6,"heroSize":1.85,"enemySize":1.55,"pickupSize":1.2,"shield":{"enabled":true,"every":8,"seconds":4},"dash":{"enabled":true,"cooldown":2.4,"seconds":0.22,"boost":3.1},"worldSize":32,"seed":23,"palette":{"skyTop":"#07182f","skyBottom":"#8fd5df","fog":"#9fd3df","iceTop":"#f3fdff","iceMid":"#b0e4f2","iceDeep":"#5eabc7","snow":"#f8ffff","water":"#2f829e","deep":"#1d5675","accent":"#ffd16e","aurora":"#83f5d4"}},"slots":{"hero":{"tile":false,"custom":false},"enemy":{"tile":false,"custom":false},"pickup":{"tile":false,"custom":false},"background":{"tile":true,"custom":false}},"assets":{"hero":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgPGcgc3Ryb2tlPSIjM2EyNDE2IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPHBhdGggZD0iTTcwIDIxNGgyMnYtMjZINzB6TTE2NCAyMTRoMjJ2LTI2aC0yMnoiIGZpbGw9IiM0YTJhMWEiLz4KICAgIDxwYXRoIGQ9Ik01NiAxMzBoMTQ0djY0SDU2eiIgZmlsbD0iI2U4ODAzYSIvPgogICAgPHBhdGggZD0iTTE2OCAxMjBsMzgtMTR2MzZsLTM4IDEweiIgZmlsbD0iI2U4ODAzYSIvPgogICAgPHBhdGggZD0iTTE5NiAxMTJsMjItOHYyMmwtMjIgOHoiIGZpbGw9IiNmNmU3ZDAiLz4KICAgIDxwYXRoIGQ9Ik05MiAxNTBoNzJ2NDBIOTJ6IiBmaWxsPSIjZjZlN2QwIi8+CiAgICA8cGF0aCBkPSJNNjAgMTEyaDEzNnYyNkg2MHoiIGZpbGw9IiNjODMyM2MiLz4KICAgIDxwYXRoIGQ9Ik0xNTAgMTM2aDIwdjQ0aC0yMHoiIGZpbGw9IiNjODMyM2MiLz4KICAgIDxwYXRoIGQ9Ik03MiA0NmgxMTJ2NzBINzJ6IiBmaWxsPSIjZTg4MDNhIi8+CiAgICA8cGF0aCBkPSJNNzIgNDZsOC0zMCAyNiAzMHpNMTg0IDQ2bC04LTMwLTI2IDMweiIgZmlsbD0iI2U4ODAzYSIvPgogICAgPHBhdGggZD0iTTEwMCA4Nmg1NnYzMGgtNTZ6IiBmaWxsPSIjZjZlN2QwIi8+CiAgPC9nPgogIDxwYXRoIGQ9Ik0xMjAgOTJoMTZ2MTBoLTE2eiIgZmlsbD0iIzJiMWExNCIvPgogIDxwYXRoIGQ9Ik05MiA2NmgxMnYxNkg5MnpNMTUyIDY2aDEydjE2aC0xMnoiIGZpbGw9IiMyMjE0MGYiLz4KICA8cGF0aCBkPSJNODQgNDBsMy0xMiAxMCAxMnpNMTcyIDQwbC0zLTEyLTEwIDEyeiIgZmlsbD0iI2Y2ZTdkMCIvPgogIDxwYXRoIGQ9Ik00MCAxNTBoMTJ2NDRINDB6IiBmaWxsPSIjNWEzYTIyIi8+CiAgPHJlY3QgeD0iMzAiIHk9IjE4OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjI2IiByeD0iNCIgZmlsbD0iI2ZmZDI3YSIgc3Ryb2tlPSIjNWEzYTIyIiBzdHJva2Utd2lkdGg9IjMiLz4KPC9zdmc+Cg==","enemy":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgPGcgZmlsbD0iIzZiM2U3YSIgc3Ryb2tlPSIjMmExODMwIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPHBhdGggZD0iTTM4IDExOGwtMjYgMTAgMjYgMTB6TTIxOCAxMThsMjYgMTAtMjYgMTB6TTExMCA1MGwxOC0zNCAxOCAzNHpNNzAgNzBsLTIyLTIyIDMyIDZ6TTE4NiA3MGwyMi0yMi0zMiA2ek01OCAxODZsLTI4IDE4IDM0LTJ6TTE5OCAxODZsMjggMTgtMzQtMnoiLz4KICA8L2c+CiAgPHJlY3QgeD0iNDgiIHk9IjU2IiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE1MCIgcng9IjEwIiBmaWxsPSIjM2IyNDQ4IiBzdHJva2U9IiMyMjE0MmEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxyZWN0IHg9IjQwIiB5PSIxMTIiIHdpZHRoPSIxNzYiIGhlaWdodD0iMjgiIHJ4PSI0IiBmaWxsPSIjNGEyZDVhIi8+CiAgPHBhdGggZD0iTTc4IDIwNmgzNnYxOEg3OHpNMTQyIDIwNmgzNnYxOGgtMzZ6IiBmaWxsPSIjMmExODMwIi8+CiAgPHJlY3QgeD0iODAiIHk9IjkyIiB3aWR0aD0iMzQiIGhlaWdodD0iMjQiIHJ4PSIzIiBmaWxsPSIjZmZkMzRkIi8+CiAgPHJlY3QgeD0iMTQyIiB5PSI5MiIgd2lkdGg9IjM0IiBoZWlnaHQ9IjI0IiByeD0iMyIgZmlsbD0iI2ZmZDM0ZCIvPgogIDxwYXRoIGQ9Ik05MCAxNjBsMTAgMTAgMTAtMTAgMTAgMTAgMTAtMTAgMTAgMTAgMTAtMTAgMTAgMTAgMTAtMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmOWY0NSIgc3Ryb2tlLXdpZHRoPSI3IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPGcgZmlsbD0iI2I5OGFkMCI+PHJlY3QgeD0iMTI0IiB5PSIxMiIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIi8+PHJlY3QgeD0iOCIgeT0iMTI0IiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiLz48cmVjdCB4PSIyMzgiIHk9IjEyNCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIi8+PC9nPgo8L3N2Zz4K","pickup":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+CiAgPGRlZnM+CiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9ImciIGN4PSI1MCUiIGN5PSI1NSUiIHI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmMmM0Ii8+PHN0b3Agb2Zmc2V0PSIuNiIgc3RvcC1jb2xvcj0iI2ZmZDI3YSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2YzYTYzYyIvPjwvcmFkaWFsR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxjaXJjbGUgY3g9IjEyOCIgY3k9IjEzOCIgcj0iMTA0IiBmaWxsPSIjZmZjNDYzIiBvcGFjaXR5PSIuMTgiLz4KICA8cmVjdCB4PSIxMjIiIHk9IjE4IiB3aWR0aD0iMTIiIGhlaWdodD0iMjAiIGZpbGw9IiNjOWEyNGEiLz4KICA8cmVjdCB4PSIxMDQiIHk9IjM2IiB3aWR0aD0iNDgiIGhlaWdodD0iMTYiIGZpbGw9IiM1YTNhMjIiLz4KICA8cmVjdCB4PSI3MCIgeT0iNTIiIHdpZHRoPSIxMTYiIGhlaWdodD0iMjIiIHJ4PSIzIiBmaWxsPSIjNWEzYTIyIi8+CiAgPHJlY3QgeD0iODAiIHk9Ijc0IiB3aWR0aD0iOTYiIGhlaWdodD0iMTA0IiBmaWxsPSJ1cmwoI2cpIi8+CiAgPGcgZmlsbD0iIzVhM2EyMiI+PHJlY3QgeD0iNzYiIHk9Ijc0IiB3aWR0aD0iMTIiIGhlaWdodD0iMTA0Ii8+PHJlY3QgeD0iMTY4IiB5PSI3NCIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEwNCIvPjwvZz4KICA8cmVjdCB4PSI2MiIgeT0iMTc4IiB3aWR0aD0iMTMyIiBoZWlnaHQ9IjI2IiByeD0iMyIgZmlsbD0iIzVhM2EyMiIvPgo8L3N2Zz4K","background":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIzMiIgeT0iMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iNjQiIHk9IjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9Ijk2IiB5PSIwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIxMjgiIHk9IjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjEzOCIgeT0iMTIiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIxNjAiIHk9IjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjE5MiIgeT0iMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMjI0IiB5PSIwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIyNTYiIHk9IjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjI2NiIgeT0iMTIiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIyODgiIHk9IjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjMyMCIgeT0iMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iMzUyIiB5PSIwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzODQiIHk9IjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjQxNiIgeT0iMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iNDQ4IiB5PSIwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSI0ODAiIHk9IjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjQ5OCIgeT0iNiIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0iI2ZmZTA4YSIvPjxyZWN0IHg9IjAiIHk9IjMyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzMiIgeT0iMzIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjY0IiB5PSIzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iOTYiIHk9IjMyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIxMjgiIHk9IjMyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIxNjAiIHk9IjMyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIxOTIiIHk9IjMyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIyMTAiIHk9IjM4IiB3aWR0aD0iNiIgaGVpZ2h0PSI2IiBmaWxsPSIjZmZlMDhhIi8+PHJlY3QgeD0iMjI0IiB5PSIzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMjU2IiB5PSIzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iMjc0IiB5PSIzOCIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0iI2ZmZTA4YSIvPjxyZWN0IHg9IjI4OCIgeT0iMzIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjMyMCIgeT0iMzIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjM1MiIgeT0iMzIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjM4NCIgeT0iMzIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjQxNiIgeT0iMzIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjQ0OCIgeT0iMzIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjQ4MCIgeT0iMzIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjAiIHk9IjY0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzMiIgeT0iNjQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjY0IiB5PSI2NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iOTYiIHk9IjY0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIxMDYiIHk9Ijc2IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iMTI4IiB5PSI2NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iMTM4IiB5PSI3NiIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjE2MCIgeT0iNjQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjE5MiIgeT0iNjQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjIyNCIgeT0iNjQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjI1NiIgeT0iNjQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjI4OCIgeT0iNjQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjI5OCIgeT0iNzYiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIzMjAiIHk9IjY0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzNTIiIHk9IjY0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIzODQiIHk9IjY0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIzOTQiIHk9Ijc2IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iNDE2IiB5PSI2NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iNDQ4IiB5PSI2NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iNDgwIiB5PSI2NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMCIgeT0iOTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjEwIiB5PSIxMDgiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIzMiIgeT0iOTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjY0IiB5PSI5NiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iOTYiIHk9Ijk2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIxMjgiIHk9Ijk2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIxNjAiIHk9Ijk2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIxNzAiIHk9IjEwOCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjE5MiIgeT0iOTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjIyNCIgeT0iOTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjI1NiIgeT0iOTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjI4OCIgeT0iOTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjMyMCIgeT0iOTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjM1MiIgeT0iOTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjM4NCIgeT0iOTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjM5NCIgeT0iMTA4IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iNDE2IiB5PSI5NiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iNDQ4IiB5PSI5NiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iNDgwIiB5PSI5NiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iNDkwIiB5PSIxMDgiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIwIiB5PSIxMjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjMyIiB5PSIxMjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjY0IiB5PSIxMjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9Ijk2IiB5PSIxMjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjEyOCIgeT0iMTI4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIxNjAiIHk9IjEyOCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iMTkyIiB5PSIxMjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjIyNCIgeT0iMTI4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIyMzQiIHk9IjE0MCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjI1NiIgeT0iMTI4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIyODgiIHk9IjEyOCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iMzIwIiB5PSIxMjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjM1MiIgeT0iMTI4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIzNzAiIHk9IjEzNCIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0iI2ZmZTA4YSIvPjxyZWN0IHg9IjM4NCIgeT0iMTI4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3MmIyNjMiLz48cmVjdCB4PSIzOTQiIHk9IjE0MCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjQxNiIgeT0iMTI4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSI0MjYiIHk9IjE0MCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjQ0OCIgeT0iMTI4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSI0ODAiIHk9IjEyOCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMCIgeT0iMTYwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIzMiIgeT0iMTYwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSI2NCIgeT0iMTYwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSI5NiIgeT0iMTYwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIxMjgiIHk9IjE2MCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iMTYwIiB5PSIxNjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjE5MiIgeT0iMTYwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIyMjQiIHk9IjE2MCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMjU2IiB5PSIxNjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjI4OCIgeT0iMTYwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzMjAiIHk9IjE2MCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iMzUyIiB5PSIxNjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjM4NCIgeT0iMTYwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzOTQiIHk9IjE3MiIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjQxNiIgeT0iMTYwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSI0NDgiIHk9IjE2MCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iNDgwIiB5PSIxNjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjAiIHk9IjE5MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iMzIiIHk9IjE5MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iNjQiIHk9IjE5MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iOTYiIHk9IjE5MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iMTI4IiB5PSIxOTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjEzOCIgeT0iMjA0IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iMTYwIiB5PSIxOTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjE5MiIgeT0iMTkyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIyMjQiIHk9IjE5MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMjU2IiB5PSIxOTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjI2NiIgeT0iMjA0IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iMjg4IiB5PSIxOTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjI5OCIgeT0iMjA0IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iMzIwIiB5PSIxOTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjM1MiIgeT0iMTkyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzODQiIHk9IjE5MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iNDE2IiB5PSIxOTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjQ0OCIgeT0iMTkyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSI0ODAiIHk9IjE5MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iMCIgeT0iMjI0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3MmIyNjMiLz48cmVjdCB4PSIzMiIgeT0iMjI0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSI2NCIgeT0iMjI0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSI5NiIgeT0iMjI0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3MmIyNjMiLz48cmVjdCB4PSIxMTQiIHk9IjIzMCIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0iI2ZmZTA4YSIvPjxyZWN0IHg9IjEyOCIgeT0iMjI0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIxNDYiIHk9IjIzMCIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0iI2ZmZTA4YSIvPjxyZWN0IHg9IjE2MCIgeT0iMjI0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIxOTIiIHk9IjIyNCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iMjI0IiB5PSIyMjQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjI1NiIgeT0iMjI0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIyODgiIHk9IjIyNCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iMzIwIiB5PSIyMjQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjM1MiIgeT0iMjI0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzODQiIHk9IjIyNCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iNDE2IiB5PSIyMjQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjQ0OCIgeT0iMjI0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSI0ODAiIHk9IjIyNCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iNDk4IiB5PSIyMzAiIHdpZHRoPSI2IiBoZWlnaHQ9IjYiIGZpbGw9IiNmZmUwOGEiLz48cmVjdCB4PSIwIiB5PSIyNTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjMyIiB5PSIyNTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjQyIiB5PSIyNjgiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSI2NCIgeT0iMjU2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSI3NCIgeT0iMjY4IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iOTYiIHk9IjI1NiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMTI4IiB5PSIyNTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjE2MCIgeT0iMjU2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIxOTIiIHk9IjI1NiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMjI0IiB5PSIyNTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjI1NiIgeT0iMjU2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIyODgiIHk9IjI1NiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iMzIwIiB5PSIyNTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjM1MiIgeT0iMjU2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzODQiIHk9IjI1NiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iMzk0IiB5PSIyNjgiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSI0MTYiIHk9IjI1NiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iNDQ4IiB5PSIyNTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjQ1OCIgeT0iMjY4IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iNDgwIiB5PSIyNTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjAiIHk9IjI4OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iMzIiIHk9IjI4OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iNjQiIHk9IjI4OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iOTYiIHk9IjI4OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iMTI4IiB5PSIyODgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjE2MCIgeT0iMjg4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIxOTIiIHk9IjI4OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iMjAyIiB5PSIzMDAiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIyMjQiIHk9IjI4OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMjM0IiB5PSIzMDAiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIyNTYiIHk9IjI4OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMjg4IiB5PSIyODgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjMyMCIgeT0iMjg4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIzMzAiIHk9IjMwMCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjM1MiIgeT0iMjg4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3MmIyNjMiLz48cmVjdCB4PSIzODQiIHk9IjI4OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iNDE2IiB5PSIyODgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjQ0OCIgeT0iMjg4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSI0ODAiIHk9IjI4OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iNDkwIiB5PSIzMDAiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIwIiB5PSIzMjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjMyIiB5PSIzMjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjY0IiB5PSIzMjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9Ijk2IiB5PSIzMjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjEyOCIgeT0iMzIwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIxMzgiIHk9IjMzMiIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjE2MCIgeT0iMzIwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIxOTIiIHk9IjMyMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMjI0IiB5PSIzMjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjI1NiIgeT0iMzIwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIyODgiIHk9IjMyMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iMzIwIiB5PSIzMjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjM1MiIgeT0iMzIwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIzODQiIHk9IjMyMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iNDE2IiB5PSIzMjAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjQ0OCIgeT0iMzIwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSI0ODAiIHk9IjMyMCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iMCIgeT0iMzUyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIzMiIgeT0iMzUyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSI0MiIgeT0iMzY0IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iNjQiIHk9IjM1MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iNzQiIHk9IjM2NCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9Ijk2IiB5PSIzNTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjEwNiIgeT0iMzY0IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iMTI4IiB5PSIzNTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjE2MCIgeT0iMzUyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIxOTIiIHk9IjM1MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iMjI0IiB5PSIzNTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjI1NiIgeT0iMzUyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIyNjYiIHk9IjM2NCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjI4OCIgeT0iMzUyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIzMjAiIHk9IjM1MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iMzUyIiB5PSIzNTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjM2MiIgeT0iMzY0IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iMzg0IiB5PSIzNTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjQxNiIgeT0iMzUyIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSI0NDgiIHk9IjM1MiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iNDgwIiB5PSIzNTIiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjAiIHk9IjM4NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMzIiIHk9IjM4NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iNjQiIHk9IjM4NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iOTYiIHk9IjM4NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMTI4IiB5PSIzODQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjE2MCIgeT0iMzg0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIxOTIiIHk9IjM4NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iMjI0IiB5PSIzODQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjIzNCIgeT0iMzk2IiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iMjU2IiB5PSIzODQiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjI4OCIgeT0iMzg0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIyOTgiIHk9IjM5NiIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjMyMCIgeT0iMzg0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIzMzAiIHk9IjM5NiIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjM1MiIgeT0iMzg0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3MmIyNjMiLz48cmVjdCB4PSIzNjIiIHk9IjM5NiIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjM4NCIgeT0iMzg0IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSI0MTYiIHk9IjM4NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iNDI2IiB5PSIzOTYiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSI0NDgiIHk9IjM4NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iNDU4IiB5PSIzOTYiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSI0ODAiIHk9IjM4NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iMCIgeT0iNDE2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzMiIgeT0iNDE2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSI2NCIgeT0iNDE2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3MmIyNjMiLz48cmVjdCB4PSI5NiIgeT0iNDE2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM1ZjljNTIiLz48cmVjdCB4PSIxMjgiIHk9IjQxNiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMTYwIiB5PSI0MTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjE5MiIgeT0iNDE2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIyMjQiIHk9IjQxNiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iMjU2IiB5PSI0MTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjI4OCIgeT0iNDE2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIzMjAiIHk9IjQxNiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iMzUyIiB5PSI0MTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjM4NCIgeT0iNDE2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSI0MDIiIHk9IjQyMiIgd2lkdGg9IjYiIGhlaWdodD0iNiIgZmlsbD0iI2ZmZTA4YSIvPjxyZWN0IHg9IjQxNiIgeT0iNDE2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSI0MjYiIHk9IjQyOCIgd2lkdGg9IjgiIGhlaWdodD0iOCIgZmlsbD0iIzhjYzc3NyIvPjxyZWN0IHg9IjQ0OCIgeT0iNDE2IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSI0ODAiIHk9IjQxNiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iMCIgeT0iNDQ4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIzMiIgeT0iNDQ4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3MmIyNjMiLz48cmVjdCB4PSI2NCIgeT0iNDQ4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3MmIyNjMiLz48cmVjdCB4PSI5NiIgeT0iNDQ4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIxMjgiIHk9IjQ0OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iMTYwIiB5PSI0NDgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzVmOWM1MiIvPjxyZWN0IHg9IjE5MiIgeT0iNDQ4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIyMjQiIHk9IjQ0OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iMjU2IiB5PSI0NDgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzY0YTQ1NyIvPjxyZWN0IHg9IjI4OCIgeT0iNDQ4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSIzMjAiIHk9IjQ0OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iMzMwIiB5PSI0NjAiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIzNTIiIHk9IjQ0OCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNWY5YzUyIi8+PHJlY3QgeD0iMzg0IiB5PSI0NDgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjM5NCIgeT0iNDYwIiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iNDE2IiB5PSI0NDgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjQyNiIgeT0iNDYwIiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iNDQ4IiB5PSI0NDgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjQ4MCIgeT0iNDQ4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3MmIyNjMiLz48cmVjdCB4PSIwIiB5PSI0ODAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjMyIiB5PSI0ODAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjY0IiB5PSI0ODAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9Ijk2IiB5PSI0ODAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzcyYjI2MyIvPjxyZWN0IHg9IjEyOCIgeT0iNDgwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM3OGI2NjciLz48cmVjdCB4PSIxNjAiIHk9IjQ4MCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iMTcwIiB5PSI0OTIiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIxOTIiIHk9IjQ4MCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzhiNjY3Ii8+PHJlY3QgeD0iMjI0IiB5PSI0ODAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjI1NiIgeT0iNDgwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2NGE0NTciLz48cmVjdCB4PSIyODgiIHk9IjQ4MCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNjRhNDU3Ii8+PHJlY3QgeD0iMjk4IiB5PSI0OTIiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiM4Y2M3NzciLz48cmVjdCB4PSIzMjAiIHk9IjQ4MCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzJiMjYzIi8+PHJlY3QgeD0iMzUyIiB5PSI0ODAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjxyZWN0IHg9IjM4NCIgeT0iNDgwIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiM2YmFiNWMiLz48cmVjdCB4PSI0MTYiIHk9IjQ4MCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNmJhYjVjIi8+PHJlY3QgeD0iNDQ4IiB5PSI0ODAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzc4YjY2NyIvPjxyZWN0IHg9IjQ1OCIgeT0iNDkyIiB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjOGNjNzc3Ii8+PHJlY3QgeD0iNDgwIiB5PSI0ODAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgZmlsbD0iIzZiYWI1YyIvPjwvc3ZnPgo="}};</script>
-<script>/* 企鹅冰山寻鱼记 — a 60-second 3D voxel collect-and-dodge game.
+<script>/* 企鹅冰山寻鱼记 — a 60-second 3D voxel collect-and-dodge polar adventure.
  *
  * The page provides window.THREE and window.GAME = { title, rules,
  * slots: { slot: { custom } }, assets: { slot: data URL } }. Everything below
@@ -4272,6 +4272,7 @@ void main() {
     pickupSize: 1.2,
     shield: { enabled: true, every: 8, seconds: 4 },
     dash: { enabled: true, cooldown: 2.4, seconds: 0.22, boost: 3.1 },
+    shockwave: { enabled: true, cooldown: 7.0, radius: 6.8, slowSeconds: 2.5 },
     worldSize: 32,
     seed: 23,
     palette: {
@@ -4296,6 +4297,46 @@ void main() {
   var TITLE = GAME.title || '企鹅冰山寻鱼记';
   function customArt(slot) { return !!(SLOTS[slot] && SLOTS[slot].custom && ASSETS[slot]); }
 
+  /* STAGES — 3 escalating polar stages */
+  var STAGES = [
+    {
+      id: 1,
+      name: '浮冰浅滩',
+      badge: '第 1/3 阶 · 浮冰浅滩',
+      sub: '极昼晴空 · 收集冰海小鱼，积攒泡泡护盾',
+      skyTop: R.palette.skyTop,
+      skyMid: '#154766',
+      skyBottom: R.palette.skyBottom,
+      fog: R.palette.fog,
+      water: R.palette.water,
+      rim: '#8deedc'
+    },
+    {
+      id: 2,
+      name: '极光雪域',
+      badge: '第 2/3 阶 · 极光雪域',
+      sub: '✨ 黄金帝王鲑出没！单条 +3 分 · 护盾双倍充能',
+      skyTop: '#0b143a',
+      skyMid: '#18426e',
+      skyBottom: '#6ce0cf',
+      fog: '#82cfe0',
+      water: '#267394',
+      rim: '#6bffce'
+    },
+    {
+      id: 3,
+      name: '冰川王座',
+      badge: '第 3/3 阶 · 冰川王座',
+      sub: '🌟 极光海星加速磁铁 · 当心皇冠海豹首领！',
+      skyTop: '#130d38',
+      skyMid: '#282d69',
+      skyBottom: '#5ee8c5',
+      fog: '#74badc',
+      water: '#1e6084',
+      rim: '#b894ff'
+    }
+  ];
+
   /* 2. RENDERER */
   var THREE = window.THREE;
   var renderer;
@@ -4319,9 +4360,14 @@ void main() {
   renderer.toneMappingExposure = 1.06;
   renderer.setClearColor(0x000000, 0);
   canvas.style.touchAction = 'none';
-  canvas.style.background = 'radial-gradient(ellipse at 68% 8%, rgba(131,245,212,.22), transparent 42%),'
-    + 'radial-gradient(ellipse at 88% 3%, rgba(255,209,140,.15), transparent 34%),'
-    + 'linear-gradient(to bottom,' + R.palette.skyTop + ' 0%,#154766 48%,' + R.palette.skyBottom + ' 100%)';
+
+  function applySkyGradient(st) {
+    canvas.style.background = 'radial-gradient(ellipse at 68% 8%, rgba(131,245,212,.26), transparent 44%),'
+      + 'radial-gradient(ellipse at 25% 6%, rgba(184,148,255,.18), transparent 38%),'
+      + 'radial-gradient(ellipse at 88% 3%, rgba(255,209,140,.16), transparent 34%),'
+      + 'linear-gradient(to bottom,' + st.skyTop + ' 0%,' + st.skyMid + ' 48%,' + st.skyBottom + ' 100%)';
+  }
+  applySkyGradient(STAGES[0]);
 
   var scene = new THREE.Scene();
   scene.fog = new THREE.Fog(R.palette.fog, 26, 92);
@@ -4769,6 +4815,15 @@ void main() {
     [0.32, 1.3, -0.05, 0.16, 0.04, 0.18, '#496b80']
   ];
 
+  // Stage 3 Alpha Seal with a golden crown on its head
+  var ALPHA_ENEMY_BOXES = ENEMY_BOXES.concat([
+    [0, 2.18, 0.3, 0.62, 0.14, 0.48, '#f5b82e', true],
+    [-0.22, 2.34, 0.3, 0.14, 0.2, 0.14, '#ffe566', true],
+    [0, 2.38, 0.3, 0.16, 0.26, 0.16, '#fff08a', true],
+    [0.22, 2.34, 0.3, 0.14, 0.2, 0.14, '#ffe566', true],
+    [0, 2.2, 0.56, 0.14, 0.12, 0.06, '#ff4d6d', true]
+  ]);
+
   var FISH_BOXES = [
     // stepped, tapered body with a pale belly
     [0, 0.54, 0.4, 0.44, 0.4, 0.28, '#57d8df'],
@@ -4793,8 +4848,41 @@ void main() {
     [0.24, 0.865, 0.41, 0.045, 0.03, 0.045, '#e9ffff']
   ];
 
-  // Scale reference for the in-game voxel bodies. The hero stays at the old
-  // body height so the penguin keeps its size and the beanie perches on top.
+  // Stage 2+ Golden Salmon (黄金帝王鲑): distinct golden-orange 3D voxel model
+  var GOLD_FISH_BOXES = [
+    [0, 0.56, 0.42, 0.48, 0.44, 0.3, '#ffae2b'],
+    [0, 0.58, 0.18, 0.66, 0.52, 0.38, '#ff981a'],
+    [0, 0.58, -0.08, 0.72, 0.54, 0.38, '#ff8514'],
+    [0, 0.57, -0.34, 0.48, 0.44, 0.32, '#f56e10'],
+    [0, 0.57, -0.52, 0.3, 0.34, 0.22, '#e0580c'],
+    [0, 0.34, 0.12, 0.44, 0.16, 0.64, '#fff4cc', true],
+    [0, 0.54, 0.6, 0.14, 0.09, 0.09, '#fff099', true],
+    // radiant crown-like dorsal & golden tail fan
+    [0, 0.6, -0.72, 0.64, 0.36, 0.24, '#ffe169', true],
+    [0, 0.6, -0.9, 0.98, 0.3, 0.18, '#ffd03b', true],
+    [0, 0.6, -1.0, 0.22, 0.22, 0.14, '#ff6d24'],
+    [0, 0.9, -0.02, 0.14, 0.28, 0.38, '#ffe678', true],
+    [0.39, 0.46, 0.08, 0.11, 0.2, 0.26, '#ffb838'],
+    [-0.39, 0.46, 0.08, 0.11, 0.2, 0.26, '#ffb838'],
+    [-0.22, 0.85, 0.4, 0.14, 0.09, 0.15, '#1b1408'],
+    [0.22, 0.85, 0.4, 0.14, 0.09, 0.15, '#1b1408'],
+    [-0.18, 0.9, 0.43, 0.05, 0.035, 0.05, '#ffffff', true],
+    [0.26, 0.9, 0.43, 0.05, 0.035, 0.05, '#ffffff', true]
+  ];
+
+  // Stage 3 Aurora Starfish (极光海星): glowing star voxel pickup
+  var STARFISH_BOXES = [
+    [0, 0.56, 0, 0.52, 0.26, 0.52, '#7ef9ff', true],
+    [0, 0.64, 0, 0.32, 0.18, 0.32, '#fff59e', true],
+    [0, 0.54, 0.44, 0.26, 0.2, 0.42, '#a98bff', true],
+    [0, 0.54, -0.44, 0.26, 0.2, 0.42, '#a98bff', true],
+    [0.44, 0.54, 0.12, 0.42, 0.2, 0.26, '#64f5d2', true],
+    [-0.44, 0.54, 0.12, 0.42, 0.2, 0.26, '#64f5d2', true],
+    [0.3, 0.54, -0.34, 0.28, 0.2, 0.32, '#ff94e8', true],
+    [-0.3, 0.54, -0.34, 0.28, 0.2, 0.32, '#ff94e8', true]
+  ];
+
+  // Scale reference for the in-game voxel bodies.
   var MODEL_HEIGHT = { hero: 3.2, enemy: 2.15, pickup: 1.02 };
   /** One source of truth for the game and the studio's live asset thumbnails. */
   var MODELS = { hero: HERO_BOXES, enemy: ENEMY_BOXES, pickup: FISH_BOXES };
@@ -4865,10 +4953,23 @@ void main() {
   bubble.add(bubbleGlint);
   hero.node.add(bubble);
 
+  // Speed boost aura ring around hero when Aurora Starfish is active
+  var starAura = new THREE.Mesh(
+    new THREE.RingGeometry(R.heroSize * 0.45, R.heroSize * 0.68, 28),
+    new THREE.MeshBasicMaterial({
+      color: '#7ef9ff', transparent: true, opacity: 0, side: THREE.DoubleSide,
+      depthWrite: false, blending: THREE.AdditiveBlending
+    })
+  );
+  starAura.rotation.x = -Math.PI / 2;
+  starAura.position.y = 0.08;
+  starAura.visible = false;
+  hero.node.add(starAura);
+
   var enemies = [], pickups = [];
 
-  /* 7. EFFECTS — pooled fish sparkles and an expanding action ring. */
-  var SPARKS = 72, sparks = [];
+  /* 7. EFFECTS — pooled fish sparkles, action ring, and Frost Shockwave ring. */
+  var SPARKS = 96, sparks = [];
   var sparkMesh = new THREE.InstancedMesh(BOX, new THREE.MeshBasicMaterial({ color: R.palette.accent }), SPARKS);
   sparkMesh.frustumCulled = false;
   for (var sp = 0; sp < SPARKS; sp++) sparks.push({ life: 0, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0 });
@@ -4902,6 +5003,29 @@ void main() {
     actionRing.visible = true;
   }
 
+  // Frost Shockwave 3D expanding icy ring
+  var shockRingGroup = new THREE.Group();
+  var shockOuter = new THREE.Mesh(
+    new THREE.RingGeometry(0.75, 1.08, 40),
+    new THREE.MeshBasicMaterial({
+      color: '#7ef4ff', transparent: true, opacity: 0, side: THREE.DoubleSide,
+      depthWrite: false, blending: THREE.AdditiveBlending
+    })
+  );
+  shockOuter.rotation.x = -Math.PI / 2;
+  var shockInner = new THREE.Mesh(
+    new THREE.RingGeometry(0.3, 0.72, 32),
+    new THREE.MeshBasicMaterial({
+      color: '#d8ffff', transparent: true, opacity: 0, side: THREE.DoubleSide,
+      depthWrite: false, blending: THREE.AdditiveBlending
+    })
+  );
+  shockInner.rotation.x = -Math.PI / 2;
+  shockRingGroup.add(shockOuter, shockInner);
+  shockRingGroup.visible = false;
+  scene.add(shockRingGroup);
+  var shockRingLife = 0, shockRingMax = 0.55;
+
   /* 8. AUDIO */
   var audio = null, muted = false;
   function blip(freq, duration, type, volume, slideTo) {
@@ -4929,13 +5053,14 @@ void main() {
     }
   }
 
-  /* 9. HUD */
+  /* 9. HUD & UI */
   var FONT = 'font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;';
   document.body.style.margin = '0';
   document.body.style.overflow = 'hidden';
   var styleNode = document.createElement('style');
-  styleNode.textContent = '@keyframes dsbCardIn{from{opacity:0;transform:translate(-50%,-48%) scale(.965)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}'
-    + '@keyframes dsbHintPulse{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}';
+  styleNode.textContent = '@keyframes dsbCardIn{from{opacity:0;transform:translate(-50%,-48%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}'
+    + '@keyframes dsbPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}'
+    + '.dsb-btn:active{transform:scale(.95)!important}';
   document.head.appendChild(styleNode);
 
   function el(tag, css, parent) {
@@ -4944,72 +5069,285 @@ void main() {
     (parent || document.body).appendChild(node);
     return node;
   }
+
   var hud = el('div', 'position:fixed;inset:0;pointer-events:none;user-select:none;color:#f7ffff;' + FONT
-    + 'font-size:clamp(14px,2.4vmin,22px);text-shadow:0 2px 8px rgba(0,24,38,.4);overflow:hidden');
-  el('div', 'position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,transparent 48%,rgba(2,18,30,.28) 100%);', hud);
-  var pillCss = 'position:absolute;top:2.4vmin;padding:.5em .92em;border-radius:999px;'
-    + 'background:linear-gradient(180deg,rgba(8,31,48,.66),rgba(7,24,39,.4));'
-    + 'border:1px solid rgba(190,245,255,.24);box-shadow:0 8px 24px rgba(1,20,32,.16);'
-    + 'backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;gap:.6em;align-items:center;font-weight:800';
-  var leftPill = el('div', pillCss + ';left:2.4vmin', hud);
-  var heartsEl = el('span', 'color:#ff8ba0;letter-spacing:.08em;font-size:1.02em', leftPill);
-  var scoreEl = el('span', 'display:inline-block;transform-origin:left center;color:#fff5d2;font-variant-numeric:tabular-nums', leftPill);
-  var timerEl = el('div', pillCss + ';right:2.4vmin;font-variant-numeric:tabular-nums;letter-spacing:.04em', hud);
-  var shieldEl = el('div', 'position:absolute;left:2.4vmin;top:calc(2.4vmin + 3.1em);padding:.35em .85em;border-radius:999px;'
-    + 'background:rgba(118,251,231,.16);border:1px solid rgba(155,255,239,.56);color:#d6fff9;font-size:.8em;font-weight:800;'
-    + 'display:none;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)', hud);
-  var hintEl = el('div', 'position:absolute;left:2.4vmin;bottom:2.5vmin;max-width:64vw;padding:.45em .8em;border-radius:999px;'
-    + 'background:rgba(5,27,43,.34);border:1px solid rgba(194,246,255,.14);font-size:.78em;font-weight:600;'
-    + 'letter-spacing:.02em;color:rgba(237,255,255,.82);text-shadow:none;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)', hud);
-  var toastEl = el('div', 'position:absolute;left:50%;top:17%;transform:translate(-50%,-8px) scale(.96);padding:.6em 1.1em;'
-    + 'border-radius:999px;background:rgba(5,33,50,.7);border:1px solid rgba(190,255,247,.35);color:#f2fffe;'
-    + 'font-size:.9em;font-weight:800;letter-spacing:.03em;opacity:0;transition:opacity .22s,transform .22s;'
-    + 'text-shadow:0 2px 8px rgba(0,25,35,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)', hud);
-  var card = el('div', 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;'
-    + 'width:min(88vw,590px);box-sizing:border-box;max-height:88vh;overflow:auto;padding:1.55em 1.35em 1.4em;'
-    + 'border-radius:28px;background:linear-gradient(155deg,rgba(9,34,53,.86),rgba(13,53,70,.68));'
-    + 'border:1px solid rgba(218,253,255,.3);box-shadow:0 30px 90px rgba(0,16,30,.42),inset 0 1px 0 rgba(255,255,255,.18);'
-    + 'backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);animation:dsbCardIn .35s cubic-bezier(.2,.9,.25,1) both', hud);
-  var cardKicker = el('div', 'font-size:.72em;font-weight:800;letter-spacing:.26em;color:#85f4dd;text-transform:uppercase;margin-bottom:.55em', card);
-  var cardTitle = el('div', 'font-size:clamp(25px,4.9vmin,42px);font-weight:900;letter-spacing:.02em;color:#f8ffff;line-height:1.14;'
-    + 'text-shadow:0 2px 18px rgba(155,255,238,.18)', card);
-  var cardBody = el('div', 'margin-top:.8em;font-size:clamp(13px,2.2vmin,18px);line-height:1.7;color:rgba(240,255,255,.9);white-space:pre-line', card);
-  var cardHint = el('div', 'margin-top:1.1em;font-weight:900;color:#ffe7a9;font-size:clamp(13px,2.2vmin,18px);'
-    + 'animation:dsbHintPulse 1.8s ease-in-out infinite', card);
-  var dashBtn = el('button', 'position:fixed;right:2.6vmin;bottom:2.6vmin;width:5.2em;height:5.2em;box-sizing:border-box;'
-    + 'border-radius:50%;border:1px solid rgba(208,255,249,.55);color:#edfffe;font-weight:900;font-size:.86em;'
-    + 'letter-spacing:.03em;display:none;align-items:center;justify-content:center;flex-direction:column;gap:.12em;'
-    + 'background:radial-gradient(circle at 34% 26%,rgba(169,255,237,.56),rgba(15,82,103,.78) 58%,rgba(5,34,51,.94));'
-    + 'box-shadow:0 8px 26px rgba(0,19,31,.35),inset 0 1px 0 rgba(255,255,255,.35);pointer-events:auto;'
-    + 'touch-action:none;cursor:pointer;z-index:3;text-shadow:0 1px 5px rgba(0,28,36,.55);' + FONT, hud);
+    + 'text-shadow:0 2px 8px rgba(0,24,38,.45);overflow:hidden;z-index:2');
+  el('div', 'position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,transparent 52%,rgba(2,18,30,.28) 100%);pointer-events:none', hud);
+
+  // Floating 3D Popups container
+  var popupLayer = el('div', 'position:absolute;inset:0;pointer-events:none;overflow:hidden;display:none;z-index:3', hud);
+  var popups = [];
+  function spawnPopup(wx, wy, wz, text, colorHex, big) {
+    var node = el('div', 'position:absolute;left:0;top:0;transform:translate(-50%,-50%);font-weight:900;'
+      + 'font-size:' + (big ? '15px' : '13px') + ';color:' + (colorHex || '#fff59d') + ';white-space:nowrap;'
+      + 'padding:2px 8px;border-radius:999px;background:rgba(4,24,38,.72);border:1px solid rgba(255,255,255,.22);'
+      + 'box-shadow:0 4px 12px rgba(0,12,24,.35);pointer-events:none;letter-spacing:.02em', popupLayer);
+    node.textContent = text;
+    popups.push({ x: wx, y: wy, z: wz, life: 0.95, maxLife: 0.95, el: node, big: !!big });
+  }
+  function clearPopups() {
+    for (var i = 0; i < popups.length; i++) {
+      if (popups[i].el && popups[i].el.parentNode) popups[i].el.parentNode.removeChild(popups[i].el);
+    }
+    popups = [];
+  }
+
+  // Top HUD Bar (hidden on title screen so 3D icebergs never clip through pills)
+  var topBar = el('div', 'position:absolute;top:12px;left:8px;right:8px;display:none;align-items:center;'
+    + 'justify-content:space-between;gap:5px;pointer-events:none;z-index:5', hud);
+
+  var basePillCss = 'height:36px;box-sizing:border-box;padding:0 9px;border-radius:999px;'
+    + 'background:linear-gradient(180deg,rgba(7,29,46,.82),rgba(5,20,34,.68));'
+    + 'border:1px solid rgba(190,245,255,.28);box-shadow:0 6px 18px rgba(1,18,30,.26);'
+    + 'backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;'
+    + 'gap:5px;font-size:clamp(11px,2.7vw,13px);font-weight:800;white-space:nowrap;flex-shrink:0';
+
+  // Left Pill: Hearts + Fish score + Combo badge
+  var leftPill = el('div', basePillCss, topBar);
+  var heartsEl = el('span', 'color:#ff7b95;letter-spacing:.03em;font-size:1.02em', leftPill);
+  var scoreEl = el('span', 'display:inline-block;transform-origin:center;color:#fff5d2;font-variant-numeric:tabular-nums', leftPill);
+  var comboBadgeEl = el('span', 'display:none;padding:1px 6px;border-radius:999px;'
+    + 'background:linear-gradient(90deg,rgba(255,190,60,.32),rgba(255,120,80,.32));'
+    + 'border:1px solid rgba(255,215,100,.6);color:#ffe484;font-size:.86em;font-weight:900', leftPill);
+
+  // Center Pill: Current Stage badge + Bubble Shield charge bar
+  var centerPill = el('div', basePillCss + ';flex-direction:column;justify-content:center;gap:1px;padding:2px 10px;min-width:0;flex-shrink:1', topBar);
+  var stageBadgeEl = el('div', 'font-size:clamp(10px,2.4vw,11.5px);color:#8df6e1;font-weight:900;line-height:1.1;letter-spacing:.01em', centerPill);
+  var shieldRowEl = el('div', 'display:flex;align-items:center;gap:5px;font-size:clamp(9.5px,2.2vw,10.5px);color:#d8fff9;line-height:1.1', centerPill);
+  var shieldTextEl = el('span', 'font-weight:800;font-variant-numeric:tabular-nums', shieldRowEl);
+  var shieldBarBg = el('div', 'width:34px;height:4px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden', shieldRowEl);
+  var shieldBarFill = el('div', 'width:0%;height:100%;border-radius:99px;background:linear-gradient(90deg,#64f5d2,#9af6ff);transition:width .18s', shieldBarBg);
+
+  // Right Pill: Timer + compact Mute and Pause buttons
+  var rightPill = el('div', basePillCss + ';padding-right:5px;gap:4px', topBar);
+  var timerEl = el('span', 'font-variant-numeric:tabular-nums;letter-spacing:.02em;margin-right:2px', rightPill);
+  var iconBtnCss = 'width:24px;height:24px;border-radius:50%;border:1px solid rgba(195,248,255,.3);'
+    + 'background:rgba(14,52,76,.75);color:#f2ffff;font-size:11px;display:inline-flex;align-items:center;'
+    + 'justify-content:center;padding:0;cursor:pointer;pointer-events:auto;touch-action:manipulation;' + FONT;
+  var muteBtn = el('button', iconBtnCss, rightPill);
+  muteBtn.className = 'dsb-btn';
+  muteBtn.setAttribute('aria-label', '静音切换');
+  muteBtn.textContent = '🔊';
+  var pauseBtn = el('button', iconBtnCss, rightPill);
+  pauseBtn.className = 'dsb-btn';
+  pauseBtn.setAttribute('aria-label', '暂停');
+  pauseBtn.textContent = '⏸';
+
+  // Top-Center Animated Stage Announcement Banner
+  var stageBanner = el('div', 'position:absolute;left:50%;top:56px;transform:translate(-50%,-12px) scale(.95);'
+    + 'padding:7px 16px;border-radius:16px;background:linear-gradient(135deg,rgba(8,36,56,.9),rgba(18,68,92,.85));'
+    + 'border:1px solid rgba(140,250,230,.55);box-shadow:0 12px 32px rgba(0,18,32,.4);'
+    + 'text-align:center;opacity:0;transition:opacity .28s,transform .28s;pointer-events:none;z-index:5;'
+    + 'backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)', hud);
+  var stageBannerTitle = el('div', 'font-size:13px;font-weight:900;color:#8efAE3;letter-spacing:.05em', stageBanner);
+  var stageBannerSub = el('div', 'font-size:11px;font-weight:700;color:#fff7d6;margin-top:2px', stageBanner);
+  var bannerTimer = 0;
+
+  function showStageBanner(title, sub) {
+    stageBannerTitle.textContent = title;
+    stageBannerSub.textContent = sub;
+    bannerTimer = 3.0;
+  }
+
+  // Toast notification
+  var toastEl = el('div', 'position:absolute;left:50%;top:112px;transform:translate(-50%,-8px) scale(.96);padding:6px 14px;'
+    + 'border-radius:999px;background:rgba(5,33,50,.78);border:1px solid rgba(190,255,247,.38);color:#f2fffe;'
+    + 'font-size:12.5px;font-weight:800;letter-spacing:.03em;opacity:0;transition:opacity .22s,transform .22s;'
+    + 'text-shadow:0 2px 8px rgba(0,25,35,.3);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:4', hud);
+
+  // Bottom Action Bar (hidden on title screen)
+  var bottomBar = el('div', 'position:absolute;left:10px;right:10px;bottom:14px;display:none;align-items:flex-end;'
+    + 'justify-content:space-between;gap:8px;pointer-events:none;z-index:5', hud);
+
+  var hintEl = el('div', 'padding:7px 12px;border-radius:999px;background:rgba(5,26,42,.68);'
+    + 'border:1px solid rgba(194,246,255,.24);font-size:clamp(10.5px,2.5vw,12.5px);font-weight:700;'
+    + 'letter-spacing:.02em;color:rgba(238,255,255,.92);text-shadow:none;backdrop-filter:blur(6px);'
+    + '-webkit-backdrop-filter:blur(6px);white-space:nowrap', bottomBar);
+  hintEl.textContent = '拖动移动 · 空格滑铲 · E 冰震波';
+
+  var skillGroup = el('div', 'display:flex;align-items:center;gap:10px;pointer-events:auto', bottomBar);
+  var skillBtnCss = 'width:58px;height:58px;box-sizing:border-box;border-radius:50%;color:#edfffe;font-weight:900;'
+    + 'display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;padding:0;'
+    + 'box-shadow:0 8px 24px rgba(0,18,30,.4),inset 0 1px 0 rgba(255,255,255,.38);pointer-events:auto;'
+    + 'touch-action:none;cursor:pointer;position:relative;overflow:hidden;text-shadow:0 1px 4px rgba(0,22,32,.65);' + FONT;
+
+  // Skill 1: Frost Shockwave (冰震波 E)
+  var shockBtn = el('button', skillBtnCss
+    + ';border:1.5px solid rgba(155,240,255,.68);'
+    + 'background:radial-gradient(circle at 34% 26%,rgba(145,235,255,.62),rgba(28,88,138,.84) 58%,rgba(8,32,58,.95))', skillGroup);
+  shockBtn.className = 'dsb-btn';
+  shockBtn.setAttribute('aria-label', '冰震波');
+  shockBtn.setAttribute('tabindex', '-1');
+  var shockLabel = el('span', 'font-size:12px;line-height:1.05;letter-spacing:.02em', shockBtn);
+  shockLabel.textContent = '冰震波';
+  var shockKeyLabel = el('span', 'font-size:9.5px;font-weight:800;color:rgba(215,250,255,.78);line-height:1', shockBtn);
+  shockKeyLabel.textContent = 'E';
+
+  // Skill 2: Belly Slide Dash (滑铲 SPACE)
+  var dashBtn = el('button', skillBtnCss
+    + ';border:1.5px solid rgba(208,255,249,.68);'
+    + 'background:radial-gradient(circle at 34% 26%,rgba(169,255,237,.6),rgba(15,82,103,.82) 58%,rgba(5,34,51,.95))', skillGroup);
+  dashBtn.className = 'dsb-btn';
   dashBtn.setAttribute('aria-label', '滑铲加速');
   dashBtn.setAttribute('tabindex', '-1');
-  var dashLabel = el('span', 'font-size:1.08em;line-height:1.05', dashBtn);
-  el('span', 'font-size:.62em;font-weight:700;color:rgba(232,255,255,.64);line-height:1', dashBtn).textContent = 'SPACE';
+  var dashLabel = el('span', 'font-size:12px;line-height:1.05;letter-spacing:.02em', dashBtn);
+  dashLabel.textContent = '滑铲';
+  var dashKeyLabel = el('span', 'font-size:9px;font-weight:800;color:rgba(232,255,255,.75);line-height:1', dashBtn);
+  dashKeyLabel.textContent = 'SPACE';
 
-  function showCard(kicker, title, body, hint) {
+  // Title & Settlement Card
+  var card = el('div', 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;'
+    + 'width:min(90vw,430px);box-sizing:border-box;max-height:88vh;overflow:auto;padding:22px 18px 20px;'
+    + 'border-radius:26px;background:linear-gradient(155deg,rgba(7,28,45,.9),rgba(11,48,66,.78));'
+    + 'border:1px solid rgba(205,250,255,.34);box-shadow:0 28px 80px rgba(0,14,28,.52),inset 0 1px 0 rgba(255,255,255,.22);'
+    + 'backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);animation:dsbCardIn .35s cubic-bezier(.2,.9,.25,1) both;'
+    + 'pointer-events:auto;z-index:6', hud);
+
+  function renderTitleCard() {
     card.style.display = 'block';
-    card.style.animation = 'none';
-    void card.offsetWidth;
-    card.style.animation = 'dsbCardIn .35s cubic-bezier(.2,.9,.25,1) both';
-    cardKicker.textContent = kicker;
-    cardTitle.textContent = title;
-    cardBody.textContent = body;
-    cardHint.textContent = hint;
-  }
-  function refreshChrome() {
-    var playing = phase === 'playing' && !paused;
-    hintEl.style.display = playing ? 'block' : 'none';
-    dashBtn.style.display = playing ? 'flex' : 'none';
-    if (!playing) {
-      shieldEl.style.display = shield > 0 && phase === 'playing' ? 'block' : 'none';
+    card.innerHTML = '';
+    el('div', 'font-size:11px;font-weight:800;letter-spacing:.22em;color:#83f5d4;text-transform:uppercase;margin-bottom:6px', card)
+      .textContent = '极地寻鱼大冒险 · ' + Math.round(R.duration) + ' 秒闯关';
+    el('div', 'font-size:clamp(24px,6vw,34px);font-weight:900;letter-spacing:.02em;color:#f8ffff;line-height:1.15;'
+      + 'text-shadow:0 2px 18px rgba(131,245,212,.22)', card).textContent = TITLE;
+    el('div', 'margin-top:6px;font-size:13px;line-height:1.5;color:rgba(232,252,255,.88)', card)
+      .textContent = '穿梭三阶极地冰山，收集珍稀鱼群、释放冰震波震退海豹！';
+
+    // 3 Stage Preview Pills
+    var stageRow = el('div', 'display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:14px', card);
+    var stagePills = ['01 浮冰浅滩', '02 极光雪域', '03 冰川王座'];
+    for (var i = 0; i < stagePills.length; i++) {
+      var sp = el('span', 'padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800;'
+        + 'background:rgba(131,245,212,.13);border:1px solid rgba(145,250,228,.36);color:#c8fff4', stageRow);
+      sp.textContent = stagePills[i];
     }
+
+    // Feature Tags
+    var featRow = el('div', 'display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:8px', card);
+    var feats = [
+      { text: '🐟 黄金鲑鱼 +3', bg: 'rgba(255,196,77,.16)', border: 'rgba(255,212,102,.42)', col: '#ffe28a' },
+      { text: '🌟 极光海星加速', bg: 'rgba(138,235,255,.15)', border: 'rgba(150,240,255,.4)', col: '#b8f7ff' },
+      { text: '🫧 泡泡护盾 & 冰震波', bg: 'rgba(184,148,255,.16)', border: 'rgba(202,175,255,.4)', col: '#e3d1ff' }
+    ];
+    for (var f = 0; f < feats.length; f++) {
+      var tag = el('span', 'padding:3.5px 8px;border-radius:8px;font-size:10.5px;font-weight:800;'
+        + 'background:' + feats[f].bg + ';border:1px solid ' + feats[f].border + ';color:' + feats[f].col, featRow);
+      tag.textContent = feats[f].text;
+    }
+
+    if (best > 0) {
+      el('div', 'margin-top:10px;font-size:12px;font-weight:800;color:#ffe699', card)
+        .textContent = '🏆 历史最佳纪录：' + best + ' 分';
+    }
+
+    var cta = el('button', 'margin-top:15px;width:100%;max-width:250px;padding:12px 22px;border-radius:999px;'
+      + 'border:1px solid rgba(255,255,255,.45);background:linear-gradient(135deg,#2ce0b8 0%,#159ec2 55%,#2b7de9 100%);'
+      + 'color:#ffffff;font-size:15.5px;font-weight:900;letter-spacing:.05em;cursor:pointer;'
+      + 'box-shadow:0 10px 26px rgba(21,158,194,.42),inset 0 1px 0 rgba(255,255,255,.45);'
+      + 'animation:dsbPulse 2s ease-in-out infinite;' + FONT, card);
+    cta.className = 'dsb-btn';
+    cta.textContent = '开始寻鱼 →';
+    cta.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (canRestart()) start();
+    });
+  }
+
+  function renderSettlementCard(won) {
+    card.style.display = 'block';
+    card.innerHTML = '';
+    var stars = score >= 20 ? 3 : score >= 9 ? 2 : 1;
+    var kicker = won ? '极地远征完成' : '冰山历险结束';
+    var title = won
+      ? (score >= 20 ? '极地寻鱼大师！' : score >= 9 ? '满载而归！' : '安全返航！')
+      : '被海豹拦住了…';
+
+    el('div', 'font-size:11px;font-weight:800;letter-spacing:.22em;color:#83f5d4;text-transform:uppercase;margin-bottom:4px', card)
+      .textContent = kicker;
+    el('div', 'font-size:clamp(22px,5.6vw,31px);font-weight:900;color:#f8ffff;line-height:1.15', card)
+      .textContent = title;
+
+    // 3-Star Rating
+    var starRow = el('div', 'margin:8px 0 10px;font-size:26px;letter-spacing:6px', card);
+    for (var s = 1; s <= 3; s++) {
+      var stSpan = el('span', s <= stars
+        ? 'color:#ffd452;text-shadow:0 0 14px rgba(255,212,82,.65)'
+        : 'color:rgba(255,255,255,.22);text-shadow:none', starRow);
+      stSpan.textContent = '★';
+    }
+
+    // 2x2 Stats Grid
+    var grid = el('div', 'display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;text-align:left', card);
+    var stInfo = STAGES[Math.min(STAGES.length - 1, Math.max(0, maxStageReached - 1))];
+    var cells = [
+      { label: '抵达阶段', val: '第 ' + maxStageReached + '/3 阶 · ' + stInfo.name, col: '#8df6e1' },
+      { label: newBest ? '总计得分 (新纪录!)' : '总计得分', val: score + ' 分 (最佳 ' + best + ')', col: '#ffe484' },
+      { label: '黄金帝王鲑', val: goldCount + ' 条', col: '#ffbe55' },
+      { label: '最高连击', val: 'x' + Math.max(1, maxCombo), col: '#b8f7ff' }
+    ];
+    for (var c = 0; c < cells.length; c++) {
+      var box = el('div', 'padding:8px 10px;border-radius:12px;background:rgba(4,20,34,.55);'
+        + 'border:1px solid rgba(190,245,255,.18)', grid);
+      el('div', 'font-size:10.5px;color:rgba(215,245,255,.68);font-weight:700', box).textContent = cells[c].label;
+      el('div', 'font-size:13.5px;font-weight:900;margin-top:2px;color:' + cells[c].col, box).textContent = cells[c].val;
+    }
+
+    var cta = el('button', 'margin-top:15px;width:100%;max-width:250px;padding:12px 22px;border-radius:999px;'
+      + 'border:1px solid rgba(255,255,255,.45);background:linear-gradient(135deg,#2ce0b8 0%,#159ec2 55%,#2b7de9 100%);'
+      + 'color:#ffffff;font-size:15.5px;font-weight:900;letter-spacing:.05em;cursor:pointer;'
+      + 'box-shadow:0 10px 26px rgba(21,158,194,.42),inset 0 1px 0 rgba(255,255,255,.45);' + FONT, card);
+    cta.className = 'dsb-btn';
+    cta.textContent = '再来一局 →';
+    cta.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (canRestart()) start();
+    });
+  }
+
+  function renderPauseCard() {
+    card.style.display = 'block';
+    card.innerHTML = '';
+    el('div', 'font-size:11px;font-weight:800;letter-spacing:.22em;color:#83f5d4;text-transform:uppercase;margin-bottom:6px', card)
+      .textContent = '游戏已暂停';
+    el('div', 'font-size:26px;font-weight:900;color:#f8ffff', card).textContent = '喘口气';
+    el('div', 'margin-top:8px;font-size:13.5px;color:rgba(235,252,255,.88)', card)
+      .textContent = '冰山的极光很美，但鱼群还在等你收集！';
+    var cta = el('button', 'margin-top:15px;width:100%;max-width:220px;padding:11px 20px;border-radius:999px;'
+      + 'border:1px solid rgba(255,255,255,.45);background:linear-gradient(135deg,#2ce0b8 0%,#159ec2 100%);'
+      + 'color:#ffffff;font-size:15px;font-weight:900;cursor:pointer;' + FONT, card);
+    cta.className = 'dsb-btn';
+    cta.textContent = '继续寻鱼 →';
+    cta.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      paused = false;
+      showPause();
+    });
+  }
+
+  function refreshChrome() {
+    var inPlay = phase === 'playing';
+    var activePlay = inPlay && !paused;
+    // Hide topBar and bottomBar when phase === 'title' (or non-playing) so 3D icebergs never clip through pills
+    topBar.style.display = inPlay ? 'flex' : 'none';
+    bottomBar.style.display = activePlay ? 'flex' : 'none';
+    popupLayer.style.display = inPlay ? 'block' : 'none';
+    if (!inPlay) {
+      stageBanner.style.opacity = '0';
+    }
+    muteBtn.textContent = muted ? '🔇' : '🔊';
+    pauseBtn.textContent = paused ? '▶' : '⏸';
   }
 
   /* 10. STATE */
   var phase = 'title', paused = false, score = 0, best = 0, newBest = false, hearts = R.hearts, timeLeft = R.duration;
   var elapsed = 0, spawnTimer = 0, invulnerable = 0, shield = 0, sinceShield = 0, endedAt = 0, fps = 60;
   var dashTime = 0, dashCooldown = 0, dashDir = { x: 0, z: 1 };
+  var shockwaveCooldown = 0;
+  var stage = 1, maxStageReached = 1, alphaSpawned = false;
+  var combo = 0, comboTimer = 0, maxCombo = 0, goldCount = 0, starBoost = 0;
   var shake = 0, toastTimer = 0, scorePulse = 0;
   try { best = Number(window.localStorage.getItem('dsh-game-studio:penguin-berg:best')) || 0; } catch (e) { best = 0; }
 
@@ -5023,82 +5361,131 @@ void main() {
     }
     return null;
   }
-  function addPickup() {
+
+  function addPickup(forcedKind) {
     var p = randomLand(4.2, false);
     if (!p) return false;
-    var node = makeCharacter('pickup', R.pickupSize, MODELS.pickup);
+    var kind = forcedKind || 'fish';
+    if (!forcedKind && phase === 'playing') {
+      var roll = Math.random();
+      if (stage >= 3 && roll < 0.18) kind = 'star';
+      else if (stage >= 2 && roll < (stage === 3 ? 0.5 : 0.34)) kind = 'gold';
+    }
+    var boxes = kind === 'gold' ? GOLD_FISH_BOXES : kind === 'star' ? STARFISH_BOXES : MODELS.pickup;
+    var scaleSize = kind === 'gold' ? R.pickupSize * 1.16 : kind === 'star' ? R.pickupSize * 1.12 : R.pickupSize;
+    var node = makeCharacter('pickup', scaleSize, boxes);
+    var glowColor = kind === 'gold' ? '#ffc83b' : kind === 'star' ? '#7ef9ff' : '#ffdf9f';
     var glow = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: GLOW, color: '#ffdf9f', transparent: true, opacity: 0.55,
+      map: GLOW, color: glowColor, transparent: true, opacity: kind === 'fish' ? 0.55 : 0.78,
       depthWrite: false, blending: THREE.AdditiveBlending
     }));
-    glow.scale.set(R.pickupSize * 1.95, R.pickupSize * 1.95, 1);
-    glow.position.y = R.pickupSize * 0.52;
+    glow.scale.set(scaleSize * 2.05, scaleSize * 2.05, 1);
+    glow.position.y = scaleSize * 0.52;
     node.add(glow);
-    pickups.push({ x: p.x, z: p.z, phase: Math.random() * 6, node: node, glow: glow });
-    return true;
-  }
-  function addEnemy() {
-    var p = randomLand(9.5, true) || randomLand(7, false);
-    if (!p) return false;
-    var node = makeCharacter('enemy', R.enemySize, MODELS.enemy);
-    enemies.push({
-      x: p.x, z: p.z, y: groundAt(p.x, p.z), wobble: Math.random() * 6,
-      pace: 0.9 + Math.random() * 0.16, node: node
+
+    if (kind === 'gold' || kind === 'star') {
+      var ring = new THREE.Mesh(
+        new THREE.RingGeometry(scaleSize * 0.42, scaleSize * 0.58, 24),
+        new THREE.MeshBasicMaterial({
+          color: kind === 'gold' ? '#ffd24c' : '#8efbff',
+          transparent: true, opacity: 0.55, side: THREE.DoubleSide,
+          depthWrite: false, blending: THREE.AdditiveBlending
+        })
+      );
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.y = 0.05;
+      node.add(ring);
+    }
+
+    pickups.push({
+      x: p.x, z: p.z, kind: kind,
+      value: kind === 'gold' ? 3 : kind === 'star' ? 2 : 1,
+      shieldCharge: kind === 'gold' ? 2 : 1,
+      phase: Math.random() * 6, node: node, glow: glow
     });
     return true;
   }
+
+  function addEnemy(isAlpha) {
+    var p = randomLand(9.5, true) || randomLand(7, false);
+    if (!p) return false;
+    var enemyBoxes = isAlpha ? ALPHA_ENEMY_BOXES : MODELS.enemy;
+    var size = isAlpha ? R.enemySize * 1.22 : R.enemySize;
+    var node = makeCharacter('enemy', size, enemyBoxes);
+    enemies.push({
+      x: p.x, z: p.z, y: groundAt(p.x, p.z), wobble: Math.random() * 6,
+      pace: isAlpha ? 1.12 : (0.9 + Math.random() * 0.16),
+      isAlpha: !!isAlpha, slowTimer: 0, node: node
+    });
+    return true;
+  }
+
   function clearEntities() {
     enemies.concat(pickups).forEach(function (entity) { disposeNode(entity.node); });
     enemies = [];
     pickups = [];
+    clearPopups();
   }
 
-  function resultText() {
-    var lines = score === 0 ? '这一局没抓到小鱼，下次再靠近鱼群试试。' : '你收集了 ' + score + ' 条小鱼。';
-    if (best > 0) lines += '\n最佳纪录：' + best + ' 条';
-    if (newBest) lines += '\n新的最佳纪录！';
-    return lines;
+  function setStage(nextStage) {
+    if (stage === nextStage) return;
+    stage = nextStage;
+    if (stage > maxStageReached) maxStageReached = stage;
+    var st = STAGES[stage - 1] || STAGES[0];
+    applySkyGradient(st);
+    showStageBanner(st.badge, st.sub);
+    blip(587, 0.16, 'triangle', 0.06, 880);
+    if (stage === 2) {
+      addPickup('gold');
+    } else if (stage === 3) {
+      addPickup('star');
+      if (!alphaSpawned) {
+        alphaSpawned = true;
+        addEnemy(true);
+      }
+    }
   }
+
   function setPhase(next) {
     phase = next;
     endedAt = performance.now();
     if (next === 'title') {
-      var shieldLine = R.shield.enabled
-        ? '每收集 ' + R.shield.every + ' 条小鱼，会获得 ' + R.shield.seconds + ' 秒泡泡护盾。'
-        : '小心追来的海豹，别把爱心撞光！';
-      var body = '在冰山上收集小鱼，躲开追来的海豹！\n'
-        + shieldLine + '\n\n'
-        + (R.dash.enabled ? 'WASD / 方向键移动 · 空格滑铲 · 也可拖动屏幕' : 'WASD / 方向键移动 · 也可拖动屏幕');
-      if (best > 0) body += '\n最佳纪录：' + best + ' 条小鱼';
-      showCard('极地 · ' + Math.round(R.duration) + ' 秒', TITLE, body, '按任意键 / 点按屏幕开始');
+      applySkyGradient(STAGES[0]);
+      renderTitleCard();
     } else if (next === 'playing') {
       card.style.display = 'none';
     } else if (next === 'won') {
-      var wonTitle = score >= 18 ? '满载而归！' : score >= 7 ? '收获满满！' : '安全返航！';
-      showCard('时间到', wonTitle, resultText(), '按任意键 / 点按屏幕再来一局');
+      renderSettlementCard(true);
     } else if (next === 'lost') {
-      showCard('游戏结束', '被海豹抓住了…', resultText(), '按任意键 / 点按屏幕再试一次');
+      renderSettlementCard(false);
     }
     refreshChrome();
     if (next !== 'playing') hideToast();
     post({ type: 'state', phase: phase, score: score });
   }
+
   function start() {
     clearEntities();
     score = 0; hearts = R.hearts; timeLeft = R.duration; elapsed = 0; spawnTimer = 0;
     invulnerable = 0; shield = 0; sinceShield = 0; paused = false; newBest = false;
     dashTime = 0; dashCooldown = 0; dashDir.x = 0; dashDir.z = 1;
-    shake = 0; scorePulse = 0; toastTimer = 0;
+    shockwaveCooldown = 0; shockRingLife = 0; shockRingGroup.visible = false;
+    stage = 1; maxStageReached = 1; alphaSpawned = false;
+    combo = 0; comboTimer = 0; maxCombo = 0; goldCount = 0; starBoost = 0;
+    shake = 0; scorePulse = 0; toastTimer = 0; bannerTimer = 0;
+    applySkyGradient(STAGES[0]);
     hero.x = 0; hero.z = 0; hero.y = groundAt(0, 0); hero.vx = hero.vz = 0; hero.facing = 0;
     keys = {};
     drag = null;
+    autoSteer.until = 0;
     focus.x = 0; focus.z = 0; focus.y = hero.y;
-    for (var i = 0; i < R.maxPickups; i++) addPickup();
-    addEnemy(); addEnemy();
+    for (var i = 0; i < R.maxPickups; i++) addPickup('fish');
+    addEnemy(false); addEnemy(false);
     blip(520, 0.12, 'triangle', 0.06, 780);
     setPhase('playing');
-    showToast('收集小鱼，小心海豹！');
+    showStageBanner(STAGES[0].badge, STAGES[0].sub);
   }
+
   function finish(won) {
     if (score > best) {
       best = score;
@@ -5112,10 +5499,10 @@ void main() {
     }
     setPhase(won ? 'won' : 'lost');
   }
-  function canRestart() { return performance.now() - endedAt > 600; }
+  function canRestart() { return performance.now() - endedAt > 500; }
   function showToast(text) {
     toastEl.textContent = text;
-    toastTimer = 1.5;
+    toastTimer = 1.45;
   }
   function hideToast() {
     toastTimer = 0;
@@ -5123,13 +5510,14 @@ void main() {
     toastEl.style.transform = 'translate(-50%,-8px) scale(.96)';
   }
 
-  /* 11. INPUT — screen aligned, with keyboard, drag and a touch dash button. */
+  /* 11. INPUT — keyboard, pointer drag, touch skill buttons, and __autoplay. */
   var keys = {};
   var KEYMAP = {
     ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down',
     ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right'
   };
   var drag = null;
+  var autoSteer = { x: 0, z: 0, until: 0 };
 
   function inputDirection() {
     var x = (keys.right ? 1 : 0) - (keys.left ? 1 : 0), z = (keys.down ? 1 : 0) - (keys.up ? 1 : 0);
@@ -5137,11 +5525,16 @@ void main() {
       var length = Math.hypot(drag.dx, drag.dy);
       if (length > 10) { x = drag.dx / length; z = drag.dy / length; }
     }
+    if (!x && !z && performance.now() < autoSteer.until) {
+      x = autoSteer.x;
+      z = autoSteer.z;
+    }
     var magnitude = Math.hypot(x, z);
     return magnitude > 0 ? { x: x / magnitude, z: z / magnitude } : { x: 0, z: 0 };
   }
+
   function tryDash() {
-    if (phase !== 'playing' || paused || !R.dash.enabled || dashTime > 0 || dashCooldown > 0) return;
+    if (phase !== 'playing' || paused || !R.dash.enabled || dashTime > 0 || dashCooldown > 0) return false;
     var dir = inputDirection();
     if (!dir.x && !dir.z) {
       dir.x = Math.sin(hero.facing);
@@ -5154,12 +5547,43 @@ void main() {
     dashCooldown = R.dash.cooldown;
     actionBurst(hero.x, hero.y, hero.z, '#c6fff4');
     blip(330, 0.13, 'sawtooth', 0.028, 760);
+    return true;
+  }
+
+  function tryShockwave() {
+    if (phase !== 'playing' || paused || !R.shockwave.enabled || shockwaveCooldown > 0) return false;
+    shockwaveCooldown = R.shockwave.cooldown;
+    shockRingGroup.position.set(hero.x, hero.y + 0.08, hero.z);
+    shockRingLife = shockRingMax;
+    shockRingGroup.visible = true;
+    burst(hero.x, hero.y + 0.5, hero.z, 24);
+    spawnPopup(hero.x, hero.y + R.heroSize * 0.9, hero.z, '❄️ 冰震波!', '#9be7ff', true);
+    blip(720, 0.25, 'sine', 0.065, 210);
+    blip(980, 0.16, 'triangle', 0.045, 440);
+
+    var hitCount = 0;
+    for (var i = 0; i < enemies.length; i++) {
+      var e = enemies[i];
+      var dx = e.x - hero.x, dz = e.z - hero.z;
+      var dist = Math.hypot(dx, dz) || 0.001;
+      if (dist <= R.shockwave.radius) {
+        var push = (1 - dist / R.shockwave.radius) * 2.8 + 1.1;
+        moveOnIsland(e, (dx / dist) * push, (dz / dist) * push, 0.32);
+        e.slowTimer = R.shockwave.slowSeconds;
+        hitCount++;
+      }
+    }
+    if (hitCount > 0) {
+      showToast('❄️ 冰震波震退并减速 ' + hitCount + ' 只海豹！');
+    }
+    return true;
   }
 
   window.addEventListener('keydown', function (event) {
     if (event.repeat) return;
     if (event.code === 'KeyM') {
       muted = !muted;
+      refreshChrome();
       if (phase === 'playing') showToast(muted ? '已静音' : '音效开启');
       return;
     }
@@ -5169,9 +5593,14 @@ void main() {
       event.preventDefault();
       return;
     }
+    if (event.code === 'KeyE') {
+      event.preventDefault();
+      if (phase === 'playing' && !paused) tryShockwave();
+      else if (phase !== 'playing' && canRestart()) start();
+      return;
+    }
     if (event.code === 'Space') {
       event.preventDefault();
-      if (event.repeat) return;
       if (phase === 'playing' && !paused) tryDash();
       else if (phase !== 'playing' && canRestart()) start();
       return;
@@ -5205,11 +5634,41 @@ void main() {
   function endDrag(event) { if (drag && event.pointerId === drag.id) drag = null; }
   canvas.addEventListener('pointerup', endDrag);
   canvas.addEventListener('pointercancel', endDrag);
+
   dashBtn.addEventListener('pointerdown', function (event) {
     event.preventDefault();
     event.stopPropagation();
     tryDash();
   });
+  shockBtn.addEventListener('pointerdown', function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    tryShockwave();
+  });
+  muteBtn.addEventListener('pointerdown', function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    muted = !muted;
+    refreshChrome();
+    if (phase === 'playing') showToast(muted ? '已静音' : '音效开启');
+  });
+  pauseBtn.addEventListener('pointerdown', function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (phase !== 'playing') return;
+    paused = !paused;
+    showPause();
+  });
+  card.addEventListener('pointerdown', function (event) {
+    event.stopPropagation();
+    if (paused) {
+      paused = false;
+      showPause();
+    } else if (phase !== 'playing' && canRestart()) {
+      start();
+    }
+  });
+
   document.addEventListener('visibilitychange', function () {
     if (document.hidden && phase === 'playing' && !paused) {
       paused = true;
@@ -5219,7 +5678,7 @@ void main() {
 
   function showPause() {
     if (paused) {
-      showCard('已暂停', '喘口气', '冰山的风景不错，但小鱼还在等你。', '按 P / 点按屏幕继续');
+      renderPauseCard();
     } else {
       card.style.display = 'none';
     }
@@ -5242,15 +5701,29 @@ void main() {
       shield = Math.max(0, shield - dt);
       dashTime = Math.max(0, dashTime - dt);
       dashCooldown = Math.max(0, dashCooldown - dt);
+      shockwaveCooldown = Math.max(0, shockwaveCooldown - dt);
+      starBoost = Math.max(0, starBoost - dt);
+      if (comboTimer > 0) {
+        comboTimer = Math.max(0, comboTimer - dt);
+        if (comboTimer <= 0) combo = 0;
+      }
+
+      // Dynamic Stage Escalation
+      if (stage === 1 && (score >= 8 || elapsed >= 20)) {
+        setStage(2);
+      } else if (stage === 2 && (score >= 18 || elapsed >= 40)) {
+        setStage(3);
+      }
 
       var dir = inputDirection();
+      var speedMul = starBoost > 0 ? 1.35 : 1.0;
       var desiredX, desiredZ;
       if (dashTime > 0) {
         desiredX = dashDir.x * R.heroSpeed * R.dash.boost;
         desiredZ = dashDir.z * R.heroSpeed * R.dash.boost;
       } else {
-        desiredX = dir.x * R.heroSpeed;
-        desiredZ = dir.z * R.heroSpeed;
+        desiredX = dir.x * R.heroSpeed * speedMul;
+        desiredZ = dir.z * R.heroSpeed * speedMul;
       }
       var responsiveness = dashTime > 0 ? 25 : 14;
       hero.vx = lerp(hero.vx, desiredX, Math.min(1, dt * responsiveness));
@@ -5261,12 +5734,14 @@ void main() {
       spawnTimer += dt;
       if (spawnTimer >= R.enemySpawnEvery && enemies.length < R.maxEnemies) {
         spawnTimer = 0;
-        addEnemy();
+        addEnemy(false);
       }
 
       var speed = R.enemySpeed + R.enemySpeedGrowth * elapsed;
       for (var i = 0; i < enemies.length; i++) {
         var e = enemies[i];
+        e.slowTimer = Math.max(0, (e.slowTimer || 0) - dt);
+        var slowFactor = e.slowTimer > 0 ? 0.35 : 1.0;
         var orbit = 0.45 + (i % 4) * 0.2;
         var targetX = hero.x + Math.sin(elapsed * 0.7 + e.wobble) * orbit;
         var targetZ = hero.z + Math.cos(elapsed * 0.6 + e.wobble) * orbit;
@@ -5286,7 +5761,7 @@ void main() {
         if (shield > 0 && dist < 3.2) {
           ax = -tx / dist; az = -tz / dist; al = 1;
         }
-        moveOnIsland(e, ax / al * speed * e.pace * dt, az / al * speed * e.pace * dt, 0.32);
+        moveOnIsland(e, ax / al * speed * e.pace * slowFactor * dt, az / al * speed * e.pace * slowFactor * dt, 0.32);
 
         var hitX = hero.x - e.x, hitZ = hero.z - e.z;
         var hitDist = Math.hypot(hitX, hitZ) || 1;
@@ -5297,9 +5772,11 @@ void main() {
             hearts -= 1;
             invulnerable = 1.65;
             shake = 1;
+            combo = 0;
+            comboTimer = 0;
             moveOnIsland(hero, -hitX / hitDist * 1.35, -hitZ / hitDist * 1.35, 0.31);
             actionBurst(hero.x, hero.y, hero.z, '#ff9a8a');
-            showToast('哎呀！被海豹撞到了');
+            showToast(e.isAlpha ? '⚠️ 被海豹首领撞到了！' : '哎呀！被海豹撞到了');
             blip(175, 0.24, 'square', 0.05, 92);
             try { if (navigator.vibrate) navigator.vibrate(70); } catch (err) { /* optional */ }
             if (hearts <= 0) { finish(false); return; }
@@ -5307,37 +5784,73 @@ void main() {
         }
       }
 
-      // Seals are long animals; keep a little daylight between them so the
-      // pack reads as individual hunters instead of one grey blob.
+      // Keep separation between seals
       for (var ea = 0; ea < enemies.length; ea++) {
         for (var eb = ea + 1; eb < enemies.length; eb++) {
           var aEnemy = enemies[ea], bEnemy = enemies[eb];
           var ex = aEnemy.x - bEnemy.x, ez = aEnemy.z - bEnemy.z;
           var ed = Math.hypot(ex, ez);
           if (ed > 0.001 && ed < 2.45) {
-            var push = (2.45 - ed) * 0.5;
-            moveOnIsland(aEnemy, ex / ed * push, ez / ed * push, 0.32);
-            moveOnIsland(bEnemy, -ex / ed * push, -ez / ed * push, 0.32);
+            var pushSep = (2.45 - ed) * 0.5;
+            moveOnIsland(aEnemy, ex / ed * pushSep, ez / ed * pushSep, 0.32);
+            moveOnIsland(bEnemy, -ex / ed * pushSep, -ez / ed * pushSep, 0.32);
           }
         }
       }
 
+      // Fish Magnet pull when Aurora Starfish boost is active
+      var magnetRadius = starBoost > 0 ? 6.8 : 0;
       for (var k = pickups.length - 1; k >= 0; k--) {
         var p = pickups[k];
-        if (Math.hypot(p.x - hero.x, p.z - hero.z) < (R.heroSize + R.pickupSize) * 0.42) {
+        var pdx = hero.x - p.x, pdz = hero.z - p.z;
+        var pDist = Math.hypot(pdx, pdz) || 0.001;
+        if (magnetRadius > 0 && pDist < magnetRadius) {
+          var pullStep = Math.min(pDist, (8.5 + (1 - pDist / magnetRadius) * 6) * dt);
+          p.x += (pdx / pDist) * pullStep;
+          p.z += (pdz / pDist) * pullStep;
+          pDist = Math.hypot(hero.x - p.x, hero.z - p.z);
+        }
+
+        if (pDist < (R.heroSize + R.pickupSize) * 0.44) {
+          var px = p.x, pz = p.z, py = groundAt(px, pz) + R.pickupSize * 0.6;
+          var pKind = p.kind;
+          var pVal = p.value || 1;
+          var pCharge = p.shieldCharge || 1;
           disposeNode(p.node);
           pickups.splice(k, 1);
-          score += 1;
+
+          combo = comboTimer > 0 ? combo + 1 : 1;
+          comboTimer = 4.5;
+          if (combo > maxCombo) maxCombo = combo;
+
+          score += pVal;
           scorePulse = 1;
-          sinceShield += 1;
-          burst(p.x, groundAt(p.x, p.z) + R.pickupSize * 0.55, p.z, 16);
+          sinceShield += pCharge;
+          if (pKind === 'gold') goldCount += 1;
+          if (pKind === 'star') {
+            starBoost = 4.0;
+            actionBurst(hero.x, hero.y, hero.z, '#7ef9ff');
+            showToast('🌟 极光海星：4秒极速 + 鱼群磁铁！');
+          }
+
+          var popText = pKind === 'gold'
+            ? '+3 黄金鲑!' + (combo >= 2 ? ' x' + combo : '')
+            : pKind === 'star'
+              ? '⚡ 极光加速! +2'
+              : '+' + pVal + (combo >= 2 ? ' · 连击x' + combo : '');
+          var popCol = pKind === 'gold' ? '#ffd24c' : pKind === 'star' ? '#7ef9ff' : '#fff59d';
+          spawnPopup(px, py, pz, popText, popCol, pKind !== 'fish' || combo >= 3);
+
+          burst(px, py, pz, pKind === 'gold' ? 24 : 16);
           var notes = [660, 740, 830, 880, 990, 1046, 1174];
-          blip(notes[score % notes.length], 0.1, 'triangle', 0.06, notes[(score + 1) % notes.length] * 1.06);
+          blip(notes[score % notes.length], 0.11, 'triangle', 0.06, notes[(score + 1) % notes.length] * 1.08);
+
           if (R.shield.enabled && R.shield.every > 0 && sinceShield >= R.shield.every) {
             sinceShield = 0;
             shield = R.shield.seconds;
             actionBurst(hero.x, hero.y, hero.z, '#a7fff0');
-            showToast('泡泡护盾启动！');
+            spawnPopup(hero.x, hero.y + R.heroSize, hero.z, '🫧 泡泡护盾!', '#a0fff2', true);
+            showToast('🫧 泡泡护盾启动！');
             blip(440, 0.34, 'sine', 0.06, 1100);
           }
           post({ type: 'state', phase: phase, score: score });
@@ -5352,6 +5865,10 @@ void main() {
 
     // Animate the world, also behind title and pause cards.
     var t = now / 1000;
+    var activeSt = STAGES[Math.min(STAGES.length - 1, Math.max(0, stage - 1))];
+    scene.fog.color.lerp(color(activeSt.fog), Math.min(1, dt * 2.2));
+    rim.color.lerp(color(activeSt.rim), Math.min(1, dt * 2.2));
+
     hero.y = lerp(hero.y, groundAt(hero.x, hero.z), Math.min(1, dt * 14));
     var moving = Math.hypot(hero.vx, hero.vz) > 0.5 && phase === 'playing' && !paused;
     var bob = moving ? Math.abs(Math.sin(t * 13)) * 0.11 : Math.sin(t * 2.1) * 0.025;
@@ -5371,10 +5888,18 @@ void main() {
     bubble.material.opacity = 0.21 + Math.sin(t * 8) * 0.045;
     bubble.rotation.y += dt * 0.9;
 
+    starAura.visible = starBoost > 0;
+    if (starBoost > 0) {
+      starAura.rotation.z = t * 3.5;
+      starAura.scale.setScalar(1 + Math.sin(t * 9) * 0.12);
+      starAura.material.opacity = 0.58;
+    }
+
     for (var m = 0; m < enemies.length; m++) {
       var en = enemies[m], body = en.node.userData.body;
       en.y = lerp(en.y, groundAt(en.x, en.z), Math.min(1, dt * 10));
-      en.node.position.set(en.x, en.y + Math.abs(Math.sin(t * 5.5 + en.wobble)) * 0.075, en.z);
+      var wobbleSpeed = en.slowTimer > 0 ? 2.5 : 5.5;
+      en.node.position.set(en.x, en.y + Math.abs(Math.sin(t * wobbleSpeed + en.wobble)) * 0.075, en.z);
       if (!body.userData.sprite) {
         body.rotation.y = lerpAngle(body.rotation.y, Math.atan2(hero.x - en.x, hero.z - en.z) + Math.sin(t * 4.2 + en.wobble) * 0.13, Math.min(1, dt * 8));
         body.rotation.z = Math.sin(t * 8.5 + en.wobble) * 0.055;
@@ -5382,14 +5907,16 @@ void main() {
     }
     for (var n = 0; n < pickups.length; n++) {
       var pk = pickups[n], pb = pk.node.userData.body;
+      var spinSpeed = pk.kind === 'star' ? 2.4 : pk.kind === 'gold' ? 1.5 : 1.0;
       pk.node.position.set(pk.x, groundAt(pk.x, pk.z) + 0.26 + Math.sin(t * 2.7 + pk.phase) * 0.12, pk.z);
       if (!pb.userData.sprite) {
-        pb.rotation.y = t * 1.0 + pk.phase;
+        pb.rotation.y = t * spinSpeed + pk.phase;
         pb.rotation.z = Math.sin(t * 2.2 + pk.phase) * 0.09;
       }
-      var pulse = 1 + Math.sin(t * 4 + pk.phase) * 0.12;
-      pk.glow.scale.set(R.pickupSize * 1.95 * pulse, R.pickupSize * 1.95 * pulse, 1);
-      pk.glow.material.opacity = 0.44 + Math.sin(t * 3.2 + pk.phase) * 0.12;
+      var pulse = 1 + Math.sin(t * 4 + pk.phase) * 0.14;
+      var baseGlow = pk.kind === 'fish' ? R.pickupSize * 1.95 : R.pickupSize * 2.35;
+      pk.glow.scale.set(baseGlow * pulse, baseGlow * pulse, 1);
+      pk.glow.material.opacity = (pk.kind === 'fish' ? 0.44 : 0.64) + Math.sin(t * 3.2 + pk.phase) * 0.12;
     }
 
     for (var sq = 0; sq < SPARKS; sq++) {
@@ -5415,9 +5942,20 @@ void main() {
       actionRing.visible = false;
     }
 
+    if (shockRingLife > 0) {
+      shockRingLife = Math.max(0, shockRingLife - dt);
+      var sAge = 1 - shockRingLife / shockRingMax;
+      var sRadius = 0.8 + sAge * (R.shockwave.radius * 0.96);
+      shockRingGroup.scale.setScalar(sRadius);
+      shockOuter.material.opacity = 0.85 * (shockRingLife / shockRingMax);
+      shockInner.material.opacity = 0.55 * (shockRingLife / shockRingMax);
+    } else {
+      shockRingGroup.visible = false;
+    }
+
     var snowPos = snowGeo.attributes.position;
     for (var w = 0; w < SNOW_COUNT; w++) {
-      var sd = snowData[w], base = w * 3;
+      var sd = snowData[w];
       var wy = snowPos.getY(w) - sd.speed * dt;
       var wxs = snowPos.getX(w) + Math.sin(t * 0.8 + sd.phase) * sd.sway * dt;
       var wzs = snowPos.getZ(w) + Math.cos(t * 0.62 + sd.phase) * sd.sway * dt * 0.6;
@@ -5435,16 +5973,18 @@ void main() {
       fd.node.position.y = fd.baseY + Math.sin(t * 0.55 + fd.phase) * 0.035;
       fd.node.rotation.y += fd.sway * dt;
     }
-    water.material.color.set(R.palette.water).multiplyScalar(0.95 + Math.sin(t * 0.7) * 0.035);
+    water.material.color.set(activeSt.water).multiplyScalar(0.95 + Math.sin(t * 0.7) * 0.035);
     waveMat.opacity = 0.16 + Math.sin(t * 0.75) * 0.04;
     if (shake > 0) shake = Math.max(0, shake - dt * 2.7);
     if (scorePulse > 0) scorePulse = Math.max(0, scorePulse - dt * 3.6);
     if (toastTimer > 0) toastTimer = Math.max(0, toastTimer - dt);
+    if (bannerTimer > 0) bannerTimer = Math.max(0, bannerTimer - dt);
   }
 
   /* 13. CAMERA */
   var PITCH = 44 * Math.PI / 180;
   var focus = new THREE.Vector3(0, groundAt(0, 0), 0);
+  var projVec = new THREE.Vector3();
   function cameraDistance() {
     var aspect = camera.aspect;
     return aspect >= 1 ? 38 : 38 + (1 - aspect) * 30;
@@ -5468,14 +6008,36 @@ void main() {
     sun.target.position.copy(focus);
     rim.position.set(focus.x + 14, focus.y + 7, focus.z - 13);
   }
+
+  function updatePopups(dt) {
+    var width = window.innerWidth || 1, heightPx = window.innerHeight || 1;
+    for (var i = popups.length - 1; i >= 0; i--) {
+      var pop = popups[i];
+      pop.life -= dt;
+      if (pop.life <= 0) {
+        if (pop.el && pop.el.parentNode) pop.el.parentNode.removeChild(pop.el);
+        popups.splice(i, 1);
+        continue;
+      }
+      var progress = 1 - pop.life / pop.maxLife;
+      projVec.set(pop.x, pop.y + progress * 1.45, pop.z).project(camera);
+      var sx = (projVec.x * 0.5 + 0.5) * width;
+      var sy = (-projVec.y * 0.5 + 0.5) * heightPx;
+      var alpha = pop.life < 0.28 ? pop.life / 0.28 : 1;
+      var sc = pop.big ? (1 + Math.sin(progress * Math.PI) * 0.16) : 1;
+      pop.el.style.opacity = String(alpha);
+      pop.el.style.transform = 'translate3d(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px,0) translate(-50%,-50%) scale(' + sc.toFixed(2) + ')';
+    }
+  }
+
   function resize() {
     var width = window.innerWidth || 1, heightPx = window.innerHeight || 1;
     renderer.setSize(width, heightPx, false);
     camera.aspect = width / heightPx;
     camera.updateProjectionMatrix();
-    hintEl.textContent = width < 620
-      ? '拖动屏幕移动 · 点按滑铲加速'
-      : 'WASD / 方向键移动 · 空格滑铲 · 拖动屏幕 · P 暂停';
+    hintEl.textContent = width < 480
+      ? '拖动移动 · 空格滑铲 · E 冰震波'
+      : '拖动 / WASD 移动 · 空格滑铲 · E 冰震波';
   }
   window.addEventListener('resize', resize);
   resize();
@@ -5489,19 +6051,50 @@ void main() {
     try {
       update(dt, now);
       placeCamera(dt);
+      updatePopups(dt);
 
-      heartsEl.textContent = '♥'.repeat(Math.max(0, hearts)) + '♡'.repeat(Math.max(0, R.hearts - hearts));
-      scoreEl.textContent = '🐟 ' + score;
-      scoreEl.style.transform = 'scale(' + (1 + scorePulse * 0.22) + ')';
-      scoreEl.style.color = scorePulse > 0 ? '#fff0a9' : '#fff5d2';
-      var seconds = Math.ceil(timeLeft);
-      timerEl.textContent = Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
-      timerEl.style.color = timeLeft <= 10 && phase === 'playing' ? '#ffc0a7' : '#f7ffff';
-      shieldEl.style.display = shield > 0 && phase === 'playing' ? 'block' : 'none';
-      shieldEl.textContent = '泡泡护盾 ' + Math.ceil(shield) + 's';
-      var dashText = dashCooldown > 0 ? (Math.ceil(dashCooldown * 10) / 10).toFixed(1) + 's' : '滑铲';
-      if (dashLabel.textContent !== dashText) dashLabel.textContent = dashText;
-      dashBtn.style.opacity = dashCooldown > 0 ? '0.58' : '1';
+      if (phase === 'playing') {
+        heartsEl.textContent = '❤'.repeat(Math.max(0, hearts)) + '♡'.repeat(Math.max(0, R.hearts - hearts));
+        scoreEl.textContent = '🐟 ' + score;
+        scoreEl.style.transform = 'scale(' + (1 + scorePulse * 0.22) + ')';
+        scoreEl.style.color = scorePulse > 0 ? '#fff0a9' : '#fff5d2';
+
+        if (combo >= 2 && comboTimer > 0) {
+          comboBadgeEl.style.display = 'inline-block';
+          comboBadgeEl.textContent = '连击 x' + combo;
+        } else {
+          comboBadgeEl.style.display = 'none';
+        }
+
+        var st = STAGES[Math.min(STAGES.length - 1, Math.max(0, stage - 1))];
+        if (stageBadgeEl.textContent !== st.badge) stageBadgeEl.textContent = st.badge;
+
+        var every = Math.max(1, R.shield.every || 8);
+        if (shield > 0) {
+          shieldTextEl.textContent = '🫧 护盾 ' + Math.ceil(shield) + 's';
+          shieldBarFill.style.width = Math.min(100, Math.round((shield / Math.max(1, R.shield.seconds)) * 100)) + '%';
+        } else {
+          var chg = Math.min(every, sinceShield);
+          shieldTextEl.textContent = '🫧 护盾 ' + chg + '/' + every;
+          shieldBarFill.style.width = Math.min(100, Math.round((chg / every) * 100)) + '%';
+        }
+
+        var seconds = Math.ceil(timeLeft);
+        timerEl.textContent = Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
+        timerEl.style.color = timeLeft <= 10 ? '#ffc0a7' : '#f7ffff';
+
+        var dashText = dashCooldown > 0 ? (Math.ceil(dashCooldown * 10) / 10).toFixed(1) + 's' : '滑铲';
+        if (dashLabel.textContent !== dashText) dashLabel.textContent = dashText;
+        dashBtn.style.opacity = dashCooldown > 0 ? '0.58' : '1';
+
+        var shockText = shockwaveCooldown > 0 ? (Math.ceil(shockwaveCooldown * 10) / 10).toFixed(1) + 's' : '冰震波';
+        if (shockLabel.textContent !== shockText) shockLabel.textContent = shockText;
+        shockBtn.style.opacity = shockwaveCooldown > 0 ? '0.58' : '1';
+
+        stageBanner.style.opacity = bannerTimer > 0 ? '1' : '0';
+        stageBanner.style.transform = bannerTimer > 0 ? 'translate(-50%,0) scale(1)' : 'translate(-50%,-12px) scale(.95)';
+      }
+
       toastEl.style.opacity = toastTimer > 0 ? '1' : '0';
       toastEl.style.transform = toastTimer > 0 ? 'translate(-50%,0) scale(1)' : 'translate(-50%,-8px) scale(.96)';
 
@@ -5513,8 +6106,8 @@ void main() {
     requestAnimationFrame(frame);
   }
   // A few idle fish and seals make the title screen feel like the same world.
-  for (var lobbyFish = 0; lobbyFish < 4; lobbyFish++) addPickup();
-  addEnemy(); addEnemy();
+  for (var lobbyFish = 0; lobbyFish < 4; lobbyFish++) addPickup('fish');
+  addEnemy(false); addEnemy(false);
   setPhase('title');
   requestAnimationFrame(frame);
 
@@ -5524,8 +6117,7 @@ void main() {
   }
 
   /* 15. LIVE ASSET RENDERS — the same voxel models, photographed for the
-   * Game Studio asset panel and playtest close-ups. Slots with custom art are
-   * skipped because their own file is already the preview. */
+   * Game Studio asset panel and playtest close-ups. */
   var thumbnailRenderer = null;
   function renderSlots(size) {
     size = Math.max(64, Math.min(512, Math.round(size || 256)));
@@ -5542,25 +6134,25 @@ void main() {
     thumbnailRenderer.setSize(size, size, false);
 
     function shoot(subject, direction) {
-      var stage = new THREE.Scene();
-      stage.add(new THREE.HemisphereLight('#e3fbff', '#213a4b', 2.15));
+      var stageScene = new THREE.Scene();
+      stageScene.add(new THREE.HemisphereLight('#e3fbff', '#213a4b', 2.15));
       var key = new THREE.DirectionalLight('#fff0d8', 3.0);
       key.position.set(-5, 8, 6);
-      stage.add(key);
+      stageScene.add(key);
       var cool = new THREE.DirectionalLight('#8deedc', 1.35);
       cool.position.set(6, 4, -6);
-      stage.add(cool);
-      stage.add(subject);
+      stageScene.add(cool);
+      stageScene.add(subject);
       var bounds = new THREE.Box3().setFromObject(subject);
       var center = bounds.getCenter(new THREE.Vector3());
       var extent = bounds.getSize(new THREE.Vector3());
       var radius = Math.max(0.001, Math.sqrt(extent.x * extent.x + extent.y * extent.y + extent.z * extent.z) * 0.5);
-      var camera = new THREE.PerspectiveCamera(28, 1, 0.1, 500);
+      var cam = new THREE.PerspectiveCamera(28, 1, 0.1, 500);
       var dir = new THREE.Vector3(direction[0], direction[1], direction[2]).normalize();
       var distance = radius / Math.sin(14 * Math.PI / 180) * 0.98;
-      camera.position.copy(center).add(dir.multiplyScalar(distance));
-      camera.lookAt(center);
-      thumbnailRenderer.render(stage, camera);
+      cam.position.copy(center).add(dir.multiplyScalar(distance));
+      cam.lookAt(center);
+      thumbnailRenderer.render(stageScene, cam);
       var url = thumbnailRenderer.domElement.toDataURL('image/png');
       subject.traverse(function (node) {
         if (node.geometry) node.geometry.dispose();
@@ -5612,17 +6204,88 @@ void main() {
     }, 400);
   }
 
-  /* 16. STATE — read by the studio preview and its checks. */
+  /* 16. AUTOPLAY & STATE — read by the studio preview and its checks. */
+  window.__autoplay = function () {
+    if (phase !== 'playing') {
+      if (canRestart()) start();
+      return;
+    }
+    if (paused) {
+      paused = false;
+      showPause();
+      return;
+    }
+    // Check nearest enemy for Frost Shockwave & evasion
+    var nearestEnemyDist = 999;
+    var repelX = 0, repelZ = 0;
+    for (var i = 0; i < enemies.length; i++) {
+      var e = enemies[i];
+      var dx = hero.x - e.x, dz = hero.z - e.z;
+      var d = Math.hypot(dx, dz) || 0.001;
+      if (d < nearestEnemyDist) nearestEnemyDist = d;
+      if (d < 5.5 && shield <= 0) {
+        var weight = (5.5 - d) / 5.5;
+        repelX += (dx / d) * weight * 2.4;
+        repelZ += (dz / d) * weight * 2.4;
+      }
+    }
+    if (nearestEnemyDist <= 4.2 && shockwaveCooldown <= 0) {
+      tryShockwave();
+    }
+
+    // Pick best target pickup (prioritize star & gold salmon)
+    var bestTarget = null, bestScore = -9999;
+    for (var k = 0; k < pickups.length; k++) {
+      var p = pickups[k];
+      var pd = Math.hypot(p.x - hero.x, p.z - hero.z) || 0.1;
+      var valBonus = p.kind === 'star' ? 6.5 : p.kind === 'gold' ? 4.5 : 0;
+      var candScore = valBonus - pd;
+      if (candScore > bestScore) {
+        bestScore = candScore;
+        bestTarget = p;
+      }
+    }
+
+    var wantX = repelX, wantZ = repelZ;
+    if (bestTarget) {
+      var tx = bestTarget.x - hero.x, tz = bestTarget.z - hero.z;
+      var td = Math.hypot(tx, tz) || 1;
+      wantX += (tx / td) * 1.4;
+      wantZ += (tz / td) * 1.4;
+    }
+
+    // Keep away from unwalkable tiles or island edge
+    var mag = Math.hypot(wantX, wantZ) || 1;
+    var stepX = wantX / mag, stepZ = wantZ / mag;
+    if (!walkable(hero.x + stepX * 1.4, hero.z + stepZ * 1.4)) {
+      // Steer gently toward island center (0, 0) if blocked ahead
+      var cx = -hero.x, cz = -hero.z, cd = Math.hypot(cx, cz) || 1;
+      stepX = stepX * 0.35 + (cx / cd) * 0.65;
+      stepZ = stepZ * 0.35 + (cz / cd) * 0.65;
+    }
+    autoSteer.x = stepX;
+    autoSteer.z = stepZ;
+    autoSteer.until = performance.now() + 260;
+
+    if ((nearestEnemyDist < 3.6 || (bestTarget && Math.hypot(bestTarget.x - hero.x, bestTarget.z - hero.z) > 5.2)) && dashCooldown <= 0) {
+      tryDash();
+    }
+  };
+
   window.__gameState = function () {
     return {
       phase: phase, paused: paused, score: score, best: best,
+      stage: stage, maxStageReached: maxStageReached,
+      combo: combo, maxCombo: maxCombo, goldCount: goldCount,
       time: Math.round(timeLeft * 100) / 100, hearts: hearts,
       shield: Math.round(shield * 100) / 100,
       dash: { active: dashTime > 0, cooldown: Math.round(dashCooldown * 100) / 100 },
+      shockwave: { cooldown: Math.round(shockwaveCooldown * 100) / 100 },
       hero: { x: Math.round(hero.x * 100) / 100, y: Math.round(hero.z * 100) / 100 },
-      pickups: pickups.map(function (p) { return { x: p.x, y: p.z }; }),
-      enemies: enemies.map(function (e) { return { x: Math.round(e.x * 100) / 100, y: Math.round(e.z * 100) / 100 }; }),
-      fps: Math.round(fps), renderer: 'webgl', heroMode: heroMode, world: { size: N },
+      pickups: pickups.map(function (p) { return { x: Math.round(p.x * 100) / 100, y: Math.round(p.z * 100) / 100, kind: p.kind }; }),
+      enemies: enemies.map(function (e) { return { x: Math.round(e.x * 100) / 100, y: Math.round(e.z * 100) / 100, isAlpha: !!e.isAlpha }; }),
+      fps: Math.round(fps), renderer: 'webgl', heroMode: heroMode,
+      world: { size: N, w: N, h: N },
       heroOnScreen: heroOnScreen()
     };
   };

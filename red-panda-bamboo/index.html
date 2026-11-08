@@ -4501,8 +4501,8 @@ void main() {
   for (var bi = 0; bi < N * N; bi++) {
     if (!height[bi] || pathCells[bi]) continue;
     var bp = cellCenter(bi);
-    if (Math.hypot(bp.x, bp.z) < 5.8) continue;
-    if (hash2(bi, 401) > 0.22) continue;
+    if (Math.hypot(bp.x, bp.z) < 9.2 || (Math.abs(bp.x) < 6.5 && bp.z > -4.5 && bp.z < 16.5)) continue;
+    if (hash2(bi, 401) > 0.12) continue;
     var tooClose = false;
     for (var cb = 0; cb < bambooClusters.length; cb++) {
       if (Math.hypot(bp.x - bambooClusters[cb].x, bp.z - bambooClusters[cb].z) < 3.4) { tooClose = true; break; }
@@ -5138,20 +5138,34 @@ void main() {
 
   var FONT = 'font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;';
   var hud = el('div', 'position:fixed;inset:0;pointer-events:none;user-select:none;color:#fff8e4;'
-    + FONT + 'font-size:clamp(13px,2.2vmin,20px);text-shadow:0 2px 8px rgba(31,42,23,.34);z-index:5');
+    + FONT + 'font-size:clamp(12px,2.1vmin,18px);text-shadow:0 2px 8px rgba(31,42,23,.34);z-index:5');
   el('div', 'position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,rgba(255,248,213,0) 42%,rgba(33,48,26,.28) 100%)', hud);
-  var pillCss = 'position:absolute;top:max(14px,2.2vmin);display:flex;align-items:center;gap:.62em;padding:.52em .88em;'
-    + 'border-radius:999px;background:linear-gradient(180deg,rgba(29,48,30,.68),rgba(37,56,30,.52));'
-    + 'border:1px solid rgba(255,247,208,.24);box-shadow:0 8px 26px rgba(20,30,15,.2);backdrop-filter:blur(8px);font-weight:750;letter-spacing:.02em';
-  var leftPill = el('div', pillCss + ';left:max(14px,2.2vmin)', hud);
-  var heartsEl = el('span', 'color:#ff9d86;letter-spacing:.1em;font-size:1.02em', leftPill);
-  var scoreEl = el('span', 'color:#fff6d8;font-variant-numeric:tabular-nums', leftPill);
-  var timerEl = el('div', pillCss + ';right:max(14px,2.2vmin);font-variant-numeric:tabular-nums;min-width:3.4em;justify-content:center', hud);
-  var muteEl = el('button', 'position:absolute;right:max(14px,2.2vmin);top:calc(max(14px,2.2vmin) + 2.7em);'
-    + 'width:2.1em;height:2.1em;border-radius:50%;border:1px solid rgba(255,247,208,.2);'
-    + 'background:rgba(29,48,30,.5);color:#f8f0d3;font:inherit;font-weight:700;cursor:pointer;'
-    + 'pointer-events:auto;display:flex;align-items:center;justify-content:center;padding:0;'
-    + 'backdrop-filter:blur(6px);transition:opacity .2s ease', hud);
+
+  var topHud = el('div', 'position:absolute;top:max(10px,1.8vmin);left:max(10px,2vmin);right:max(10px,2vmin);'
+    + 'display:none;align-items:center;justify-content:space-between;gap:6px;z-index:6', hud);
+  var pillCss = 'display:flex;align-items:center;gap:.42em;padding:.38em .68em;'
+    + 'border-radius:14px;background:linear-gradient(180deg,rgba(24,42,25,.84),rgba(33,52,27,.72));'
+    + 'border:1px solid rgba(255,247,208,.26);box-shadow:0 8px 22px rgba(20,30,15,.26);backdrop-filter:blur(8px);font-weight:750;letter-spacing:.01em';
+
+  var leftPill = el('div', pillCss + ';flex-direction:column;align-items:flex-start;gap:2px;min-width:6.4em', topHud);
+  var leftTopRow = el('div', 'display:flex;align-items:center;gap:.45em', leftPill);
+  var heartsEl = el('span', 'color:#ff9d86;letter-spacing:.06em;font-size:.96em', leftTopRow);
+  var scoreEl = el('span', 'color:#fff6d8;font-variant-numeric:tabular-nums;font-size:.96em', leftTopRow);
+  var comboEl = el('div', 'font-size:.66em;color:#ffd876;font-weight:800;min-height:1.1em;letter-spacing:.02em', leftPill);
+
+  var centerPill = el('div', pillCss + ';flex-direction:column;align-items:center;gap:3px;padding:.34em .68em;min-width:7.6em', topHud);
+  var stageEl = el('div', 'font-size:.74em;color:#e6f6bd;font-weight:800;letter-spacing:.03em;white-space:nowrap', centerPill);
+  var shieldWrap = el('div', 'display:flex;align-items:center;gap:5px;width:100%', centerPill);
+  var shieldEl = el('span', 'font-size:.64em;color:#d6f59e;white-space:nowrap;font-weight:750', shieldWrap);
+  var shieldTrack = el('div', 'flex:1;min-width:38px;height:5px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden', shieldWrap);
+  var shieldFill = el('div', 'height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#9de368,#ffe483);transition:width .18s ease', shieldTrack);
+
+  var rightPill = el('div', pillCss + ';gap:.38em;padding:.34em .54em', topHud);
+  var timerEl = el('span', 'font-variant-numeric:tabular-nums;min-width:2.6em;text-align:center;font-size:.98em;color:#fff8e2', rightPill);
+  var btnCss = 'width:1.85em;height:1.85em;border-radius:50%;border:1px solid rgba(255,247,208,.24);'
+    + 'background:rgba(29,48,30,.65);color:#f8f0d3;font:inherit;font-size:.86em;font-weight:750;cursor:pointer;'
+    + 'pointer-events:auto;display:flex;align-items:center;justify-content:center;padding:0;transition:opacity .2s ease';
+  var muteEl = el('button', btnCss, rightPill);
   muteEl.type = 'button';
   muteEl.textContent = '♪';
   muteEl.title = '静音 / 开启声音';
@@ -5160,11 +5174,7 @@ void main() {
     event.stopPropagation();
     toggleMuted();
   });
-  var pauseEl = el('button', 'position:absolute;right:max(14px,2.2vmin);top:calc(max(14px,2.2vmin) + 5.05em);'
-    + 'width:2.1em;height:2.1em;border-radius:50%;border:1px solid rgba(255,247,208,.2);'
-    + 'background:rgba(29,48,30,.5);color:#f8f0d3;font:inherit;font-weight:750;cursor:pointer;'
-    + 'pointer-events:auto;display:none;align-items:center;justify-content:center;padding:0;'
-    + 'backdrop-filter:blur(6px);letter-spacing:0', hud);
+  var pauseEl = el('button', btnCss, rightPill);
   pauseEl.type = 'button';
   pauseEl.textContent = 'Ⅱ';
   pauseEl.title = '暂停 / 继续';
@@ -5173,40 +5183,51 @@ void main() {
     event.stopPropagation();
     togglePause();
   });
-  var brandEl = el('div', 'position:absolute;left:50%;top:max(18px,2.6vmin);transform:translateX(-50%);'
-    + 'font-size:.66em;letter-spacing:.34em;color:rgba(255,249,224,.64);font-weight:650;white-space:nowrap', hud);
-  brandEl.textContent = '竹 影 小 熊 猫';
-  var shieldEl = el('div', 'position:absolute;left:max(14px,2.2vmin);top:calc(max(14px,2.2vmin) + 2.7em);'
-    + 'padding:.26em .76em;border-radius:999px;background:rgba(136,193,93,.24);border:1px solid rgba(201,234,146,.55);'
-    + 'color:#ecffc5;font-size:.74em;font-weight:750;display:none;letter-spacing:.03em', hud);
-  var toastEl = el('div', 'position:absolute;left:50%;top:max(15px,16vmin);transform:translate(-50%,8px);opacity:0;'
-    + 'padding:.44em .98em;border-radius:999px;background:rgba(37,54,28,.7);border:1px solid rgba(255,242,192,.32);'
-    + 'color:#fff1ba;font-weight:750;font-size:.82em;transition:opacity .3s ease,transform .3s ease;white-space:nowrap', hud);
-  var hintEl = el('div', 'position:absolute;left:50%;bottom:max(12px,2.2vmin);transform:translateX(-50%);'
-    + 'padding:.38em .85em;border-radius:999px;background:rgba(29,45,28,.36);border:1px solid rgba(255,247,208,.12);'
-    + 'font-size:.62em;color:rgba(255,250,231,.74);letter-spacing:.04em;white-space:nowrap;font-weight:550;'
-    + 'backdrop-filter:blur(4px)', hud);
+  var brandEl = null;
+
+  var toastEl = el('div', 'position:absolute;left:50%;top:max(66px,11.5vmin);transform:translate(-50%,8px);opacity:0;'
+    + 'padding:.42em .96em;border-radius:999px;background:rgba(28,45,23,.84);border:1px solid rgba(255,242,192,.36);'
+    + 'color:#fff1ba;font-weight:750;font-size:.82em;transition:opacity .26s ease,transform .26s ease;white-space:nowrap;z-index:7', hud);
+
+  var bottomBar = el('div', 'position:absolute;left:max(12px,2.2vmin);right:max(12px,2.2vmin);bottom:max(12px,2.2vmin);'
+    + 'display:none;align-items:flex-end;justify-content:space-between;gap:8px;z-index:6', hud);
   var isTouch = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-  hintEl.textContent = isTouch ? '拖动屏幕移动 · 收集嫩笋，躲开野猪' : 'WASD / 方向键移动 · 拖动鼠标 · M 静音 · P 暂停';
+  var hintEl = el('div', 'padding:.42em .78em;border-radius:12px;background:rgba(24,40,23,.62);border:1px solid rgba(255,247,208,.18);'
+    + 'font-size:.64em;color:rgba(255,250,231,.82);letter-spacing:.02em;line-height:1.35;font-weight:600;backdrop-filter:blur(6px);max-width:52vw', bottomBar);
+  hintEl.innerHTML = isTouch
+    ? '拖动移动 · 收集<b style="color:#ffe49c">嫩笋/金笋</b><br>点右侧技能闪避或震退野猪'
+    : 'WASD/方向键移动 · 空格翻滚 · E 落叶旋风';
+
+  var skillWrap = el('div', 'display:flex;align-items:center;gap:8px;pointer-events:auto', bottomBar);
+  var skillBtnCss = 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:4.5em;padding:.42em .66em;'
+    + 'border-radius:14px;border:1px solid rgba(255,244,196,.34);background:linear-gradient(180deg,rgba(36,59,33,.88),rgba(24,41,23,.88));'
+    + 'color:#fff6db;font:inherit;cursor:pointer;box-shadow:0 8px 20px rgba(15,24,11,.35);backdrop-filter:blur(6px)';
+  var leafBtn = el('button', skillBtnCss, skillWrap);
+  leafBtn.type = 'button';
+  var rollBtn = el('button', skillBtnCss, skillWrap);
+  rollBtn.type = 'button';
+
   var damageEl = el('div', 'position:absolute;inset:0;opacity:0;background:radial-gradient(ellipse at center,rgba(197,63,39,0) 38%,rgba(191,58,38,.62) 100%);transition:opacity .12s linear', hud);
 
   var card = el('div', 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;'
-    + 'width:min(88vw,550px);padding:1.65em 1.55em 1.35em;border-radius:26px;'
-    + 'background:linear-gradient(155deg,rgba(28,45,29,.88),rgba(48,62,36,.82));'
-    + 'border:1px solid rgba(255,245,197,.27);box-shadow:0 28px 80px rgba(18,28,14,.38),inset 0 1px 0 rgba(255,255,255,.08);'
-    + 'backdrop-filter:blur(12px);animation:rpGlow 5s ease-in-out infinite', hud);
-  var cardKicker = el('div', 'font-size:.68em;letter-spacing:.34em;color:#c6d99b;font-weight:650;margin-bottom:.65em', card);
-  var cardTitle = el('div', 'font-size:2.25em;font-weight:900;letter-spacing:.03em;color:#ffe5a1;line-height:1.16;'
-    + 'text-shadow:0 4px 24px rgba(255,197,87,.15)', card);
-  var cardBody = el('div', 'margin-top:.72em;color:#f5efd8;line-height:1.62;font-size:.92em', card);
-  var cardHint = el('div', 'margin-top:1.15em;color:#fff3c7;font-weight:750;font-size:.9em;animation:rpBreathe 2.2s ease-in-out infinite', card);
+    + 'width:min(88vw,440px);padding:1.5em 1.4em 1.25em;border-radius:26px;'
+    + 'background:linear-gradient(155deg,rgba(25,41,26,.92),rgba(43,57,33,.88));'
+    + 'border:1px solid rgba(255,245,197,.3);box-shadow:0 28px 80px rgba(18,28,14,.46),inset 0 1px 0 rgba(255,255,255,.1);'
+    + 'backdrop-filter:blur(12px);animation:rpGlow 5s ease-in-out infinite;z-index:8', hud);
+  var cardKicker = el('div', 'font-size:.68em;letter-spacing:.32em;color:#c6d99b;font-weight:700;margin-bottom:.55em', card);
+  var cardTitle = el('div', 'font-size:2.1em;font-weight:900;letter-spacing:.03em;color:#ffe5a1;line-height:1.16;'
+    + 'text-shadow:0 4px 24px rgba(255,197,87,.18)', card);
+  var cardBody = el('div', 'margin-top:.68em;color:#f5efd8;line-height:1.58;font-size:.88em', card);
+  var cardHint = el('div', 'margin-top:1.05em;padding:.55em 1.1em;border-radius:999px;display:inline-block;'
+    + 'background:linear-gradient(180deg,rgba(255,225,138,.22),rgba(169,214,109,.16));border:1px solid rgba(255,236,179,.36);'
+    + 'color:#fff5ce;font-weight:800;font-size:.86em;animation:rpBreathe 2.2s ease-in-out infinite', card);
   function showCard(title, bodyHTML, hint, kicker) {
     card.style.display = 'block';
     cardKicker.textContent = kicker || '· 竹 林 寻 笋 ·';
     cardTitle.textContent = title;
     cardBody.innerHTML = bodyHTML;
     cardHint.textContent = hint || '';
-    cardHint.style.display = hint ? 'block' : 'none';
+    cardHint.style.display = hint ? 'inline-block' : 'none';
   }
   var toastTimer = null;
   function toast(text) {
@@ -5220,11 +5241,82 @@ void main() {
     }, 1500);
   }
 
-  /* 9. GAME STATE */
+  /* 9. GAME STATE & STAGES */
+  var STAGES = [
+    { id: 1, name: '01 晨雾竹林', minScore: 0, maxEnemies: 4, speedMul: 1.0 },
+    { id: 2, name: '02 金秋溪谷', minScore: 10, maxEnemies: 5, speedMul: 1.12 },
+    { id: 3, name: '03 萤火深林', minScore: 22, maxEnemies: 6, speedMul: 1.24 }
+  ];
+  var GOLDEN_SHOOT_BOXES = [
+    [-2, 0, -2, 2, 2, 2, '#c88c28'],
+    [-2, 2, -2, 2, 6, 2, '#f5c342'],
+    [-1, 6, -1, 1, 10, 1, '#ffe47a'],
+    [0, 10, 0, 0, 12, 0, '#fff7bf']
+  ];
+  var BOOST_MUSHROOM_BOXES = [
+    [-1, 0, -1, 1, 4, 1, '#f4ebd0'],
+    [-3, 4, -3, 3, 6, 3, '#e04f3e'],
+    [-2, 6, -2, 2, 7, 2, '#f26a52'],
+    [-2, 7, 0, -1, 7, 1, '#fff6dc'],
+    [1, 7, -1, 2, 7, 0, '#fff6dc']
+  ];
+
   var phase = 'title', paused = false, score = 0, best = 0, hearts = R.hearts, timeLeft = R.duration;
   var elapsed = 0, spawnTimer = 0, invulnerable = 0, shield = 0, sinceShield = 0, endedAt = 0, fps = 60;
   var damageFlash = 0, shake = 0;
+  var stageIndex = 0, combo = 0, comboTimer = 0, maxCombo = 0;
+  var goldenCount = 0, mushroomCount = 0, speedBoostTimer = 0;
+  var rollCooldown = 0, rollActive = 0, leafBlastCooldown = 0;
   try { best = Number(window.localStorage.getItem('dsh-game-studio:bamboo-shadows:best')) || 0; } catch (e) { best = 0; }
+
+  function triggerRoll() {
+    if (phase !== 'playing' || paused || rollCooldown > 0) return;
+    rollCooldown = 2.4;
+    rollActive = 0.42;
+    invulnerable = Math.max(invulnerable, 0.55);
+    var dir = inputDirection();
+    var rx = dir.x, rz = dir.z;
+    if (Math.hypot(rx, rz) < 0.1) {
+      rx = Math.sin(hero.facing);
+      rz = Math.cos(hero.facing);
+    }
+    hero.vx = rx * R.heroSpeed * 2.15;
+    hero.vz = rz * R.heroSpeed * 2.15;
+    leafBurst.emit(hero.x, hero.y + 0.45, hero.z, { count: 10, spread: 1.9, up: 2.2, life: 0.55, size: 0.95 });
+    blip(620, 0.12, 'triangle', 0.05, 960);
+  }
+
+  function triggerLeafBlast() {
+    if (phase !== 'playing' || paused || leafBlastCooldown > 0) return;
+    leafBlastCooldown = 6.5;
+    invulnerable = Math.max(invulnerable, 0.7);
+    shake = Math.max(shake, 0.35);
+    leafBurst.emit(hero.x, hero.y + 0.6, hero.z, { count: 24, spread: 3.4, up: 3.2, life: 0.85, size: 1.2 });
+    blip(420, 0.28, 'sine', 0.06, 880);
+    var stunned = 0;
+    for (var i = 0; i < enemies.length; i++) {
+      var e = enemies[i];
+      var dx = e.x - hero.x, dz = e.z - hero.z;
+      var dist = Math.hypot(dx, dz) || 0.001;
+      if (dist < 8.5) {
+        stopCharge(e);
+        e.timer = Math.max(e.timer, 1.4);
+        moveOnIsland(e, (dx / dist) * 3.1, (dz / dist) * 3.1, 0.4);
+        dustBurst.emit(e.x, e.y + 0.4, e.z, { count: 8, spread: 1.4, up: 1.2, life: 0.55, size: 1.0 });
+        stunned++;
+      }
+    }
+    toast(stunned > 0 ? '🍃 落叶旋风！震退 ' + stunned + ' 头野猪' : '🍃 落叶旋风护体！');
+  }
+
+  leafBtn.addEventListener('click', function (event) {
+    event.stopPropagation();
+    triggerLeafBlast();
+  });
+  rollBtn.addEventListener('click', function (event) {
+    event.stopPropagation();
+    triggerRoll();
+  });
 
   function randomLand(minFromHero, maxFromHero) {
     for (var tries = 0; tries < 800; tries++) {
@@ -5240,53 +5332,103 @@ void main() {
     return null;
   }
 
-  function addPickup() {
+  function addPickup(forceKind) {
     var p = randomLand(3.2, 20) || randomLand(2.5, 32);
     if (!p) return false;
-    var node = makeCharacter('pickup', R.pickupSize, MODELS.pickup);
+    var roll = Math.random();
+    var kind = forceKind || (roll < 0.22 ? 'golden' : roll < 0.36 ? 'mushroom' : 'normal');
+    var node;
+    if (kind === 'golden') {
+      node = new THREE.Group();
+      var gBody = voxelModel(GOLDEN_SHOOT_BOXES);
+      gBody.scale.setScalar((R.pickupSize * 1.18) / 12);
+      var gShadow = new THREE.Mesh(
+        new THREE.PlaneGeometry(R.pickupSize * 1.15, R.pickupSize * 1.15),
+        new THREE.MeshBasicMaterial({ map: BLOB, transparent: true, depthWrite: false })
+      );
+      gShadow.rotation.x = -Math.PI / 2;
+      gShadow.position.y = 0.03;
+      node.add(gBody, gShadow);
+      node.userData.body = gBody;
+      scene.add(node);
+    } else if (kind === 'mushroom') {
+      node = new THREE.Group();
+      var mBody = voxelModel(BOOST_MUSHROOM_BOXES);
+      mBody.scale.setScalar((R.pickupSize * 1.08) / 8);
+      var mShadow = new THREE.Mesh(
+        new THREE.PlaneGeometry(R.pickupSize * 1.05, R.pickupSize * 1.05),
+        new THREE.MeshBasicMaterial({ map: BLOB, transparent: true, depthWrite: false })
+      );
+      mShadow.rotation.x = -Math.PI / 2;
+      mShadow.position.y = 0.03;
+      node.add(mBody, mShadow);
+      node.userData.body = mBody;
+      scene.add(node);
+    } else {
+      node = makeCharacter('pickup', R.pickupSize, MODELS.pickup);
+    }
+    var glowColor = kind === 'golden' ? '#ffd84d' : kind === 'mushroom' ? '#ff9468' : R.palette.accent;
     var glow = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: GLOW, color: R.palette.accent, transparent: true, opacity: 0.72,
+      map: GLOW, color: glowColor, transparent: true, opacity: kind === 'normal' ? 0.72 : 0.9,
       depthWrite: false, blending: THREE.AdditiveBlending
     }));
     glow.scale.set(R.pickupSize * 1.9, R.pickupSize * 1.9, 1);
     glow.position.y = R.pickupSize * 0.55;
     node.add(glow);
     var ring = new THREE.Mesh(
-      new THREE.RingGeometry(0.62, 0.8, 28),
-      new THREE.MeshBasicMaterial({ color: '#ffe097', transparent: true, opacity: 0.42, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide })
+      new THREE.RingGeometry(0.62, 0.82, 28),
+      new THREE.MeshBasicMaterial({ color: glowColor, transparent: true, opacity: 0.48, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide })
     );
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = 0.06;
     node.add(ring);
-    pickups.push({ x: p.x, z: p.z, phase: Math.random() * 6.28, node: node, glow: glow, ring: ring });
+    pickups.push({
+      x: p.x, z: p.z, kind: kind, value: kind === 'golden' ? 3 : 1,
+      phase: Math.random() * 6.28, node: node, glow: glow, ring: ring
+    });
     return true;
   }
 
-  function addEnemy() {
+  function addEnemy(forceAlpha) {
     var p = randomLand(11, 28) || randomLand(8, 34) || randomLand(5.5, 40);
     if (!p) return false;
-    var node = makeCharacter('enemy', R.enemySize, MODELS.enemy);
+    var hasAlpha = enemies.some(function (en) { return en.alpha; });
+    var isAlpha = forceAlpha || (!hasAlpha && stageIndex >= 1 && Math.random() < 0.45);
+    var size = isAlpha ? R.enemySize * 1.28 : R.enemySize;
+    var node = makeCharacter('enemy', size, MODELS.enemy);
+    if (isAlpha) {
+      var crown = voxelModel([
+        [-2, 0, -2, 2, 1, 2, '#e6a822'],
+        [-2, 1, -2, -1, 3, -1, '#ffd95e'],
+        [1, 1, -2, 2, 3, -1, '#ffd95e'],
+        [0, 1, 1, 1, 3, 2, '#ffd95e']
+      ]);
+      crown.scale.setScalar(0.11);
+      crown.position.set(0, size * 0.98, 0.15);
+      node.add(crown);
+    }
     var alert = new THREE.Sprite(new THREE.SpriteMaterial({
       map: ALERT_TEX, transparent: true, depthWrite: false, depthTest: false
     }));
     alert.scale.set(1.05, 1.05, 1);
-    alert.position.y = R.enemySize * 1.48;
+    alert.position.y = size * 1.48;
     alert.visible = false;
     alert.renderOrder = 20;
     node.add(alert);
     var ring = new THREE.Mesh(
       new THREE.RingGeometry(0.72, 1.05, 28),
-      new THREE.MeshBasicMaterial({ color: '#ffbb72', transparent: true, opacity: 0.58, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide })
+      new THREE.MeshBasicMaterial({ color: isAlpha ? '#ff6a4d' : '#ffbb72', transparent: true, opacity: 0.62, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide })
     );
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = 0.07;
-    ring.scale.setScalar(R.enemySize * 0.95);
+    ring.scale.setScalar(size * 0.95);
     ring.visible = false;
     node.add(ring);
     var e = {
       x: p.x, z: p.z, y: groundAt(p.x, p.z), facing: Math.random() * 6.28, vx: 0, vz: 0,
       state: 'roam', timer: 0, cooldown: 1.2 + Math.random() * 2.2, dirX: 1, dirZ: 0,
-      wobble: Math.random() * 6.28, node: node, alert: alert, alertRing: ring, spawn: 0.5, chargeDust: 0
+      wobble: Math.random() * 6.28, node: node, alert: alert, alertRing: ring, spawn: 0.5, chargeDust: 0,
+      alpha: isAlpha, size: size
     };
     node.scale.setScalar(0.25);
     enemies.push(e);
@@ -5303,39 +5445,43 @@ void main() {
   function setPhase(next) {
     phase = next;
     endedAt = performance.now();
+    topHud.style.display = next === 'playing' ? 'flex' : 'none';
+    bottomBar.style.display = next === 'playing' ? 'flex' : 'none';
     if (pauseEl) {
-      pauseEl.style.display = next === 'playing' ? 'flex' : 'none';
       pauseEl.textContent = 'Ⅱ';
     }
     if (next === 'title') {
       showCard(
         TITLE,
-        '<div>踩过沙沙的落叶，帮小熊猫收集林间的<b style="color:#ffe3a1">嫩笋</b>，<br>躲开爱冲撞的<b style="color:#ffc28d">野猪</b>。</div>'
-        + '<div style="margin-top:.8em;font-size:.84em;color:#d4deb2">野猪会先刨地蓄力，再直线冲撞——看准时机往旁边闪开。</div>'
-        + '<div style="margin-top:.9em;font-size:.76em;color:#adc48c;letter-spacing:.04em">60 秒 · 3 颗爱心 · 每 8 根嫩笋获得 4 秒竹叶护身</div>'
-        + (best > 0 ? '<div style="margin-top:.45em;font-size:.74em;color:#93aa79">最佳记录：' + best + ' 根嫩笋</div>' : ''),
-        '轻点屏幕 / 按任意键开始',
-        '· 竹 林 寻 笋 ·'
+        '<div>穿过晨雾、溪谷与萤火竹林，帮小熊猫收集<b style="color:#ffe3a1">春笋</b>与<b style="color:#ffd84d">金玉冬笋(+3)</b>！</div>'
+        + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:.75em;font-size:.76em">'
+        + '<div style="padding:.45em .3em;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,244,196,.16)"><b style="color:#ffd84d">🎋 金玉冬笋</b><br>单颗 +3 分</div>'
+        + '<div style="padding:.45em .3em;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,244,196,.16)"><b style="color:#ff9d76">🍄 灵芝仙菇</b><br>加速 + 吸笋磁铁</div>'
+        + '<div style="padding:.45em .3em;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,244,196,.16)"><b style="color:#b8f284">🍃 落叶旋风</b><br>震退周围野猪</div>'
+        + '</div>'
+        + '<div style="margin-top:.75em;font-size:.75em;color:#bfd499">三大林区挑战 · 每 8 根嫩笋触发 4 秒竹叶护身</div>'
+        + (best > 0 ? '<div style="margin-top:.4em;font-size:.74em;color:#9dc07b">🏆 历史最高：' + best + ' 分</div>' : ''),
+        '轻点屏幕 / 按任意键开始寻笋',
+        '· 3D 体 素 竹 林 冒 险 ·'
       );
     } else if (next === 'playing') {
       card.style.display = 'none';
-    } else if (next === 'won') {
-      var headline = score >= 32 ? '竹林传说' : score >= 20 ? '满载而归' : score >= 10 ? '收获满满' : '平安就好';
+    } else if (next === 'won' || next === 'lost') {
+      var stars = score >= 26 ? '★★★' : score >= 14 ? '★★☆' : '★☆☆';
+      var headline = next === 'won'
+        ? (score >= 28 ? '竹林传说大丰收' : score >= 16 ? '满载而归' : '平安归林')
+        : '哎呀，被野猪撞晕了';
       showCard(
         headline,
-        '你在竹林里采到 <b style="color:#ffe3a1">' + score + '</b> 根嫩笋，<br>'
-        + (hearts >= R.hearts ? '一路平安，连一根竹叶都没弄乱。' : '虽然被野猪撞了几下，还是坚持到了最后。')
-        + '<div style="margin-top:.7em;font-size:.82em;color:#bfd29c">最佳记录：' + best + ' 根嫩笋</div>',
-        '轻点屏幕 / 按任意键再玩一局',
-        '· 竹 林 归 途 ·'
-      );
-    } else if (next === 'lost') {
-      showCard(
-        '哎呀，被野猪撞飞了',
-        '这次只采到 <b style="color:#ffe3a1">' + score + '</b> 根嫩笋。'
-        + '<div style="margin-top:.7em;font-size:.82em;color:#bfd29c">最佳记录：' + best + ' 根嫩笋</div>',
+        '<div style="font-size:1.35em;color:#ffd859;letter-spacing:.18em;margin-bottom:.25em">' + stars + '</div>'
+        + '<div>本局收获 <b style="color:#ffe3a1;font-size:1.18em">' + score + '</b> 分 · 抵达 <b style="color:#d6f59e">' + STAGES[stageIndex].name + '</b></div>'
+        + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:.7em;font-size:.76em;color:#e6efd0">'
+        + '<div style="padding:.4em;border-radius:10px;background:rgba(255,255,255,.06)">金笋收集<br><b style="color:#ffd84d">' + goldenCount + ' 颗</b></div>'
+        + '<div style="padding:.4em;border-radius:10px;background:rgba(255,255,255,.06)">最高连击<br><b style="color:#ffbe6b">' + maxCombo + ' 连击</b></div>'
+        + '<div style="padding:.4em;border-radius:10px;background:rgba(255,255,255,.06)">历史最佳<br><b style="color:#b8f284">' + best + ' 分</b></div>'
+        + '</div>',
         '轻点屏幕 / 按任意键再来一局',
-        '· 野 猪 出 没 ·'
+        next === 'won' ? '· 竹 林 归 途 ·' : '· 重 整 旗 鼓 ·'
       );
     }
     post({ type: 'state', phase: phase, score: score, hearts: hearts });
@@ -5351,6 +5497,16 @@ void main() {
     invulnerable = 0;
     shield = 0;
     sinceShield = 0;
+    stageIndex = 0;
+    combo = 0;
+    comboTimer = 0;
+    maxCombo = 0;
+    goldenCount = 0;
+    mushroomCount = 0;
+    speedBoostTimer = 0;
+    rollCooldown = 0;
+    rollActive = 0;
+    leafBlastCooldown = 0;
     paused = false;
     if (pauseEl) pauseEl.textContent = 'Ⅱ';
     damageFlash = 0;
@@ -5362,6 +5518,8 @@ void main() {
     focus.x = hero.x;
     focus.z = hero.z;
     focus.y = hero.y;
+    addPickup('golden');
+    addPickup('mushroom');
     var guard = 0;
     while (pickups.length < R.maxPickups && guard++ < R.maxPickups * 3) {
       if (!addPickup()) break;
@@ -5369,7 +5527,7 @@ void main() {
     addEnemy(); addEnemy();
     blip(520, 0.13, 'triangle', 0.055, 780);
     setPhase('playing');
-    toast('出发！寻找林间的嫩笋');
+    toast('出发！探索 01 晨雾竹林');
   }
 
   function finish(won) {
@@ -5389,7 +5547,7 @@ void main() {
   }
   function showPause() {
     if (paused) {
-      showCard('竹林暂停', '深呼吸，听一听竹叶的沙沙声。<div style="margin-top:.7em;font-size:.82em;color:#bfd29c">当前嫩笋：' + score + ' · 剩余 ' + Math.ceil(timeLeft) + ' 秒</div>',
+      showCard('竹林暂停', '深呼吸，听一听竹叶的沙沙声。<div style="margin-top:.7em;font-size:.82em;color:#bfd29c">当前得分：' + score + ' · 剩余 ' + Math.ceil(timeLeft) + ' 秒</div>',
         isTouch ? '轻触 ▶ 继续' : '按 P 继续', '· 稍 作 歇 息 ·');
     } else {
       card.style.display = 'none';
@@ -5402,6 +5560,8 @@ void main() {
   window.addEventListener('keydown', function (event) {
     if (event.code === 'KeyM') { toggleMuted(); return; }
     if (phase === 'playing' && event.code === 'KeyP') { togglePause(); return; }
+    if (phase === 'playing' && event.code === 'Space') { event.preventDefault(); triggerRoll(); return; }
+    if (phase === 'playing' && (event.code === 'KeyE' || event.code === 'KeyQ')) { event.preventDefault(); triggerLeafBlast(); return; }
     if (KEYMAP[event.code]) { keys[KEYMAP[event.code]] = true; event.preventDefault(); }
     if (phase !== 'playing' && canRestart()) start();
   });
@@ -5426,11 +5586,16 @@ void main() {
   function endDrag(event) { if (drag && event.pointerId === drag.id) drag = null; }
   canvas.addEventListener('pointerup', endDrag);
   canvas.addEventListener('pointercancel', endDrag);
+  var autoSteer = { x: 0, z: 0, until: 0 };
   function inputDirection() {
     var x = (keys.right ? 1 : 0) - (keys.left ? 1 : 0), z = (keys.down ? 1 : 0) - (keys.up ? 1 : 0);
     if (drag) {
       var length = Math.hypot(drag.dx, drag.dy);
       if (length > 10) { x = drag.dx / length; z = drag.dy / length; }
+    }
+    if (x === 0 && z === 0 && performance.now() < autoSteer.until) {
+      x = autoSteer.x;
+      z = autoSteer.z;
     }
     var magnitude = Math.hypot(x, z);
     return magnitude > 0 ? { x: x / magnitude, z: z / magnitude } : { x: 0, z: 0 };
@@ -5446,7 +5611,7 @@ void main() {
   /* 11. BOARS — sniff, paw, lock on, charge; each step is telegraphed. */
   function beginWindup(e, dx, dz, dist) {
     e.state = 'windup';
-    e.timer = R.charge.windup;
+    e.timer = e.alpha ? R.charge.windup * 0.85 : R.charge.windup;
     e.dirX = dist > 0.001 ? dx / dist : 1;
     e.dirZ = dist > 0.001 ? dz / dist : 0;
     e.alert.visible = true;
@@ -5465,7 +5630,7 @@ void main() {
   }
 
   function hurtByBoar(e, dx, dz, dist) {
-    if (shield > 0) {
+    if (shield > 0 || rollActive > 0) {
       stopCharge(e);
       moveOnIsland(e, -dx / (dist || 1) * 2.4, -dz / (dist || 1) * 2.4, 0.4);
       dustBurst.emit(e.x, e.y + 0.4, e.z, { count: 8, spread: 1.5, up: 1.2, life: 0.6, size: 1.05 });
@@ -5475,6 +5640,8 @@ void main() {
     }
     if (invulnerable > 0) return;
     hearts -= 1;
+    combo = 0;
+    comboTimer = 0;
     invulnerable = 1.6;
     damageFlash = 1;
     shake = 0.6;
@@ -5488,6 +5655,7 @@ void main() {
 
   function updateBoars(dt) {
     var charge = R.charge;
+    var stageMul = STAGES[stageIndex].speedMul;
     for (var i = 0; i < enemies.length; i++) {
       var e = enemies[i];
       e.cooldown = Math.max(0, e.cooldown - dt);
@@ -5502,9 +5670,9 @@ void main() {
           if (od > 0 && od < 1.8) { ax += ox / od * 0.8; az += oz / od * 0.8; }
         }
         var al = Math.hypot(ax, az) || 1;
-        var speed = R.enemySpeed + R.enemySpeedGrowth * elapsed;
+        var speed = (R.enemySpeed + R.enemySpeedGrowth * elapsed) * stageMul * (e.alpha ? 1.12 : 1);
         moveOnIsland(e, ax / al * speed * dt, az / al * speed * dt, 0.4);
-        if (e.cooldown <= 0 && dist < charge.range) {
+        if (e.cooldown <= 0 && dist < charge.range * (e.alpha ? 1.15 : 1)) {
           beginWindup(e, dx, dz, dist);
         }
       } else if (e.state === 'windup') {
@@ -5516,7 +5684,7 @@ void main() {
         }
         if (e.timer <= 0) {
           e.state = 'charge';
-          e.timer = charge.duration;
+          e.timer = charge.duration * (e.alpha ? 1.15 : 1);
           e.alert.visible = false;
           e.alertRing.visible = false;
           e.chargeDust = 0;
@@ -5526,7 +5694,8 @@ void main() {
       } else if (e.state === 'charge') {
         e.timer -= dt;
         var beforeX = e.x, beforeZ = e.z;
-        moveOnIsland(e, e.dirX * charge.speed * dt, e.dirZ * charge.speed * dt, 0.4);
+        var cSpeed = charge.speed * (e.alpha ? 1.12 : 1);
+        moveOnIsland(e, e.dirX * cSpeed * dt, e.dirZ * cSpeed * dt, 0.4);
         e.facing = Math.atan2(e.dirX, e.dirZ);
         e.chargeDust -= dt;
         if (e.chargeDust <= 0 && Math.hypot(e.x - beforeX, e.z - beforeZ) > 0.001) {
@@ -5542,7 +5711,7 @@ void main() {
       // Contact uses the fresh distance after any movement.
       var cdx = hero.x - e.x, cdz = hero.z - e.z;
       var cdist = Math.hypot(cdx, cdz);
-      if (phase === 'playing' && cdist < (R.heroSize + R.enemySize) * 0.32 && invulnerable <= 0) {
+      if (phase === 'playing' && cdist < (R.heroSize + (e.size || R.enemySize)) * 0.31 && invulnerable <= 0) {
         hurtByBoar(e, cdx, cdz, cdist);
         if (phase !== 'playing') return;
       }
@@ -5560,38 +5729,85 @@ void main() {
       timeLeft = Math.max(0, timeLeft - dt);
       invulnerable = Math.max(0, invulnerable - dt);
       shield = Math.max(0, shield - dt);
+      speedBoostTimer = Math.max(0, speedBoostTimer - dt);
+      rollCooldown = Math.max(0, rollCooldown - dt);
+      rollActive = Math.max(0, rollActive - dt);
+      leafBlastCooldown = Math.max(0, leafBlastCooldown - dt);
+      if (comboTimer > 0) {
+        comboTimer = Math.max(0, comboTimer - dt);
+        if (comboTimer <= 0) combo = 0;
+      }
 
       var dir = inputDirection();
-      hero.vx = lerp(hero.vx, dir.x * R.heroSpeed, Math.min(1, dt * 12));
-      hero.vz = lerp(hero.vz, dir.z * R.heroSpeed, Math.min(1, dt * 12));
+      var speedCap = R.heroSpeed * (speedBoostTimer > 0 ? 1.34 : 1) * (rollActive > 0 ? 1.85 : 1);
+      hero.vx = lerp(hero.vx, dir.x * speedCap, Math.min(1, dt * (rollActive > 0 ? 18 : 12)));
+      hero.vz = lerp(hero.vz, dir.z * speedCap, Math.min(1, dt * (rollActive > 0 ? 18 : 12)));
       moveOnIsland(hero, hero.vx * dt, hero.vz * dt, 0.32);
       if (Math.abs(hero.vx) + Math.abs(hero.vz) > 0.4) {
         hero.facing = Math.atan2(hero.vx, hero.vz);
       }
 
+      var maxEn = Math.min(R.maxEnemies, STAGES[stageIndex].maxEnemies);
       spawnTimer += dt;
-      if (spawnTimer >= R.enemySpawnEvery && enemies.length < R.maxEnemies) {
+      if (spawnTimer >= R.enemySpawnEvery && enemies.length < maxEn) {
         spawnTimer = 0;
         addEnemy();
       }
       updateBoars(dt);
       if (phase !== 'playing') return;
 
+      var magnetRadius = speedBoostTimer > 0 ? 4.8 : 2.1;
       for (var k = pickups.length - 1; k >= 0; k--) {
         var p = pickups[k];
-        if (Math.hypot(p.x - hero.x, p.z - hero.z) < (R.heroSize + R.pickupSize) * 0.4) {
+        var pdx = hero.x - p.x, pdz = hero.z - p.z;
+        var pdist = Math.hypot(pdx, pdz);
+        if (pdist < magnetRadius && pdist > 0.05) {
+          var pull = (speedBoostTimer > 0 ? 7.5 : 3.4) * dt;
+          p.x += (pdx / pdist) * pull;
+          p.z += (pdz / pdist) * pull;
+        }
+        if (Math.hypot(p.x - hero.x, p.z - hero.z) < (R.heroSize + R.pickupSize) * 0.44) {
           scene.remove(p.node);
           pickups.splice(k, 1);
-          score += 1;
-          leafBurst.emit(p.x, groundAt(p.x, p.z) + R.pickupSize * 0.55, p.z, { count: 12, spread: 2.1, up: 3.1, life: 0.7, size: 1 });
-          blip(780, 0.1, 'triangle', 0.05, 1230);
+          combo += 1;
+          comboTimer = 4.2;
+          if (combo > maxCombo) maxCombo = combo;
+          var pts = p.value || 1;
+          if (combo >= 4) pts += 1;
+          score += pts;
+          if (p.kind === 'golden') {
+            goldenCount++;
+            toast('🎋 金玉冬笋 +' + pts + '！');
+            blip(920, 0.16, 'triangle', 0.06, 1420);
+          } else if (p.kind === 'mushroom') {
+            mushroomCount++;
+            speedBoostTimer = 5.5;
+            toast('🍄 灵芝加速 + 吸笋磁铁 5秒！');
+            blip(680, 0.22, 'sine', 0.06, 1280);
+          } else {
+            blip(780, 0.1, 'triangle', 0.05, 1230);
+          }
+          leafBurst.emit(p.x, groundAt(p.x, p.z) + R.pickupSize * 0.55, p.z, { count: p.kind === 'golden' ? 18 : 12, spread: 2.2, up: 3.2, life: 0.72, size: 1.05 });
+
+          // Check stage progression
+          if (stageIndex < STAGES.length - 1 && score >= STAGES[stageIndex + 1].minScore) {
+            stageIndex += 1;
+            timeLeft = Math.min(R.duration + 12, timeLeft + 5);
+            toast('✨ 进入 ' + STAGES[stageIndex].name + ' · 时间 +5秒！');
+            blip(540, 0.35, 'triangle', 0.06, 1080);
+            if (stageIndex === 1) addEnemy(true);
+          }
+
           post({ type: 'state', phase: phase, score: score, hearts: hearts });
-          if (R.shield.enabled && R.shield.every > 0 && ++sinceShield >= R.shield.every) {
-            sinceShield = 0;
-            shield = R.shield.seconds;
-            leafBurst.emit(hero.x, hero.y + R.heroSize * 0.5, hero.z, { count: 16, spread: 2.4, up: 3.2, life: 0.8, size: 1.1 });
-            blip(460, 0.4, 'sine', 0.055, 1080);
-            toast('竹叶护身 · ' + Math.round(R.shield.seconds) + ' 秒');
+          if (R.shield.enabled && R.shield.every > 0) {
+            sinceShield += (p.kind === 'golden' ? 2 : 1);
+            if (sinceShield >= R.shield.every) {
+              sinceShield = 0;
+              shield = R.shield.seconds;
+              leafBurst.emit(hero.x, hero.y + R.heroSize * 0.5, hero.z, { count: 16, spread: 2.4, up: 3.2, life: 0.8, size: 1.1 });
+              blip(460, 0.4, 'sine', 0.055, 1080);
+              toast('🍃 竹叶护身 · ' + Math.round(R.shield.seconds) + ' 秒无敌');
+            }
           }
         }
       }
@@ -5611,12 +5827,13 @@ void main() {
     var heroBody = hero.node.userData.body;
     hero.node.position.set(hero.x, hero.y, hero.z);
     heroBody.position.y = moving ? Math.abs(Math.sin(t * 11.5)) * 0.11 : Math.sin(t * 2.2) * 0.025;
-    heroBody.rotation.z = moving ? Math.sin(t * 11.5) * 0.035 : 0;
+    heroBody.rotation.z = rollActive > 0 ? Math.sin(t * 28) * 0.22 : (moving ? Math.sin(t * 11.5) * 0.035 : 0);
     if (heroBody.userData.sprite) heroBody.material.rotation = moving ? Math.sin(t * 11.5) * 0.06 : 0;
     else heroBody.rotation.y = lerp(heroBody.rotation.y, hero.facing, Math.min(1, dt * 11));
-    var blinking = invulnerable > 0 && phase === 'playing';
+    var blinking = invulnerable > 0 && phase === 'playing' && rollActive <= 0;
     hero.node.visible = !blinking || Math.floor(t * 14) % 2 === 0;
-    bubble.visible = shield > 0;
+    bubble.visible = shield > 0 || speedBoostTimer > 0;
+    bubble.material.color.set(shield > 0 ? '#b6e68d' : '#ffd876');
     bubble.material.opacity = 0.14 + Math.sin(t * 8) * 0.06;
     var auraPulse = 1 + Math.sin(t * 2.4) * 0.05;
     heroAura.scale.setScalar(auraPulse);
@@ -5642,17 +5859,17 @@ void main() {
       if (alertVisible) {
         var pop = 1 + Math.sin(t * 14) * 0.08;
         en.alert.scale.set(1.05 * pop, 1.05 * pop, 1);
-        en.alert.position.y = R.enemySize * 1.48 + Math.sin(t * 7) * 0.06;
+        en.alert.position.y = (en.size || R.enemySize) * 1.48 + Math.sin(t * 7) * 0.06;
         en.alertRing.material.opacity = 0.32 + Math.sin(t * 9) * 0.16;
-        en.alertRing.scale.setScalar(R.enemySize * (0.9 + Math.sin(t * 9) * 0.05));
+        en.alertRing.scale.setScalar((en.size || R.enemySize) * (0.9 + Math.sin(t * 9) * 0.05));
       }
     }
 
     for (var n = 0; n < pickups.length; n++) {
       var pk = pickups[n], pbody = pk.node.userData.body;
       pk.node.position.set(pk.x, groundAt(pk.x, pk.z) + 0.16 + Math.sin(t * 2.5 + pk.phase) * 0.13, pk.z);
-      if (!pbody.userData.sprite) {
-        pbody.rotation.y = t * 0.55 + pk.phase;
+      if (pbody && !pbody.userData.sprite) {
+        pbody.rotation.y = t * (pk.kind === 'golden' ? 1.15 : 0.55) + pk.phase;
         pbody.rotation.z = Math.sin(t * 2 + pk.phase) * 0.04;
       }
       var pulse = 1 + Math.sin(t * 4 + pk.phase) * 0.15;
@@ -5695,20 +5912,19 @@ void main() {
       driftMesh.setMatrixAt(d, dummy.matrix);
     }
     driftMesh.instanceMatrix.needsUpdate = true;
-
   }
 
   /* 13. CAMERA */
-  var PITCH = 45 * Math.PI / 180;
+  var PITCH = 46 * Math.PI / 180;
   var focus = new THREE.Vector3(0, groundAt(0, 0), 0);
   function cameraDistance() {
     var aspect = camera.aspect;
-    return aspect >= 1 ? 29 : 29 + (1 - aspect) * 4;
+    return aspect >= 1 ? 28 : 28 + (1 - aspect) * 3.5;
   }
   function placeCamera(dt, now) {
-    focus.x = lerp(focus.x, hero.x, Math.min(1, dt * 5));
-    focus.z = lerp(focus.z, hero.z, Math.min(1, dt * 5));
-    focus.y = lerp(focus.y, hero.y, Math.min(1, dt * 4));
+    focus.x = lerp(focus.x, hero.x, Math.min(1, dt * 8));
+    focus.z = lerp(focus.z, hero.z, Math.min(1, dt * 8));
+    focus.y = lerp(focus.y, hero.y, Math.min(1, dt * 6));
     var distance = cameraDistance();
     var sx = shake > 0 ? Math.sin(now * 0.053) * shake * 0.7 : 0;
     var sy = shake > 0 ? Math.cos(now * 0.061) * shake * 0.45 : 0;
@@ -5725,11 +5941,8 @@ void main() {
     var width = window.innerWidth || 1, heightPx = window.innerHeight || 1;
     renderer.setSize(width, heightPx, false);
     camera.aspect = width / heightPx;
-    // Portrait screens keep a wide horizontal field of view by opening the lens
-    // rather than pulling the camera far away from the little panda.
     camera.fov = camera.aspect >= 1 ? 40 : 40 + (1 - camera.aspect) * 12;
     camera.updateProjectionMatrix();
-    if (brandEl) brandEl.style.display = width < 360 ? 'none' : 'block';
   }
   window.addEventListener('resize', resize);
   resize();
@@ -5746,13 +5959,25 @@ void main() {
       var fullHearts = '♥'.repeat(Math.max(0, hearts));
       var emptyHearts = '♡'.repeat(Math.max(0, R.hearts - hearts));
       heartsEl.innerHTML = '<span style="color:#ff9d86">' + fullHearts + '</span><span style="color:rgba(255,246,224,.35)">' + emptyHearts + '</span>';
-      scoreEl.textContent = '嫩笋 × ' + score;
+      scoreEl.textContent = '🎋 ' + score;
+      comboEl.textContent = combo >= 2 ? ('🔥 ' + combo + '连击' + (speedBoostTimer > 0 ? ' · 🍄加速' : '')) : (speedBoostTimer > 0 ? '🍄 灵芝加速中' : '收集嫩笋与金笋');
+      stageEl.textContent = STAGES[stageIndex].name;
       var seconds = Math.ceil(timeLeft);
       timerEl.textContent = Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
-      shieldEl.style.display = shield > 0 ? 'block' : 'none';
-      shieldEl.textContent = '竹叶护身 ' + Math.ceil(shield) + ' 秒';
+      if (shield > 0) {
+        shieldEl.textContent = '🍃 护身 ' + Math.ceil(shield) + 's';
+        shieldFill.style.width = Math.min(100, (shield / R.shield.seconds) * 100) + '%';
+      } else {
+        shieldEl.textContent = '🍃 护身 ' + sinceShield + '/' + R.shield.every;
+        shieldFill.style.width = Math.min(100, (sinceShield / R.shield.every) * 100) + '%';
+      }
+      leafBtn.style.opacity = leafBlastCooldown > 0 ? '0.58' : '1';
+      leafBtn.innerHTML = '<span style="font-size:.82em;font-weight:800;color:#d6f59e">🍃 旋风 E</span>'
+        + '<span style="font-size:.64em;color:#fff2c2">' + (leafBlastCooldown > 0 ? leafBlastCooldown.toFixed(1) + 's' : '就绪') + '</span>';
+      rollBtn.style.opacity = rollCooldown > 0 ? '0.58' : '1';
+      rollBtn.innerHTML = '<span style="font-size:.82em;font-weight:800;color:#ffe49c">⚡ 翻滚 空格</span>'
+        + '<span style="font-size:.64em;color:#fff2c2">' + (rollCooldown > 0 ? rollCooldown.toFixed(1) + 's' : '就绪') + '</span>';
       damageEl.style.opacity = String(Math.min(0.9, damageFlash * 0.9));
-      hintEl.style.opacity = phase === 'playing' ? (elapsed < 8 ? '1' : '0.5') : '0.72';
       renderer.render(scene, camera);
     } catch (error) {
       reportError(error && error.message || error);
@@ -5771,7 +5996,7 @@ void main() {
 
   function heroOnScreen() {
     var v = new THREE.Vector3(hero.x, hero.y + R.heroSize * 0.5, hero.z).project(camera);
-    return Math.abs(v.x) <= 1 && Math.abs(v.y) <= 1;
+    return Math.abs(v.x) <= 0.98 && Math.abs(v.y) <= 0.98;
   }
 
   /* 15. CHARACTER CLOSE-UPS for the studio sidebar and playtest reports. */
@@ -5818,15 +6043,78 @@ void main() {
     catch (error) { reportError('character renders failed: ' + (error && error.message || error)); }
   }, 400);
 
-  /* 16. STATE read by the studio's preview and playtest. */
+  /* 16. STATE & AUTOPLAY read by the studio's preview and playtest. */
+  window.__autoplay = function () {
+    if (phase !== 'playing') {
+      if (canRestart()) start();
+      return;
+    }
+    var hx = hero.x, hz = hero.z;
+    for (var i = 0; i < enemies.length; i++) {
+      var e = enemies[i];
+      var dx = hx - e.x, dz = hz - e.z;
+      var dist = Math.hypot(dx, dz) || 0.001;
+      if (dist < 4.8 && leafBlastCooldown <= 0) {
+        triggerLeafBlast();
+        break;
+      }
+      if ((e.state === 'charge' || e.state === 'windup') && dist < 5.5) {
+        if (rollCooldown <= 0) triggerRoll();
+        autoSteer.x = -e.dirZ;
+        autoSteer.z = e.dirX;
+        autoSteer.until = performance.now() + 260;
+        return;
+      }
+    }
+    var bestP = null, bestVal = -999;
+    for (var j = 0; j < pickups.length; j++) {
+      var p = pickups[j];
+      var d = Math.hypot(p.x - hx, p.z - hz);
+      var scoreWeight = (p.kind === 'golden' ? 6 : p.kind === 'mushroom' ? 5 : 2) - d * 0.35;
+      if (scoreWeight > bestVal) {
+        bestVal = scoreWeight;
+        bestP = p;
+      }
+    }
+    var tx = bestP ? bestP.x - hx : -hx;
+    var tz = bestP ? bestP.z - hz : -hz;
+    var tl = Math.hypot(tx, tz) || 1;
+    tx /= tl; tz /= tl;
+    for (var k = 0; k < enemies.length; k++) {
+      var en = enemies[k];
+      var ex = hx - en.x, ez = hz - en.z, ed = Math.hypot(ex, ez) || 0.001;
+      if (ed < 5.8) {
+        tx += (ex / ed) * (5.8 - ed) * 0.85;
+        tz += (ez / ed) * (5.8 - ed) * 0.85;
+      }
+    }
+    var fl = Math.hypot(tx, tz) || 1;
+    var stepX = tx / fl, stepZ = tz / fl;
+    if (!walkable(hx + stepX * 1.1, hz + stepZ * 1.1)) {
+      var altX = -stepZ, altZ = stepX;
+      if (walkable(hx + altX * 1.1, hz + altZ * 1.1)) {
+        stepX = altX; stepZ = altZ;
+      } else {
+        stepX = -hx / (Math.hypot(hx, hz) || 1);
+        stepZ = -hz / (Math.hypot(hx, hz) || 1);
+      }
+    }
+    if (rollCooldown <= 0 && bestP && Math.hypot(bestP.x - hx, bestP.z - hz) > 4.2) triggerRoll();
+    autoSteer.x = stepX;
+    autoSteer.z = stepZ;
+    autoSteer.until = performance.now() + 260;
+  };
+
   window.__gameState = function () {
     return {
       phase: phase, paused: paused, score: score, best: best,
+      stage: stageIndex + 1, stageName: STAGES[stageIndex].name,
+      combo: combo, goldenCount: goldenCount,
       time: Math.round(timeLeft * 100) / 100, hearts: hearts,
       shield: Math.round(shield * 100) / 100,
       hero: { x: Math.round(hero.x * 100) / 100, y: Math.round(hero.z * 100) / 100 },
-      pickups: pickups.map(function (p) { return { x: p.x, y: p.z }; }),
-      enemies: enemies.map(function (e) { return { x: Math.round(e.x * 100) / 100, y: Math.round(e.z * 100) / 100, state: e.state }; }),
+      pickups: pickups.map(function (p) { return { x: p.x, y: p.z, kind: p.kind }; }),
+      enemies: enemies.map(function (e) { return { x: Math.round(e.x * 100) / 100, y: Math.round(e.z * 100) / 100, state: e.state, alpha: !!e.alpha }; }),
       fps: Math.round(fps), renderer: 'webgl', heroMode: heroMode,
       world: { size: N, bamboo: bambooClusters.length },
       heroOnScreen: heroOnScreen()

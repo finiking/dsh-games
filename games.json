@@ -3,7 +3,7 @@
   "version": 1,
   "name": "finiking 的小游戏",
   "author": "finiking",
-  "updatedAt": "2026-11-08T10:34:45.648Z",
+  "updatedAt": "2026-11-08T13:58:30.330Z",
   "games": [
     {
       "slug": "gem-blast",
@@ -12,7 +12,7 @@
       "cover": "gem-blast/cover.jpg",
       "dimension": "2d",
       "orientation": "portrait",
-      "publishedAt": "2026-11-08T10:34:45.648Z"
+      "publishedAt": "2026-11-08T13:58:30.330Z"
     },
     {
       "slug": "fox-adventure",
@@ -21,7 +21,7 @@
       "cover": "fox-adventure/cover.jpg",
       "dimension": "2d",
       "orientation": "landscape",
-      "publishedAt": "2026-11-08T10:34:45.648Z"
+      "publishedAt": "2026-11-08T13:58:30.330Z"
     },
     {
       "slug": "kitchen-cat-fish",
@@ -30,7 +30,7 @@
       "cover": "kitchen-cat-fish/cover.jpg",
       "dimension": "2d",
       "orientation": "portrait",
-      "publishedAt": "2026-11-08T10:34:45.648Z"
+      "publishedAt": "2026-11-08T13:58:30.330Z"
     },
     {
       "slug": "penguin-berg",
@@ -39,7 +39,7 @@
       "cover": "penguin-berg/cover.jpg",
       "dimension": "3d",
       "orientation": "portrait",
-      "publishedAt": "2026-11-08T10:34:45.648Z"
+      "publishedAt": "2026-11-08T13:58:30.330Z"
     },
     {
       "slug": "red-panda-bamboo",
@@ -48,7 +48,7 @@
       "cover": "red-panda-bamboo/cover.jpg",
       "dimension": "3d",
       "orientation": "portrait",
-      "publishedAt": "2026-11-08T10:34:45.648Z"
+      "publishedAt": "2026-11-08T13:58:30.330Z"
     },
     {
       "slug": "hoop-rush",
@@ -57,7 +57,7 @@
       "cover": "hoop-rush/cover.jpg",
       "dimension": "2d",
       "orientation": "portrait",
-      "publishedAt": "2026-11-08T10:34:45.648Z"
+      "publishedAt": "2026-11-08T13:58:30.330Z"
     },
     {
       "slug": "slime-king-cards",
@@ -66,7 +66,7 @@
       "cover": "slime-king-cards/cover.jpg",
       "dimension": "2d",
       "orientation": "portrait",
-      "publishedAt": "2026-11-08T10:34:45.648Z"
+      "publishedAt": "2026-11-08T13:58:30.330Z"
     },
     {
       "slug": "apex-rush",
@@ -75,7 +75,7 @@
       "cover": "apex-rush/cover.jpg",
       "dimension": "2d",
       "orientation": "portrait",
-      "publishedAt": "2026-11-08T10:34:45.648Z"
+      "publishedAt": "2026-11-08T13:58:30.330Z"
     },
     {
       "slug": "slime-gate-defense",
@@ -84,7 +84,7 @@
       "cover": "slime-gate-defense/cover.jpg",
       "dimension": "2d",
       "orientation": "portrait",
-      "publishedAt": "2026-11-08T10:34:45.648Z"
+      "publishedAt": "2026-11-08T13:58:30.330Z"
     },
     {
       "slug": "dino-volcano-eggs",
@@ -93,7 +93,7 @@
       "cover": "dino-volcano-eggs/cover.jpg",
       "dimension": "3d",
       "orientation": "portrait",
-      "publishedAt": "2026-11-08T10:34:45.648Z"
+      "publishedAt": "2026-11-08T13:58:30.330Z"
     }
   ],
   "wall": "wall/"

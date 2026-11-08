@@ -44,10 +44,17 @@
   var R = resolveRules(GAME.rules || {});
   var N = Math.max(4, Math.min(8, Math.round(R.gridSize)));
   var TYPES = Math.max(4, Math.min(6, Math.round(R.gemTypes)));
-  var DURATION = Math.max(5, R.duration);
+  var DURATION = Math.max(1, R.duration);
+  var SHORT_RUN = R.duration <= 10;
   var TARGET = Math.max(100, Math.round(R.targetScore));
   var BASE_POINTS = Math.max(5, Math.round(R.basePoints));
   var HINT_DELAY = Math.max(1.5, R.hintDelay);
+  var FEVER_DURATION = 6.0;
+  var STAGES = [
+    { id: 1, name: '星辉初现', label: '第 1 关 · 星辉初现', target: TARGET },
+    { id: 2, name: '极光秘境', label: '第 2 关 · 极光秘境', target: TARGET === 1000 ? 2500 : Math.round(TARGET * 2.5) },
+    { id: 3, name: '皇家宝库', label: '第 3 关 · 皇家宝库', target: TARGET === 1000 ? 4500 : Math.round(TARGET * 4.5) }
+  ];
 
   var canvas = document.getElementById('game');
   if (!canvas) {
@@ -593,10 +600,16 @@
   var phase = 'title';
   var state = 'idle';
   var board = [];
+  var specials = [];
   var anim = null;
   var time = DURATION;
   var score = 0;
   var bestScore = 0;
+  var stageIndex = 0;
+  var feverEnergy = 0;
+  var feverTimer = 0;
+  var stageBannerTimer = 0;
+  var stageBannerText = '';
   var combo = 0;
   var chain = 1;
   var selected = null;
@@ -611,10 +624,12 @@
   var winTimeLeft = 0;
   var lastTickSecond = -1;
   var dropNotice = false;
+  var autoCooldown = 0;
 
   var particles = [];
   var floaters = [];
   var rings = [];
+  var beams = [];
   var confetti = [];
   var shake = 0;
   var shakePower = 0;
@@ -628,6 +643,20 @@
   var lastFrame = 0;
   var drag = null;
   var decor = { stars: [], ghosts: [], dust: [] };
+
+  function makeEmptySpecials() {
+    var s = [];
+    for (var r = 0; r < N; r++) {
+      s[r] = [];
+      for (var c = 0; c < N; c++) s[r][c] = null;
+    }
+    return s;
+  }
+  function currentStageTarget() {
+    if (SHORT_RUN) return TARGET;
+    var st = STAGES[Math.min(stageIndex, STAGES.length - 1)];
+    return st ? st.target : TARGET;
+  }
 
   function loadBest() {
     try { return Math.max(0, parseInt(localStorage.getItem('gemBlastBest') || '0', 10) || 0); }
@@ -760,6 +789,11 @@
     var tmp = board[a.r][a.c];
     board[a.r][a.c] = board[b.r][b.c];
     board[b.r][b.c] = tmp;
+    if (specials[a.r] && specials[b.r]) {
+      var stmp = specials[a.r][a.c];
+      specials[a.r][a.c] = specials[b.r][b.c];
+      specials[b.r][b.c] = stmp;
+    }
   }
 
   function adjacent(a, b) {
@@ -782,6 +816,7 @@
     particles.length = 0;
     floaters.length = 0;
     rings.length = 0;
+    beams.length = 0;
     confetti.length = 0;
     shake = 0;
     shakePower = 0;
@@ -798,6 +833,11 @@
     paused = false;
     time = DURATION;
     score = 0;
+    stageIndex = 0;
+    feverEnergy = 0;
+    feverTimer = 0;
+    stageBannerTimer = 0;
+    stageBannerText = '';
     combo = 0;
     chain = 1;
     selected = null;
@@ -812,6 +852,7 @@
     drag = null;
     resetEffects();
     board = generateBoard();
+    specials = makeEmptySpecials();
     cursor = { r: Math.floor(N / 2), c: Math.floor(N / 2) };
     cursorActive = false;
     sfxStart();
@@ -866,24 +907,102 @@
     combo = multiplier;
     comboFlash = multiplier > 1 ? 1.35 : 0.55;
 
-    var cells = match.cells;
-    var lineBonus = 0;
-    for (var i = 0; i < match.runs.length; i++) {
-      lineBonus += Math.max(0, match.runs[i].len - 3) * 15;
+    var cells = match.cells.slice();
+    var mask = {};
+    var i, r, c;
+    for (i = 0; i < cells.length; i++) {
+      mask[keyOf(cells[i].r, cells[i].c)] = true;
     }
-    var gain = Math.round((cells.length * BASE_POINTS + lineBonus) * multiplier);
+
+    // Trigger any existing special gems in the cleared cells
+    var specialBonus = 0;
+    var queue = cells.slice();
+    while (queue.length > 0) {
+      var cur = queue.shift();
+      var sp = specials[cur.r] && specials[cur.r][cur.c];
+      if (!sp) continue;
+      specials[cur.r][cur.c] = null;
+      var spPos = cellCenter(cur.r, cur.c);
+      if (sp === 'lineH') {
+        specialBonus += 120;
+        beams.push({ x1: layout.boardX, y1: spPos.y, x2: layout.boardX + layout.boardSize, y2: spPos.y, age: 0, life: 0.42, color: '#7deaff' });
+        addFloater(spPos.x, spPos.y - layout.cell * 0.45, '⚡ 横向射线!', '#8cf0ff', 1.15);
+        for (c = 0; c < N; c++) {
+          var kh = keyOf(cur.r, c);
+          if (!mask[kh] && board[cur.r][c] != null) {
+            mask[kh] = true;
+            var ncellH = { r: cur.r, c: c, type: board[cur.r][c] };
+            cells.push(ncellH);
+            queue.push(ncellH);
+          }
+        }
+      } else if (sp === 'lineV') {
+        specialBonus += 120;
+        beams.push({ x1: spPos.x, y1: layout.boardY, x2: spPos.x, y2: layout.boardY + layout.boardSize, age: 0, life: 0.42, color: '#7deaff' });
+        addFloater(spPos.x, spPos.y - layout.cell * 0.45, '⚡ 纵向射线!', '#8cf0ff', 1.15);
+        for (r = 0; r < N; r++) {
+          var kv = keyOf(r, cur.c);
+          if (!mask[kv] && board[r][cur.c] != null) {
+            mask[kv] = true;
+            var ncellV = { r: r, c: cur.c, type: board[r][cur.c] };
+            cells.push(ncellV);
+            queue.push(ncellV);
+          }
+        }
+      } else if (sp === 'bomb') {
+        specialBonus += 200;
+        rings.push({ x: spPos.x, y: spPos.y, age: 0, life: 0.65, maxR: layout.cell * 1.9, color: 'rgba(255,216,112,0.95)' });
+        addFloater(spPos.x, spPos.y - layout.cell * 0.5, '💣 星辰爆破!', '#ffe07d', 1.22);
+        for (r = Math.max(0, cur.r - 1); r <= Math.min(N - 1, cur.r + 1); r++) {
+          for (c = Math.max(0, cur.c - 1); c <= Math.min(N - 1, cur.c + 1); c++) {
+            var kb = keyOf(r, c);
+            if (!mask[kb] && board[r][c] != null) {
+              mask[kb] = true;
+              var ncellB = { r: r, c: c, type: board[r][c] };
+              cells.push(ncellB);
+              queue.push(ncellB);
+            }
+          }
+        }
+      }
+    }
+
+    // Spawn new special gems from 4-matches or 5-matches
+    var spawnedSpecials = [];
+    var lineBonus = 0;
+    for (i = 0; i < match.runs.length; i++) {
+      var run = match.runs[i];
+      lineBonus += Math.max(0, run.len - 3) * 25;
+      if (run.len >= 4) {
+        var anchor = run.cells[Math.floor(run.cells.length / 2)];
+        var spKind = run.len >= 5 ? 'bomb' : (run.dir === 'h' ? 'lineV' : 'lineH');
+        spawnedSpecials.push({ r: anchor.r, c: anchor.c, type: run.type, kind: spKind });
+      }
+    }
+
+    // Charge Fever gauge
+    if (feverTimer <= 0) {
+      feverEnergy = Math.min(100, feverEnergy + cells.length * 9 + (multiplier > 1 ? 14 : 0));
+      if (feverEnergy >= 100) {
+        feverEnergy = 0;
+        feverTimer = FEVER_DURATION;
+        flash = 0.45;
+        addFloater(world.w / 2, layout.boardY + layout.boardSize * 0.24, '🔥 狂热时刻 ×2 开启!', '#ff9ed2', 1.28);
+      }
+    }
+
+    var feverMult = feverTimer > 0 ? 2 : 1;
+    var gain = Math.round((cells.length * BASE_POINTS + lineBonus + specialBonus) * multiplier * feverMult);
     score += gain;
     if (score > bestScore) bestScore = score;
     scorePulse = 1;
-    shake = Math.min(0.24, 0.08 + cells.length * 0.012);
-    shakePower = Math.min(1, 0.4 + cells.length * 0.06) * (multiplier > 1 ? 1.4 : 1);
+    shake = Math.min(0.28, 0.08 + cells.length * 0.014);
+    shakePower = Math.min(1.2, 0.4 + cells.length * 0.06) * (multiplier > 1 ? 1.4 : 1);
     comboFlash = Math.max(comboFlash, multiplier > 1 ? 1.35 : 0.55);
 
-    var mask = {};
     var cx = 0, cy = 0;
     for (i = 0; i < cells.length; i++) {
       var cell = cells[i];
-      mask[keyOf(cell.r, cell.c)] = true;
       var pos = cellCenter(cell.r, cell.c);
       cx += pos.x;
       cy += pos.y;
@@ -892,7 +1011,7 @@
     cx /= cells.length;
     cy /= cells.length;
 
-    addFloater(cx, cy - layout.cell * 0.32, '+' + formatScore(gain), '#fff0b6', 1);
+    addFloater(cx, cy - layout.cell * 0.32, '+' + formatScore(gain) + (feverMult > 1 ? ' 🔥' : ''), feverMult > 1 ? '#ffd0e8' : '#fff0b6', 1);
     if (multiplier > 1) {
       addFloater(cx, cy - layout.cell * 0.95, '连击 ×' + multiplier, '#ffb7da', 1.15);
       for (var ringIdx = 0; ringIdx < Math.min(3, cells.length); ringIdx++) {
@@ -903,23 +1022,41 @@
       rings.push({ x: cx, y: cy, age: 0, life: 0.5, maxR: layout.cell * 0.75, color: 'rgba(255,226,163,0.6)' });
     }
 
-    if (score >= TARGET) pendingWin = true;
+    // Check stage progression or final win
+    if (SHORT_RUN) {
+      if (score >= TARGET) pendingWin = true;
+    } else {
+      while (stageIndex < STAGES.length - 1 && score >= STAGES[stageIndex].target) {
+        stageIndex++;
+        time = Math.min(DURATION + 25, time + 12);
+        stageBannerText = '✦ 晋级 ' + STAGES[stageIndex].label + ' · 奖励 +12秒! ✦';
+        stageBannerTimer = 2.6;
+        flash = 0.4;
+        spawnConfettiWide();
+      }
+      if (stageIndex >= STAGES.length - 1 && score >= STAGES[STAGES.length - 1].target) {
+        pendingWin = true;
+      }
+    }
     sfxMatch(multiplier);
 
     state = 'clear';
-    anim = { type: 'clear', t: 0, dur: 0.30, cells: cells, mask: mask };
+    anim = { type: 'clear', t: 0, dur: 0.30, cells: cells, mask: mask, spawnedSpecials: spawnedSpecials };
   }
 
   function collapseAndFill() {
     var next = [];
+    var nextSpec = [];
     var starts = [];
     var maxDrop = 0;
     var r, c, write;
     for (r = 0; r < N; r++) {
       next[r] = [];
+      nextSpec[r] = [];
       starts[r] = [];
       for (c = 0; c < N; c++) {
         next[r][c] = null;
+        nextSpec[r][c] = null;
         starts[r][c] = null;
       }
     }
@@ -929,6 +1066,7 @@
       for (r = N - 1; r >= 0; r--) {
         if (board[r][c] != null) {
           next[write][c] = board[r][c];
+          nextSpec[write][c] = specials[r] ? specials[r][c] : null;
           starts[write][c] = r;
           if (Math.abs(r - write) > maxDrop) maxDrop = Math.abs(r - write);
           write--;
@@ -937,12 +1075,14 @@
       var emptyCount = write + 1;
       for (r = write; r >= 0; r--) {
         next[r][c] = randomType();
+        nextSpec[r][c] = null;
         starts[r][c] = r - emptyCount;
         if (Math.abs(starts[r][c] - r) > maxDrop) maxDrop = Math.abs(starts[r][c] - r);
       }
     }
 
     board = next;
+    specials = nextSpec;
     state = 'fall';
     anim = {
       type: 'fall',
@@ -989,7 +1129,19 @@
     if (finished.type === 'clear') {
       for (var i = 0; i < finished.cells.length; i++) {
         var c = finished.cells[i];
-        if (board[c.r] && board[c.r][c.c] != null) board[c.r][c.c] = null;
+        if (board[c.r] && board[c.r][c.c] != null) {
+          board[c.r][c.c] = null;
+          if (specials[c.r]) specials[c.r][c.c] = null;
+        }
+      }
+      if (finished.spawnedSpecials) {
+        for (var si = 0; si < finished.spawnedSpecials.length; si++) {
+          var sp = finished.spawnedSpecials[si];
+          board[sp.r][sp.c] = sp.type;
+          specials[sp.r][sp.c] = sp.kind;
+          var spPos = cellCenter(sp.r, sp.c);
+          addFloater(spPos.x, spPos.y - layout.cell * 0.3, sp.kind === 'bomb' ? '★ 星辰炸弹!' : '⚡ 极光宝石!', '#ffe999', 1.1);
+        }
       }
       collapseAndFill();
       return;
@@ -1021,11 +1173,23 @@
     hint = null;
     hintTimer = 0;
     board = generateBoard();
+    specials = makeEmptySpecials();
     state = 'idle';
     anim = null;
     flash = 0.5;
-    addFloater(world.w / 2, layout.boardY + layout.boardSize * 0.5, '重新排列！', '#ffe9ae', 1.2);
+    addFloater(world.w / 2, layout.boardY + layout.boardSize * 0.5, '🔀 重新洗牌！', '#ffe9ae', 1.2);
     sfxShuffle();
+  }
+
+  function triggerHintButton() {
+    if (phase !== 'playing' || state !== 'idle' || paused || timeUp) return;
+    hint = findAnyMove();
+    hintTimer = HINT_DELAY;
+    sfxSelect();
+    if (hint) {
+      var p = cellCenter(hint.a.r, hint.a.c);
+      addFloater(p.x, p.y - layout.cell * 0.38, '💡 可交换!', '#ffe89c', 1.05);
+    }
   }
 
   /* ================================================================
@@ -1109,6 +1273,10 @@
     }
   }
 
+  function rectContains(rect, x, y) {
+    return !!(rect && x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h);
+  }
+
   function pointerDown(e) {
     ensureAudio();
     var p = toWorldPoint(e);
@@ -1124,6 +1292,18 @@
         togglePause();
         e.preventDefault();
         return;
+      }
+      if (phase === 'playing' && !paused && state === 'idle') {
+        if (rectContains(layout.hintBtn, p.x, p.y)) {
+          triggerHintButton();
+          e.preventDefault();
+          return;
+        }
+        if (rectContains(layout.shuffleBtn, p.x, p.y)) {
+          reshuffleBoard();
+          e.preventDefault();
+          return;
+        }
       }
     }
 
@@ -1289,6 +1469,8 @@
     }
     if (phase !== 'playing') return;
 
+    if (k === 'h') { triggerHintButton(); return; }
+    if (k === 'r') { if (state === 'idle') reshuffleBoard(); return; }
     if (k === 'arrowleft' || k === 'a') { handleArrow(0, -1); return; }
     if (k === 'arrowright' || k === 'd') { handleArrow(0, 1); return; }
     if (k === 'arrowup' || k === 'w') { handleArrow(-1, 0); return; }
@@ -1384,6 +1566,11 @@
       p.age += dt;
       if (p.age >= p.life) rings.splice(i, 1);
     }
+    for (i = beams.length - 1; i >= 0; i--) {
+      p = beams[i];
+      p.age += dt;
+      if (p.age >= p.life) beams.splice(i, 1);
+    }
     for (i = confetti.length - 1; i >= 0; i--) {
       p = confetti[i];
       p.age += dt;
@@ -1399,9 +1586,14 @@
     if (comboFlash > 0) comboFlash = Math.max(0, comboFlash - dt);
     if (flash > 0) flash = Math.max(0, flash - dt * 2.2);
     if (shake > 0) shake = Math.max(0, shake - dt);
+    if (stageBannerTimer > 0) stageBannerTimer = Math.max(0, stageBannerTimer - dt);
+    if (autoCooldown > 0) autoCooldown = Math.max(0, autoCooldown - dt);
   }
 
   function updatePlaying(dt) {
+    if (feverTimer > 0) {
+      feverTimer = Math.max(0, feverTimer - dt);
+    }
     if (!timeUp) {
       time = Math.max(0, time - dt);
       var second = Math.ceil(time);
@@ -1462,10 +1654,10 @@
       var titleH = clamp(H * 0.055, 48, 80);
       var cardH = clamp(H * 0.055, 64, 90);
       var cardGap = clamp(W * 0.028, 12, 20);
-      var progressH = 40;
-      var footerH = clamp(H * 0.09, 104, 150);
-      var boardSize = Math.min(W - pad * 2, H * 0.495, 680);
-      gap = clamp(H * 0.017, 16, 28);
+      var progressH = 54;
+      var footerH = clamp(H * 0.088, 100, 138);
+      var boardSize = Math.min(W - pad * 2, H * 0.485, 680);
+      gap = clamp(H * 0.016, 14, 24);
       var groupH = titleH + 8 + cardH + 8 + progressH + gap + boardSize + gap + footerH;
       var top = Math.max(16, (H - groupH) / 2);
 
@@ -1484,9 +1676,14 @@
       L.boardY = L.progress.y + progressH + gap;
       L.cell = boardSize / N;
       L.footer = { x: pad, y: L.boardY + boardSize + gap, w: W - pad * 2, h: footerH };
+      var btnH = clamp(footerH * 0.54, 48, 64);
+      var btnW = clamp(L.footer.w * 0.23, 120, 152);
+      var btnY = L.footer.y + (L.footer.h - btnH) / 2;
+      L.shuffleBtn = { x: L.footer.x + L.footer.w - 16 - btnW, y: btnY, w: btnW, h: btnH };
+      L.hintBtn = { x: L.shuffleBtn.x - 12 - btnW, y: btnY, w: btnW, h: btnH };
       L.buttons = [
         { id: 'mute', x: W - pad - 22, y: L.title.y, r: 22 },
-        { id: 'pause', x: W - pad - 70, y: L.title.y, r: 22 }
+        { id: 'pause', x: W - pad - 74, y: L.title.y, r: 22 }
       ];
     } else {
       pad = clamp(W * 0.024, 18, 34);
@@ -1524,7 +1721,7 @@
         x: leftX,
         y: L.scoreCard.y + L.scoreCard.h + 24,
         w: sideW,
-        h: 32
+        h: 46
       };
       L.bestY = L.progress.y + L.progress.h + 20;
       L.leftTip = {
@@ -1551,9 +1748,12 @@
         w: sideW,
         h: bSize * 0.235
       };
+      var lBtnW = (sideW - 10) / 2;
+      L.hintBtn = { x: rightX, y: L.rightHint.y, w: lBtnW, h: 46 };
+      L.shuffleBtn = { x: rightX + lBtnW + 10, y: L.rightHint.y, w: lBtnW, h: 46 };
       L.buttons = [
         { id: 'mute', x: W - pad - 22, y: pad + 22, r: 22 },
-        { id: 'pause', x: W - pad - 70, y: pad + 22, r: 22 }
+        { id: 'pause', x: W - pad - 74, y: pad + 22, r: 22 }
       ];
     }
 
@@ -1572,37 +1772,40 @@
     decor.ghosts = [];
     decor.dust = [];
     var i;
-    for (i = 0; i < 64; i++) {
+    for (i = 0; i < 54; i++) {
+      var sx = rnd() * W;
+      var sy = rnd() * H;
+      var nearHeader = sy < H * 0.16;
       decor.stars.push({
-        x: rnd() * W,
-        y: rnd() * H,
-        r: 0.7 + rnd() * 2,
+        x: sx,
+        y: sy,
+        r: nearHeader ? (0.6 + rnd() * 0.9) : (0.7 + rnd() * 1.9),
         phase: rnd() * TAU,
         speed: 0.4 + rnd() * 1.2,
-        gold: rnd() > 0.74
+        gold: !nearHeader && rnd() > 0.74
       });
     }
-    for (i = 0; i < 7; i++) {
+    for (i = 0; i < 5; i++) {
       var side = i % 2 === 0;
       decor.ghosts.push({
-        x: side ? W * (0.02 + rnd() * 0.20) : W * (0.78 + rnd() * 0.20),
-        y: H * (0.05 + rnd() * 0.88),
-        size: W * (0.08 + rnd() * 0.14),
+        x: side ? W * (0.04 + rnd() * 0.14) : W * (0.82 + rnd() * 0.14),
+        y: H * (0.24 + rnd() * 0.62),
+        size: W * (0.06 + rnd() * 0.08),
         type: Math.floor(rnd() * TYPES),
-        alpha: 0.010 + rnd() * 0.026,
-        spin: (rnd() - 0.5) * 0.12,
+        alpha: 0.008 + rnd() * 0.016,
+        spin: (rnd() - 0.5) * 0.10,
         phase: rnd() * TAU,
-        drift: 6 + rnd() * 16
+        drift: 5 + rnd() * 12
       });
     }
-    for (i = 0; i < 13; i++) {
+    for (i = 0; i < 12; i++) {
       decor.dust.push({
         x: rnd() * W,
-        y: rnd() * H,
-        r: W * (0.008 + rnd() * 0.035),
+        y: H * (0.16 + rnd() * 0.78),
+        r: W * (0.008 + rnd() * 0.032),
         phase: rnd() * TAU,
         speed: 0.12 + rnd() * 0.25,
-        alpha: 0.02 + rnd() * 0.04
+        alpha: 0.018 + rnd() * 0.035
       });
     }
   }
@@ -2008,6 +2211,43 @@
         if (rot) ctx.rotate(rot);
         ctx.globalAlpha = alpha;
         drawGemSprite(type, 0, 0, box, 0, 1);
+
+        var sp = specials[r] && specials[r][c];
+        if (sp && !clearing) {
+          ctx.save();
+          if (sp === 'lineH' || sp === 'lineV') {
+            ctx.strokeStyle = 'rgba(162,248,255,0.95)';
+            ctx.fillStyle = 'rgba(220,253,255,0.95)';
+            ctx.lineWidth = Math.max(2.2, step * 0.032);
+            ctx.shadowColor = 'rgba(92,235,255,0.9)';
+            ctx.shadowBlur = step * 0.14;
+            var len = step * 0.32;
+            ctx.beginPath();
+            if (sp === 'lineH') {
+              ctx.moveTo(-len, 0); ctx.lineTo(len, 0);
+              ctx.moveTo(-len + 6, -5); ctx.lineTo(-len, 0); ctx.lineTo(-len + 6, 5);
+              ctx.moveTo(len - 6, -5); ctx.lineTo(len, 0); ctx.lineTo(len - 6, 5);
+            } else {
+              ctx.moveTo(0, -len); ctx.lineTo(0, len);
+              ctx.moveTo(-5, -len + 6); ctx.lineTo(0, -len); ctx.lineTo(5, -len + 6);
+              ctx.moveTo(-5, len - 6); ctx.lineTo(0, len); ctx.lineTo(5, len - 6);
+            }
+            ctx.stroke();
+          } else if (sp === 'bomb') {
+            ctx.shadowColor = 'rgba(255,218,105,0.95)';
+            ctx.shadowBlur = step * 0.18;
+            ctx.fillStyle = '#fff5bd';
+            drawStarPath(ctx, 0, 0, step * 0.24, step * 0.10, 6, timeGlobal * 1.6);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,232,148,0.88)';
+            ctx.lineWidth = Math.max(2, step * 0.025);
+            ctx.beginPath();
+            ctx.arc(0, 0, step * 0.30, 0, TAU);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+
         ctx.globalAlpha = 1;
         ctx.restore();
 
@@ -2027,6 +2267,25 @@
    * ================================================================ */
   function drawEffects() {
     var i, p, a;
+    for (i = 0; i < beams.length; i++) {
+      p = beams[i];
+      a = 1 - p.age / p.life;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, a);
+      ctx.strokeStyle = p.color || '#8cf0ff';
+      ctx.lineWidth = layout.cell * 0.36 * a;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = '#66e6ff';
+      ctx.shadowBlur = 22;
+      ctx.beginPath();
+      ctx.moveTo(p.x1, p.y1);
+      ctx.lineTo(p.x2, p.y2);
+      ctx.stroke();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = layout.cell * 0.12 * a;
+      ctx.stroke();
+      ctx.restore();
+    }
     for (i = 0; i < rings.length; i++) {
       p = rings[i];
       a = 1 - p.age / p.life;
@@ -2233,28 +2492,37 @@
     }
   }
 
+  function drawActionBtn(rect, label, accent) {
+    if (!rect) return;
+    drawGlassPanel(rect.x, rect.y, rect.w, rect.h, rect.h / 2, {
+      top: accent ? 'rgba(84,52,126,0.92)' : 'rgba(56,42,96,0.90)',
+      mid: accent ? 'rgba(48,28,82,0.92)' : 'rgba(32,24,62,0.90)',
+      bottom: 'rgba(16,11,36,0.95)',
+      border: accent ? 'rgba(255,222,148,0.45)' : 'rgba(182,216,255,0.34)'
+    });
+    drawTextLine(label, rect.x + rect.w / 2, rect.y + rect.h / 2 + 1,
+      clamp(rect.h * 0.36, 15, 22), '700', accent ? '#ffe8a3' : '#e6f2ff', 'center', rect.w - 16);
+  }
+
   function drawGoalProgress(rect) {
     var x = rect.x, y = rect.y, w = rect.w, h = rect.h;
-    var labelSize = clamp(Math.min(w * 0.035, 20), 13, 18);
-    var ratio = clamp(score / TARGET, 0, 1);
-    setFont('600', labelSize);
+    var labelSize = clamp(Math.min(w * 0.034, 19), 12, 17);
+    var curTarget = currentStageTarget();
+    var prevTarget = (!SHORT_RUN && stageIndex > 0) ? STAGES[stageIndex - 1].target : 0;
+    var ratio = clamp((score - prevTarget) / Math.max(1, curTarget - prevTarget), 0, 1);
+    var stageLabel = SHORT_RUN ? '目标进度' : ('第 ' + (stageIndex + 1) + '/' + STAGES.length + ' 关 · ' + STAGES[stageIndex].name);
+    setFont('700', labelSize);
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = 'rgba(242,233,255,0.7)';
-    ctx.fillText('目标进度', x, y + 10);
+    ctx.fillStyle = 'rgba(255,232,179,0.92)';
+    ctx.fillText(stageLabel, x, y + 10);
     ctx.textAlign = 'right';
-    ctx.fillStyle = 'rgba(255,235,189,0.94)';
-    ctx.fillText(formatScore(score) + ' / ' + formatScore(TARGET), x + w, y + 10);
+    ctx.fillStyle = 'rgba(255,238,198,0.95)';
+    ctx.fillText(formatScore(score) + ' / ' + formatScore(curTarget), x + w, y + 10);
 
-    var barY = y + 24;
-    var barH = Math.max(9, Math.min(15, h - 25));
+    var barY = y + 23;
+    var barH = 11;
     fillRoundRect(ctx, x, barY, w, barH, barH / 2, 'rgba(255,255,255,0.14)');
-    ctx.save();
-    roundRectPath(ctx, x + 0.5, barY + 0.5, w - 1, barH - 1, barH / 2);
-    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.restore();
     if (ratio > 0) {
       var fillW = Math.max(barH, w * ratio);
       var g = ctx.createLinearGradient(x, barY, x + w, barY);
@@ -2262,60 +2530,58 @@
       g.addColorStop(0.55, '#ffc76b');
       g.addColorStop(1, '#fff1bd');
       fillRoundRect(ctx, x, barY, fillW, barH, barH / 2, g);
-      ctx.save();
-      roundRectPath(ctx, x, barY, fillW, barH, barH / 2);
-      ctx.clip();
-      var sx = x + ((timeGlobal * 90) % (w + 140)) - 60;
-      var sg = ctx.createLinearGradient(sx, barY, sx + 80, barY);
-      sg.addColorStop(0, 'rgba(255,255,255,0)');
-      sg.addColorStop(0.5, 'rgba(255,255,255,0.35)');
-      sg.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = sg;
-      ctx.fillRect(sx, barY, 80, barH);
-      ctx.restore();
     }
-    ctx.save();
-    ctx.translate(x + w, barY + barH / 2);
-    ctx.fillStyle = ratio >= 1 ? 'rgba(255,246,206,1)' : 'rgba(255,224,158,0.72)';
-    drawStarPath(ctx, 0, 0, barH * 0.82, barH * 0.27, 4, 0);
-    ctx.fill();
-    ctx.restore();
+
+    // Fever energy / active Fever bar
+    var fY = barY + barH + 7;
+    var fH = 8;
+    var fRatio = feverTimer > 0 ? clamp(feverTimer / FEVER_DURATION, 0, 1) : clamp(feverEnergy / 100, 0, 1);
+    fillRoundRect(ctx, x, fY, w * 0.72, fH, fH / 2, 'rgba(255,255,255,0.10)');
+    if (fRatio > 0) {
+      var fg = ctx.createLinearGradient(x, fY, x + w * 0.72, fY);
+      if (feverTimer > 0) {
+        fg.addColorStop(0, '#ff61a6');
+        fg.addColorStop(0.5, '#ffbe55');
+        fg.addColorStop(1, '#fff4a8');
+      } else {
+        fg.addColorStop(0, '#6cd9ff');
+        fg.addColorStop(1, '#b98eff');
+      }
+      fillRoundRect(ctx, x, fY, Math.max(fH, w * 0.72 * fRatio), fH, fH / 2, fg);
+    }
+    var fText = feverTimer > 0 ? ('🔥 狂热 ×2 (' + Math.ceil(feverTimer) + 's)') : ('⚡ 狂热充能 ' + Math.round(feverEnergy) + '%');
+    drawTextLine(fText, x + w, fY + fH / 2, clamp(labelSize * 0.78, 11, 14), '700',
+      feverTimer > 0 ? '#ffadd2' : 'rgba(205,225,255,0.82)', 'right', w * 0.26);
   }
 
   function drawPortraitFooter(rect) {
     drawGlassPanel(rect.x, rect.y, rect.w, rect.h, Math.min(22, rect.h * 0.22), {
-      top: 'rgba(48,33,82,0.67)',
-      mid: 'rgba(24,17,47,0.67)',
-      bottom: 'rgba(13,9,30,0.76)'
+      top: 'rgba(48,33,82,0.78)',
+      mid: 'rgba(24,17,47,0.80)',
+      bottom: 'rgba(13,9,30,0.88)'
     });
-    var pad = clamp(rect.w * 0.03, 14, 24);
-    var size = clamp(rect.h * 0.20, 18, 24);
-    var y1 = rect.y + rect.h * (rect.h > 116 ? 0.30 : 0.32);
-    var y2 = y1 + size * 1.30;
-    var textX = rect.x + pad;
-    var bestText = bestScore > 0 ? '最高分 ' + formatScore(bestScore) : '首个目标 · ' + formatScore(TARGET) + ' 分';
-    setFont('600', clamp(size * 0.66, 11, 15));
-    var bestW = ctx.measureText(bestText).width + 18;
-    ctx.textAlign = 'right';
-    ctx.fillStyle = 'rgba(255,227,170,0.68)';
-    ctx.fillText(bestText, rect.x + rect.w - pad, y1 - size * 0.88);
+    var pad = clamp(rect.w * 0.032, 14, 24);
+    var leftW = (layout.hintBtn ? layout.hintBtn.x : rect.x + rect.w * 0.52) - rect.x - pad * 1.4;
+    var y1 = rect.y + rect.h * 0.34;
+    var y2 = rect.y + rect.h * 0.68;
 
-    var motifSize = Math.min(rect.h * 0.30, 32);
-    var motifX = rect.x + pad + motifSize * 0.5;
-    drawGemSprite(0, motifX, y1, motifSize, 0, 0.95);
-    drawGemSprite(2, motifX + motifSize * 0.62, y1, motifSize, 0, 0.95);
-    drawGemSprite(3, motifX + motifSize * 1.24, y1, motifSize, 0, 0.95);
-    var lineX = rect.x + pad + motifSize * 2.05;
-    drawTextLine('交换相邻宝石 · 三个同色即可消除', lineX, y1, size, '600', 'rgba(247,239,255,0.9)', 'left', rect.w - (lineX - rect.x) - pad - bestW * 0.25);
-    drawTextLine('连锁消除可获得倍率加分 · 达到 ' + formatScore(TARGET) + ' 分立即获胜', textX, y2, size * 0.82, '500', 'rgba(219,207,244,0.72)', 'left', rect.w - pad * 2);
-    if (rect.h > 116) {
-      drawTextLine('点击选择 · 滑动交换 · P 暂停 · M 静音', textX, y2 + size * 0.98, size * 0.68, '500', 'rgba(206,191,231,0.55)', 'left', rect.w - pad * 2);
-    }
+    var statusLine = feverTimer > 0
+      ? '🔥 狂热时刻生效中 · 全场得分 ×2!'
+      : (combo > 1 && comboFlash > 0 ? ('✨ 连锁 ×' + combo + ' · 继续消除冲刺狂热!') : '4连合成⚡极光宝石 · 5连合成★星辰炸弹');
+    drawTextLine(statusLine, rect.x + pad, y1, clamp(rect.h * 0.19, 15, 21), '700',
+      feverTimer > 0 ? '#ffc4e1' : 'rgba(255,239,205,0.95)', 'left', leftW);
+
+    var subLine = '最高分 ' + formatScore(bestScore) + ' · 过关奖励 +12秒';
+    drawTextLine(subLine, rect.x + pad, y2, clamp(rect.h * 0.15, 12, 16), '500',
+      'rgba(214,202,242,0.75)', 'left', leftW);
+
+    drawActionBtn(layout.hintBtn, '💡 提示', true);
+    drawActionBtn(layout.shuffleBtn, '🔀 洗牌', false);
   }
 
   function drawPortraitHUD() {
     var L = layout;
-    drawGradientText(TITLE, L.title.x, L.title.y, L.W - L.pad * 2 - 110, L.title.size, '800', 'center');
+    drawGradientText(TITLE, L.title.x, L.title.y, L.W - L.pad * 2 - 120, L.title.size, '800', 'center');
 
     var low = time <= 10 && phase === 'playing';
     drawStatCard(L.scoreCard, '当前得分', formatScore(score), '', 'score', false);
@@ -2323,6 +2589,19 @@
     drawGoalProgress(L.progress);
     drawPortraitFooter(L.footer);
     drawTopButtons();
+
+    if (stageBannerTimer > 0 && stageBannerText) {
+      var ba = clamp(Math.min(1, stageBannerTimer / 0.35), 0, 1);
+      ctx.save();
+      ctx.globalAlpha = ba;
+      drawPill(stageBannerText, L.W / 2, L.boardY - 14, 18, {
+        top: 'rgba(92,52,138,0.95)',
+        border: 'rgba(255,229,158,0.75)',
+        color: '#fff3be',
+        weight: '800'
+      });
+      ctx.restore();
+    }
   }
 
   function drawLandscapeTipPanel(rect, lines, heading) {
@@ -2883,6 +3162,51 @@
     } catch (e) { postError('character renders failed: ' + (e && e.message || e)); }
   }
 
+  function findBestMove() {
+    var best = null;
+    var bestWeight = -1;
+    var r, c, tmp, m, w;
+    for (r = 0; r < N; r++) {
+      for (c = 0; c < N; c++) {
+        if (c + 1 < N) {
+          tmp = board[r][c]; board[r][c] = board[r][c + 1]; board[r][c + 1] = tmp;
+          m = findMatchesOn(board);
+          tmp = board[r][c]; board[r][c] = board[r][c + 1]; board[r][c + 1] = tmp;
+          if (m.cells.length > 0) {
+            w = m.cells.length * 10 + (specials[r][c] || specials[r][c + 1] ? 35 : 0);
+            if (w > bestWeight) { bestWeight = w; best = { a: { r: r, c: c }, b: { r: r, c: c + 1 } }; }
+          }
+        }
+        if (r + 1 < N) {
+          tmp = board[r][c]; board[r][c] = board[r + 1][c]; board[r + 1][c] = tmp;
+          m = findMatchesOn(board);
+          tmp = board[r][c]; board[r][c] = board[r + 1][c]; board[r + 1][c] = tmp;
+          if (m.cells.length > 0) {
+            w = m.cells.length * 10 + (specials[r][c] || specials[r + 1][c] ? 35 : 0);
+            if (w > bestWeight) { bestWeight = w; best = { a: { r: r, c: c }, b: { r: r + 1, c: c } }; }
+          }
+        }
+      }
+    }
+    return best;
+  }
+
+  window.__autoplay = function () {
+    if (phase === 'title') {
+      startGame();
+      return;
+    }
+    if (phase !== 'playing' || paused || timeUp || state !== 'idle' || autoCooldown > 0) return;
+    var mv = findBestMove();
+    if (mv) {
+      autoCooldown = 0.08;
+      cursor = { r: mv.b.r, c: mv.b.c };
+      attemptSwap(mv.a, mv.b);
+    } else {
+      reshuffleBoard();
+    }
+  };
+
   window.__gameState = function () {
     function round(n) {
       if (typeof n !== 'number' || isNaN(n)) return 0;
@@ -2901,7 +3225,8 @@
       pickups: [],
       enemies: [],
       world: { w: round(world.w), h: round(world.h) },
-      targetScore: TARGET,
+      targetScore: currentStageTarget(),
+      stage: stageIndex + 1,
       boardSize: N,
       paused: !!paused,
       timeUp: !!timeUp
@@ -2918,6 +3243,7 @@
 
   buildGemSprites();
   board = generateBoard();
+  specials = makeEmptySpecials();
   time = DURATION;
   resize();
   requestAnimationFrame(frame);
