@@ -91,10 +91,19 @@
       "dimension": "3d",
       "orientation": "portrait",
       "cover": "dino-volcano-eggs/cover.jpg"
+    },
+    "riverbend-skyline": {
+      "title": "天际线 · 河湾市",
+      "source": "5148b0d7831498de",
+      "publishedAt": "2026-11-09T11:00:07.172Z",
+      "buildId": "f2d409e505ad",
+      "dimension": "3d",
+      "orientation": "landscape",
+      "cover": "riverbend-skyline/cover.jpg"
     }
   },
   "wall": {
-    "publishedAt": "2026-11-08T18:36:10.038Z",
-    "games": 10
+    "publishedAt": "2026-11-09T11:00:07.172Z",
+    "games": 11
   }
 }
