@@ -95,15 +95,15 @@
     "riverbend-skyline": {
       "title": "天际线 · 河湾市",
       "source": "5148b0d7831498de",
-      "publishedAt": "2026-11-09T11:30:05.357Z",
-      "buildId": "2fcf00a6f777",
+      "publishedAt": "2026-11-09T12:26:56.712Z",
+      "buildId": "3e1c2a986941",
       "dimension": "3d",
       "orientation": "landscape",
       "cover": "riverbend-skyline/cover.jpg"
     }
   },
   "wall": {
-    "publishedAt": "2026-11-09T11:30:05.357Z",
+    "publishedAt": "2026-11-09T12:26:56.712Z",
     "games": 11
   }
 }

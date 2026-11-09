@@ -4433,7 +4433,7 @@ const known = (object,key,fallback) => Object.hasOwn(object,key) ? key : fallbac
 const money = amount => '¥'+amount.toLocaleString('zh-CN');
 const TOOLS = [
   {id:'inspect', name:'查看', key:'1', icon:'cursor', price:'地块信息', hint:'点击地块，查看开发状态、交通车流和公共服务覆盖半径。', color:'#c8d4ec'},
-  {id:'road', name:'道路', key:'2', icon:'road', price:'¥90 / 格', hint:'点击或拖动铺路。跨河会自动架桥，费用 ¥650 / 格。', color:'#e3e4f1'},
+  {id:'road', name:'道路', key:'2', icon:'road', price:'¥90 / 格', hint:'点击或拖动铺路。跨河需从一岸陆地拖至对岸架桥（¥650 / 格）。', color:'#e3e4f1'},
   {id:'homes', name:'住宅', key:'3', icon:'house', price:'¥45 / 格', hint:'沿通往城外的道路划区。道路、水电与排污到位后，居民会陆续迁入。', color:'#bca8fc'},
   {id:'shops', name:'商业', key:'4', icon:'shop', price:'¥60 / 格', hint:'靠近居民布局商业区，为城市提供工作岗位与税收。', color:'#78d4eb'},
   {id:'industry', name:'工业', key:'5', icon:'factory', price:'¥70 / 格', hint:'工业能增加就业和税收。住宅与工厂保持距离会更宜居。', color:'#f6b26f'},
@@ -4481,7 +4481,7 @@ function waterDist(i,j,map) {
   return Math.min(d1, d2);
 }
 function landKind(i,j,map) {
-  if (waterDist(i,j,map) < 0) return 'water';
+  if (waterDist(i,j,map) < 0.48) return 'water';
   if (map==='cape') return (j<9 && i>24) || (i>39 && j<17) || (j>36 && i>19) || (i<3 && j<23) ? 'hill' : 'land';
   if (map==='island') return (j<5 && i>18 && i<29) || (j>38 && i>18 && i<30) || (i<3 && j<19) || (i>40 && j>29) ? 'hill' : 'land';
   if ((j < 6 && i > 16) || (j > 37 && i < 32) || (i < 3 && j < 21) || (i > 41 && j > 26)) return 'hill';
@@ -4529,7 +4529,7 @@ function freshCity(map='river',mode='sandbox',blank=false) {
   if (map==='cape' || map==='island') {
     if (map==='island') {
       row(24,0,39); row(18,20,38); row(29,20,38); row(28,3,10);
-      col(5,24,31); col(9,24,31); col(21,16,32); col(25,15,32); col(28,16,32); col(35,17,30); col(38,18,29);
+      col(5,24,31); col(9,24,31); col(20,18,30); col(23,16,31); col(26,18,30); col(35,17,30); col(38,18,29);
     } else {
       row(24,0,38); row(19,22,36); row(30,20,38); row(34,22,38); row(28,2,9);
       col(4,24,31); col(8,23,31); col(22,19,34); col(27,16,34); col(33,16,34); col(38,24,34);
@@ -4549,7 +4549,7 @@ function freshCity(map='river',mode='sandbox',blank=false) {
   }
   row(24,0,39); row(18,19,39); row(12,22,35); row(30,20,37);
   col(20,18,30); col(24,12,33); col(29,10,33); col(34,12,30); col(39,18,24);
-  row(28,2,6); col(4,24,32); col(6,24,32);
+  row(28,2,6); col(4,24,32); col(6,24,29);
   const plots = {
     homes:[[6,23],[7,23],[8,23],[9,23],[3,25],[5,25],[7,25],[3,26],[3,27],[5,27],[7,27],[3,29],[5,29],[5,30],[3,31],
       [21,19],[21,21],[23,19],[23,20],[23,21],[25,22],[26,23],[27,23],[30,23],[31,23],[32,23],
@@ -4566,14 +4566,14 @@ function freshCity(map='river',mode='sandbox',blank=false) {
       put(i,j,type, type === 'shops' && downtown ? (mixed > .39 ? 3 : 2) : mixed > .68 ? 2 : 1);
     }
   }
-  for (const [i,j] of [[31,21],[27,21],[22,19],[32,26],[25,28],[8,26],[23,15],[26,13],[31,13]]) put(i,j,'park');
+  for (const [i,j] of [[31,21],[27,21],[22,19],[32,26],[25,28],[7,26],[23,15],[26,13],[31,13]]) put(i,j,'park');
   for (const [i,j] of [[4,23],[37,25],[29,34]]) put(i,j,'power');
   grantUtilities(city);
   return city;
 }
 function coast(id,map) {
   const [i,j]=coord(id);
-  return waterDist(i,j,map)<=2.1;
+  return waterDist(i,j,map)<=2.4;
 }
 
 function network(city) {
@@ -4608,26 +4608,92 @@ function slotKey(map,mode) {
   return map==='river' && mode==='sandbox' ? SAVE_KEY : SAVE_KEY+'/'+map+'/'+mode;
 }
 
+function bridgeSpan(city, id, candidateRoadSet = null, requireRoadAnchors = true) {
+  const map = city.map;
+  const [i, j] = coord(id);
+  if (landKind(i, j, map) !== 'water') return { ok: true, waterTiles: [] };
+  const hasRoad = k => Boolean(city.tiles[k]?.type === 'road' || candidateRoadSet?.has(k));
+  if (!hasRoad(id)) return { ok: false, waterTiles: [] };
+
+  let iL = i - 1;
+  while (iL >= 0 && landKind(iL, j, map) === 'water' && hasRoad(idAt(iL, j))) iL--;
+  let iR = i + 1;
+  while (iR < SIZE && landKind(iR, j, map) === 'water' && hasRoad(idAt(iR, j))) iR++;
+  const horizOk = iL >= 0 && iR < SIZE &&
+    landKind(iL, j, map) === 'land' && landKind(iR, j, map) === 'land' &&
+    (!requireRoadAnchors || (hasRoad(idAt(iL, j)) && hasRoad(idAt(iR, j)))) &&
+    waterDist((iL + iR) / 2, j, map) < -0.4;
+  if (horizOk) {
+    const waterTiles = [];
+    for (let x = iL + 1; x < iR; x++) waterTiles.push(idAt(x, j));
+    return { ok: true, waterTiles };
+  }
+
+  let jU = j - 1;
+  while (jU >= 0 && landKind(i, jU, map) === 'water' && hasRoad(idAt(i, jU))) jU--;
+  let jD = j + 1;
+  while (jD < SIZE && landKind(i, jD, map) === 'water' && hasRoad(idAt(i, jD))) jD++;
+  const vertOk = jU >= 0 && jD < SIZE &&
+    landKind(i, jU, map) === 'land' && landKind(i, jD, map) === 'land' &&
+    (!requireRoadAnchors || (hasRoad(idAt(i, jU)) && hasRoad(idAt(i, jD)))) &&
+    waterDist(i, (jU + jD) / 2, map) < -0.4;
+  if (vertOk) {
+    const waterTiles = [];
+    for (let y = jU + 1; y < jD; y++) waterTiles.push(idAt(i, y));
+    return { ok: true, waterTiles };
+  }
+
+  return { ok: false, waterTiles: [id] };
+}
+
+function waterRoadCluster(city, startId) {
+  const seen = new Set([startId]);
+  const queue = [startId];
+  while (queue.length) {
+    const cur = queue.shift();
+    for (const next of adjacent(cur)) {
+      if (seen.has(next)) continue;
+      if (city.tiles[next]?.type === 'road' && landKind(...coord(next), city.map) === 'water') {
+        seen.add(next);
+        queue.push(next);
+      }
+    }
+  }
+  return [...seen];
+}
+
 function validateCityObject(city, fallbackMap='river', fallbackMode='sandbox') {
   if (!city || typeof city !== 'object') return null;
   const map = known(MAPS, city.map, fallbackMap);
   const mode = known(MODES, city.mode, fallbackMode);
-  const validTiles=Array.isArray(city?.tiles) && city.tiles.length===MAX_TILE && city.tiles.every((tile,id)=>
-    tile===null || (tileTypes.has(tile?.type) && (tile.type==='road' || landKind(...coord(id),map)==='land') &&
-    Number.isInteger(tile.level) && tile.level>=0 && tile.level<=3));
-  if ((city?.version===1 || city?.version===2) && validTiles && city.tiles[ENTRY]?.type==='road' &&
+  city.map = map;
+  city.mode = mode;
+  if (!Array.isArray(city?.tiles) || city.tiles.length !== MAX_TILE) return null;
+  let clearedUtility = false;
+  for (let id = 0; id < MAX_TILE; id++) {
+    const tile = city.tiles[id];
+    if (!tile) continue;
+    if (!tileTypes.has(tile?.type) || !Number.isInteger(tile.level) || tile.level < 0 || tile.level > 3) return null;
+    const lk = landKind(...coord(id), map);
+    if (tile.type !== 'road' && lk !== 'land') {
+      if (tile.type === 'water' || tile.type === 'sewer') clearedUtility = true;
+      city.tiles[id] = null;
+    } else if (tile.type === 'road' && lk === 'water' && !bridgeSpan(city, id, null, false).ok) {
+      city.tiles[id] = null;
+    }
+  }
+  if ((city?.version===1 || city?.version===2) && city.tiles[ENTRY]?.type==='road' &&
       Number.isFinite(city.cash) && Number.isInteger(city.day) && city.day>=0 &&
       Number.isInteger(city.tax) && city.tax>=4 && city.tax<=16) {
     const legacy=city.version===1;
     city.version=2;
-    city.map=map;
-    city.mode=mode;
     city.stage=Number.isInteger(city.stage) ? Math.min(GOALS.length,Math.max(0,city.stage)) : 0;
     city.result=['won','lost'].includes(city.result) ? city.result : null;
     city.lines=(Array.isArray(city.lines)?city.lines:[]).filter(line=>Number.isInteger(line?.id) &&
       line.id>0 && validId(line.from) && validId(line.to) && line.from!==line.to).slice(0,MAX_LINES);
     city.nextLine=Math.max(0,...city.lines.map(line=>line.id),Number.isInteger(city.nextLine)?city.nextLine-1:0)+1;
     if (legacy) grantUtilities(city);
+    else if (clearedUtility) grantUtilities(city, true);
     return city;
   }
   return null;
@@ -4997,6 +5063,18 @@ function plan(city,tool,ids) {
   if (!Object.hasOwn(COST,tool) || (definition.stage??0)>city.stage) return {valid,invalid:ids,cost,reason:'人口里程碑尚未解锁。'};
   const road=tool==='road'||tool==='avenue';
   const needsCoast = tool==='water' || tool==='sewer' || tool==='pier';
+  if (tool === 'clear') {
+    const expanded = new Set();
+    for (const id of ids) {
+      if (!validId(id)) continue;
+      expanded.add(id);
+      if (city.tiles[id]?.type === 'road' && landKind(...coord(id), city.map) === 'water') {
+        for (const wId of waterRoadCluster(city, id)) expanded.add(wId);
+      }
+    }
+    ids = [...expanded];
+  }
+  const candidateRoadSet = road ? new Set(ids.filter(validId)) : null;
   for(const id of ids) {
     if(!validId(id)) continue;
     const tile=city.tiles[id];
@@ -5005,9 +5083,17 @@ function plan(city,tool,ids) {
     if (needsCoast && ground==='land' && !tile && !coast(id,city.map)) {
       invalid.push(id); reason='该设施需建在离河岸两格内的陆地。'; continue;
     }
+    if (road && ground==='water' && !bridgeSpan(city, id, candidateRoadSet, true).ok) {
+      invalid.push(id); reason='跨河架桥需从一岸道路或陆地一直拖到对岸，不能在河面单独修筑。'; continue;
+    }
     const canBuild=tool==='clear' ? id!==ENTRY :
       ((!tile && (ground==='land' || (road && ground==='water'))) || (tool==='avenue' && tile?.type==='road'));
-    if(!canBuild) { invalid.push(id); continue; }
+    if(!canBuild) {
+      invalid.push(id);
+      if (!reason && ground === 'water' && !road && tool !== 'clear') reason = '河道与河岸斜坡上不能建造建筑，请在平坦陆地施工。';
+      else if (!reason && ground === 'hill' && tool !== 'clear') reason = '陡峭山丘上不能施工，请选择平坦陆地。';
+      continue;
+    }
     cost+=road && ground==='water' && !tile ? (tool==='avenue'?960:650) : COST[tool];
     valid.push(id);
   }
