@@ -4235,7 +4235,7 @@ void main() {
 <script>(() => {
   const THREE = window.THREE;
   const styleEl = document.createElement('style');
-  styleEl.textContent = ":root {\n  color-scheme:dark;\n  --text:#f1f2f7;\n  --muted:#aeb9ce;\n  --dim:#8e9ab3;\n  --accent:#f7ce8d;\n  --panel:#172133f5;\n  --rule:#d2e0fd25;\n  --mono:\"SFMono-Regular\",\"Cascadia Mono\",\"Consolas\",monospace;\n  font-family:\"Avenir Next\",\"PingFang SC\",\"Microsoft YaHei\",sans-serif;\n  font-synthesis:none;\n}\n* { box-sizing:border-box; }\nbody { margin:0; overflow:hidden; color:var(--text); background:#192235; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; overscroll-behavior:none; }\nbutton, input { font:inherit; }\nbutton { cursor:pointer; color:inherit; }\nbutton:focus-visible, canvas:focus-visible, input:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }\n[hidden] { display:none !important; }\n.symbol-bank { display:block; width:0; height:0; position:absolute; }\n.icon { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex:none; }\n#game { position:relative; width:100vw; height:100dvh; overflow:hidden; isolation:isolate; }\n#world { width:100%; height:100%; display:block; touch-action:none; cursor:crosshair; }\n#world[data-pan] { cursor:grabbing; }\n.scene-shade { position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg,#14243a30 0,transparent 18%,transparent 73%,#101d365e 100%); z-index:1; }\n.panel { background:var(--panel); border:1px solid #b3c6ee36; border-radius:10px; box-shadow:0 8px 24px #0b13274a, inset 0 1px #fff1; z-index:2; backdrop-filter:blur(6px); }\n.topbar { height:72px; position:absolute; top:0; left:0; right:0; display:flex; align-items:center; gap:18px; padding:0 22px; background:#101827fa; border-bottom:1px solid #afc5ed42; box-shadow:0 5px 24px #0e142e4d; z-index:3; }\n.brand { display:flex; align-items:center; gap:12px; flex:1 0 auto; }\n.brand-mark { width:40px; height:40px; border-radius:8px; display:grid; place-items:center; background:var(--accent); color:#302419; box-shadow:inset 0 0 0 1px #fff0ce; }\n.brand-mark .icon { width:25px; height:25px; stroke-width:1.45; }\nh1 { font-size:17px; margin:0 0 2px; font-weight:700; letter-spacing:.045em; }\nh1 span { color:#a89476; font-weight:500; margin:0 2px; }\n.brand-caption { font:9px var(--mono); color:#9daac3; letter-spacing:.19em; }\n.brand-caption span { color:var(--accent); }\n.telemetry { align-self:stretch; display:flex; }\n.metric { display:flex; align-items:center; gap:9px; padding:0 clamp(11px,1.4vw,22px); background:transparent; border:0; border-left:1px solid var(--rule); color:var(--text); text-align:left; white-space:nowrap; }\nbutton.metric:hover { background:#c7dbff13; }\n.metric:last-child { border-right:1px solid var(--rule); }\n.metric-icon { width:18px; height:18px; color:#a9bad6; margin-right:1px; }\n.metric-power .metric-icon { color:#f0be83; }\n.metric-label { display:block; color:var(--muted); font-size:10px; margin-bottom:4px; }\n.metric strong { display:block; font:600 16px var(--mono); letter-spacing:-.04em; }\n.delta { color:var(--accent); font:10px var(--mono); margin-top:14px; }\n.delta.negative, .warning { color:#f4aa92; }\n.time-controls { display:flex; align-items:center; gap:14px; }\n.date { white-space:nowrap; }\n.date span { display:block; color:var(--muted); font-size:10px; margin-bottom:4px; }\n.date strong { display:block; font:12px var(--mono); }\n.speed { display:flex; align-items:center; gap:2px; background:#0c1423; border:1px solid var(--rule); border-radius:7px; padding:3px; }\n.speed button { width:29px; height:29px; border-radius:4px; border:0; background:transparent; color:#aebcd5; display:grid; place-items:center; font:600 11px var(--mono); padding:0; }\n.speed .icon { width:17px; height:17px; }\n.speed button:hover, .icon-button:hover { background:#a6c4ff26; color:var(--text); }\n.speed button[aria-pressed=true] { background:var(--accent); color:#2d2218; }\n.utilities { display:flex; gap:5px; align-items:center; }\n.icon-button { width:34px; height:34px; display:grid; place-items:center; padding:0; border:1px solid transparent; border-radius:7px; background:transparent; color:#c5d1e8; transition:background .14s,border-color .14s; }\n#lighting-button { width:auto; display:inline-flex; align-items:center; gap:5px; padding:0 9px; border-color:#b3c6ee2e; background:#19253b; }\n.util-tag { font:600 11px var(--mono); color:var(--accent); }\n#sound-button[aria-pressed=false] { opacity:.48; }\n.icon-button.panel { border-color:#b3c6ee36; background:var(--panel); }\n.icon-button.panel:hover, .icon-button[aria-expanded=true] { background:#304465; }\n.icon-button.panel[aria-pressed=true] { background:#473b31; border-color:var(--accent); color:var(--accent); }\n.icon-button .icon { width:18px; height:18px; }\n.objective { position:absolute; top:92px; left:22px; width:229px; padding:15px 15px 13px; }\n.eyebrow { color:#d5dff4; font-size:11px; font-weight:600; letter-spacing:.065em; display:flex; align-items:center; gap:6px; }\n.eyebrow .icon { width:14px; height:14px; color:var(--accent); }\n.eyebrow > span { margin-left:auto; color:#a9b8d6; font:9px var(--mono); letter-spacing:.075em; }\n.objective h2, .inspector h2 { margin:10px 0 3px; font-size:21px; letter-spacing:.06em; }\n.objective p, .inspector p { margin:0; color:var(--muted); font-size:12px; }\n.progress, .meter { border-radius:20px; background:#0c1424; box-shadow:inset 0 1px 2px #0007; overflow:hidden; }\n.progress { height:6px; margin-top:14px; }\n.progress div { height:100%; border-radius:inherit; background:var(--accent); width:0; transition:width .35s ease; }\n.goal-foot { display:flex; justify-content:space-between; margin-top:8px; font:10px var(--mono); color:var(--muted); }\n.goal-foot strong, #goal-percent { color:var(--accent); }\n.view-tag { position:absolute; right:23px; top:95px; color:#f1f5ff; font:600 10px var(--mono); letter-spacing:.12em; text-shadow:0 1px 6px #152240; pointer-events:none; z-index:2; }\n.view-tag span { display:inline-block; background:#f7ce8d; border-radius:50%; width:6px; height:6px; margin-right:4px; box-shadow:0 0 0 2px #15254150; }\n.view-tag b { color:#f3d6af; margin:0 4px; }\n.world-labels { position:absolute; inset:0; pointer-events:none; z-index:1; }\n.district { position:absolute; border-radius:4px; transform:translate(-50%,-50%); background:#19263ae0; border:1px solid #bdd1f17c; color:#eef3ff; font-size:11px; font-weight:600; padding:5px 9px; white-space:nowrap; letter-spacing:.085em; box-shadow:0 3px 9px #0c122b55; transition:opacity .18s; }\n.district span { font:9px var(--mono); color:#f3cb90; border-right:1px solid #adbcdc66; padding-right:5px; margin-right:3px; }\n.water-label { border:0; border-bottom:1px solid #e8f1ffa0; border-radius:0; background:transparent; box-shadow:none; font-size:13px; letter-spacing:.25em; text-shadow:0 1px 3px #1a325c; }\n.demand { position:absolute; left:22px; bottom:40px; width:196px; padding:12px 13px 13px; }\n.demand .eyebrow { margin-bottom:11px; }\n.demand-row { display:grid; grid-template-columns:15px 25px 1fr 22px; gap:6px; align-items:center; font-size:11px; color:#d3ddf1; }\n.demand-row+.demand-row { margin-top:7px; }\n.demand-row .icon { width:14px; height:14px; color:var(--zone); }\n.demand-row b { font:10px var(--mono); color:var(--zone); text-align:right; }\n.meter { height:5px; }\n.meter i { display:block; background:var(--zone); border-radius:inherit; height:100%; transition:width .3s; }\n.map-dock { position:absolute; right:22px; bottom:40px; display:grid; grid-template-columns:auto auto; gap:8px; align-items:end; z-index:2; }\n.map-actions { display:flex; flex-direction:column; gap:5px; }\n.map-actions .icon-button { width:33px; height:33px; }\n.layer-menu { position:absolute; bottom:184px; right:0; width:147px; padding:8px; }\n.layer-menu .eyebrow { margin:4px 5px 7px; }\n.layer-menu button { display:block; width:100%; background:transparent; border:0; text-align:left; border-radius:4px; padding:7px 8px; font-size:12px; }\n.layer-menu button:hover, .layer-menu button[aria-pressed=true] { background:#f7ce8d24; color:var(--accent); }\n.minimap { width:185px; padding:8px; }\n.minimap-head, .minimap-foot { display:flex; align-items:center; gap:5px; padding:0 3px 7px; font-size:10px; color:#e3eaf9; }\n.minimap-head .icon { width:13px; height:13px; color:#b2c5e6; }\n.minimap-head span, .minimap-foot span:last-child { margin-left:auto; font:9px var(--mono); color:var(--muted); }\n.minimap canvas { width:100%; height:auto; aspect-ratio:1/1; display:block; border:1px solid #bfd2f75f; border-radius:5px; cursor:crosshair; }\n.minimap-foot { padding:7px 3px 1px; }\n.minimap-foot i, .save-status i, .toolbox-title i, .tool-state i { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--accent); margin-right:4px; vertical-align:1px; }\n.build-dock { position:absolute; bottom:19px; left:50%; transform:translateX(-50%); width:min(584px,calc(100% - 492px)); z-index:2; }\n.tool-info { margin:0 auto 7px; display:flex; align-items:center; gap:10px; width:fit-content; max-width:100%; min-height:33px; padding:6px 10px; color:#d1dcf1; font-size:11px; border-radius:7px; }\n.tool-state { white-space:nowrap; color:var(--text); border-right:1px solid var(--rule); padding-right:8px; }\n.tool-state i { width:5px; height:5px; }\n.tool-price { white-space:nowrap; color:var(--accent); font:10px var(--mono); padding-left:4px; }\n.toolbox { padding:10px; }\n.toolbox-title { display:flex; justify-content:space-between; align-items:center; padding:0 2px 8px; gap:8px; }\n.toolbox-title span { font-size:11px; font-weight:650; letter-spacing:.06em; }\n.toolbox-title i { width:5px; height:5px; }\n.toolbox-title b { color:var(--dim); font:9px var(--mono); letter-spacing:.11em; }\n.tools { display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:5px; }\n.tool { position:relative; border-radius:6px; min-width:0; height:60px; display:grid; justify-items:center; align-content:center; gap:4px; background:#22314a; border:1px solid #b7ccf21e; padding:0; transition:background .13s,border-color .13s; }\n.tool .icon { width:21px; height:21px; color:var(--tool); }\n.tool span { font-size:11px; color:#e1e9fc; }\n.tool kbd { position:absolute; right:5px; top:4px; color:#9baacc; font:9px var(--mono); }\n.tool:hover { background:#304666; border-color:#c3d4f763; }\n.tool[aria-pressed=true] { background:#473b31; border-color:var(--accent); box-shadow:inset 0 0 14px #f7ce8d22; }\n.tool[aria-pressed=true] span, .tool[aria-pressed=true] kbd { color:#ffe9c6; }\n.build-footer { display:flex; justify-content:space-between; padding:8px 1px 0; gap:8px; color:#edf2ff; font-size:10px; text-shadow:0 1px 4px #142139,0 0 10px #192843; white-space:nowrap; }\n.build-footer kbd { font:9px var(--mono); background:#142541b8; border:1px solid #bccfee55; border-radius:3px; padding:1px 3px; margin-right:2px; }\n.build-footer b { margin:0 3px; color:#c5d2ea; }\n.save-status i { width:5px; height:5px; }\n.inspector { position:absolute; width:229px; left:22px; top:253px; padding:12px 13px; z-index:2; }\n.inspector .eyebrow { justify-content:space-between; }\n.inspector .icon-button { width:24px; height:24px; margin:-5px; }\n.inspect-coord { color:var(--dim); font:10px var(--mono); border-top:1px solid var(--rule); padding-top:8px; margin-top:10px; }\n#toast { position:absolute; left:50%; top:91px; z-index:5; transform:translate(-50%,-6px); color:#eef3ff; background:#202e46; border:1px solid #f7ce8d73; border-radius:7px; padding:8px 12px; font-size:12px; opacity:0; transition:opacity .16s,transform .16s; pointer-events:none; white-space:nowrap; }\n#toast.show { opacity:1; transform:translate(-50%,0); }\n#toast.error { border-color:#eaa287; color:#ffcfbc; }\n.boot { position:absolute; inset:0; background:#121b2d; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10; }\n.boot h2 { margin:14px 0 0; font-size:20px; }\n.boot p { color:var(--muted); margin:6px 0; font-size:13px; text-align:center; }\ndialog { width:min(430px,calc(100vw - 28px)); border:1px solid #b9ccf35c; border-radius:12px; background:#172238; color:var(--text); padding:21px; box-shadow:0 15px 80px #0008; }\ndialog::backdrop { background:#0a1325a8; backdrop-filter:blur(3px); }\n.dialog-top { display:flex; align-items:center; justify-content:space-between; }\n.dialog-top .icon-button { margin:-9px -8px -3px 0; }\ndialog h2 { margin:11px 0 14px; font-size:23px; }\ndialog p, dialog li { color:#d0dbef; font-size:13px; line-height:1.65; }\ndialog ol { padding-left:1.4em; }\ndialog li+li { margin-top:6px; }\n.dialog-grid { display:grid; grid-template-columns:1fr auto; gap:9px 12px; padding:10px 0 13px; border-bottom:1px solid var(--rule); font-size:13px; }\n.dialog-grid output { font:12px var(--mono); }\n.tax-row { display:flex; justify-content:space-between; align-items:center; margin-top:14px; font-size:13px; }\n.tax-range { width:100%; accent-color:#f7ce8d; margin:10px 0 5px; }\n.dialog-buttons { display:flex; gap:8px; flex-wrap:wrap; }\n.dialog-button { padding:8px 13px; background:#263752; border:1px solid #b6c9f052; border-radius:6px; font-size:12px; }\n.dialog-button:hover { background:#344c73; }\n.dialog-button.primary { color:#282015; background:var(--accent); }\n.dialog-button.danger { color:#ffd0bb; border-color:#edab925c; }\n\n.brand em, .brand-caption b { font:inherit; }\n.goal-detail { border:0; background:transparent; color:var(--accent); font-size:10px; padding:4px 0 0; }\n.goal-detail:hover { text-decoration:underline; }\n.objective .goal-detail { margin-top:5px; }\n.city-status { position:absolute; right:22px; top:120px; display:flex; gap:0; border-radius:7px; z-index:2; }\n.city-status button { display:flex; align-items:center; gap:5px; padding:7px 9px; background:transparent; border:0; font-size:10px; color:#d3ddf1; }\n.city-status button + button { border-left:1px solid var(--rule); }\n.city-status button:hover { background:#acc5fa16; }\n.city-status .icon { width:14px; height:14px; color:#a6cff5; }\n.city-status strong { margin-left:3px; color:var(--accent); font:10px var(--mono); }\n.city-status strong.warning { color:#ffab95; }\n.build-tabs { display:flex; gap:4px; flex-wrap:wrap; }\n.build-tabs button { background:transparent; border:1px solid transparent; border-radius:4px; padding:3px 7px; color:var(--muted); font-size:11px; }\n.build-tabs button:hover { color:var(--text); }\n.build-tabs button[aria-pressed=true] { color:var(--accent); border-color:#f7ce8d39; background:#f7ce8d12; }\n.tool.is-locked { border-style:dashed; }\n.tool.is-locked .icon, .tool.is-locked span { opacity:.63; }\n.tool .lock-icon { position:absolute; top:4px; right:4px; width:12px; height:12px; color:#e0be89; }\n.tools[data-group=services] { grid-template-columns:repeat(6,minmax(0,1fr)); }\n.tools[data-group=transport] { grid-template-columns:repeat(4,minmax(0,1fr)); }\n.tools[data-group=landmarks] { grid-template-columns:repeat(3,minmax(0,1fr)); }\n.tools[data-group=services] .tool span { font-size:10px; }\n.dialog-list { display:grid; gap:8px; max-height:48vh; overflow:auto; }\n.dialog-entry { border:1px solid var(--rule); background:#131e30; border-radius:7px; padding:9px 10px; }\n.dialog-entry + .dialog-buttons { margin-top:8px; }\n.dialog-entry h3 { margin:0 0 4px; font-size:13px; }\n.dialog-entry p { margin:0 0 7px; font-size:11px; }\n.dialog-entry .dialog-buttons { gap:6px; }\n.dialog-entry .dialog-button { padding:5px 8px; }\n.dialog-stat { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; padding:6px 0; border-bottom:1px solid var(--rule); }\n.dialog-stat strong { color:var(--accent); font:11px var(--mono); text-align:right; }\n.dialog-stat strong.complete { color:#92c6f5; }\n.layer-menu { max-height:min(320px,54dvh); overflow:auto; }\n\n@media(max-width:1100px) {\n  .topbar { gap:8px; padding:0 12px; }\n  .brand-caption,.metric-icon,.date span { display:none; }\n  .time-controls { gap:6px; }\n  .metric { padding:0 9px; }\n  .delta { display:none; }\n  .utilities { gap:5px; }\n  .build-dock { width:min(512px,calc(100% - 396px)); }\n  .minimap { width:136px; }\n  .demand { width:154px; }\n  .map-dock { right:14px; }\n  .demand,.objective,.inspector { left:14px; }\n}\n@media(max-width:850px) {\n  .brand-caption,.metric-power,.metric-icon,.date span,.util-tag { display:none; }\n  #lighting-button { width:34px; padding:0; justify-content:center; }\n  .brand { gap:8px; }\n  .brand-mark { width:31px; height:31px; }\n  .brand-mark .icon { width:20px; height:20px; }\n  h1 { font-size:14px; }\n  .topbar { height:60px; }\n  .objective { top:73px; }\n  .view-tag { top:78px; }\n  #toast { top:70px; }\n  .demand,.map-dock { bottom:155px; }\n  .minimap { width:125px; }\n  .build-dock { width:min(540px,calc(100% - 30px)); }\n  .map-actions .icon-button { width:28px; height:28px; }\n  .layer-menu { bottom:171px; }\n  .city-status { right:14px; top:100px; }\n  .inspector { top:248px; }\n}\n@media(max-width:570px) {\n  .topbar { height:83px; flex-wrap:wrap; align-content:space-evenly; gap:0; padding:0 10px; }\n  .brand { order:0; flex:1 0 46%; }\n  .utilities { order:1; flex:0 0 54%; justify-content:flex-end; gap:3px; }\n  .telemetry { order:2; align-self:auto; flex:1; }\n  .metric { padding:0 8px 0 5px; border:0 !important; }\n  .metric-label { font-size:9px; margin-bottom:2px; }\n  .metric strong { font-size:12px; }\n  .time-controls { order:3; gap:5px; }\n  .date strong { font-size:9px; }\n  .speed button { width:22px; height:21px; }\n  .speed .icon { width:14px; height:14px; }\n  .utilities .icon-button { width:27px; height:27px; }\n  .objective { top:92px; left:8px; width:153px; padding:8px; }\n  .objective h2 { font-size:16px; margin-top:6px; }\n  .objective p,.goal-foot { font-size:9px; }\n  .progress { margin-top:7px; }\n  .view-tag,.minimap,.district span,.build-footer > span:first-child { display:none; }\n  .demand { left:8px; bottom:146px; width:153px; padding:6px 8px; }\n  .demand .eyebrow { display:none; }\n  .demand-row { font-size:9px; gap:4px; grid-template-columns:12px 20px 1fr 18px; }\n  .demand-row+.demand-row { margin-top:4px; }\n  .map-dock { right:8px; bottom:146px; }\n  .district { font-size:9px; }\n  .build-dock { width:calc(100% - 16px); bottom:8px; }\n  .toolbox { padding:6px; }\n  .toolbox-title { padding-bottom:6px; }\n  .tools { gap:3px; }\n  .tool { height:46px; }\n  .tool kbd { display:none; }\n  .tool .icon { width:16px; height:16px; }\n  .tool span,.tool-info { font-size:10px; }\n  .tool-info { gap:5px; padding:4px 6px; min-height:26px; }\n  .tool-price { font-size:9px; }\n  .build-footer { padding-top:5px; justify-content:flex-end; }\n  .inspector { top:224px; left:8px; width:153px; }\n  .inspector h2 { font-size:16px; }\n  .layer-menu { bottom:1px; right:35px; }\n  #toast { top:90px; max-width:90%; white-space:normal; text-align:center; }\n  .city-status { right:8px; top:93px; flex-direction:column; }\n  .city-status button { padding:5px 6px; font-size:9px; }\n  .city-status button + button { border-left:0; border-top:1px solid var(--rule); }\n  .city-status .icon { width:12px; height:12px; }\n  .build-tabs button { padding:3px 5px; font-size:10px; }\n  .tools[data-group=services] .tool span { line-height:1.1; }\n}\n";
+  styleEl.textContent = ":root {\n  color-scheme:dark;\n  --text:#f1f2f7;\n  --muted:#aeb9ce;\n  --dim:#8e9ab3;\n  --accent:#f7ce8d;\n  --panel:#172133f5;\n  --rule:#d2e0fd25;\n  --mono:\"SFMono-Regular\",\"Cascadia Mono\",\"Consolas\",monospace;\n  font-family:\"Avenir Next\",\"PingFang SC\",\"Microsoft YaHei\",sans-serif;\n  font-synthesis:none;\n}\n* { box-sizing:border-box; }\nbody { margin:0; overflow:hidden; color:var(--text); background:#192235; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; overscroll-behavior:none; }\nbutton, input { font:inherit; }\nbutton { cursor:pointer; color:inherit; }\nbutton:focus-visible, canvas:focus-visible, input:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }\n[hidden] { display:none !important; }\n.symbol-bank { display:block; width:0; height:0; position:absolute; }\n.icon { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; flex:none; }\n#game { position:relative; width:100vw; height:100dvh; overflow:hidden; isolation:isolate; }\n#world { width:100%; height:100%; display:block; touch-action:none; cursor:crosshair; }\n#world[data-pan] { cursor:grabbing; }\n.scene-shade { position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg,#14243a30 0,transparent 18%,transparent 73%,#101d365e 100%); z-index:1; }\n.panel { background:linear-gradient(165deg,rgba(21,33,52,.82),rgba(14,23,38,.76)); border:1px solid rgba(190,214,255,.24); border-radius:12px; box-shadow:0 12px 30px rgba(7,12,24,.38), inset 0 1px rgba(255,255,255,.12); z-index:2; backdrop-filter:blur(16px) saturate(1.35); -webkit-backdrop-filter:blur(16px) saturate(1.35); }\n.topbar { height:62px; position:absolute; top:10px; left:16px; right:16px; display:flex; align-items:center; gap:14px; padding:0 16px; background:linear-gradient(180deg,rgba(19,30,48,.84),rgba(13,22,36,.78)); border:1px solid rgba(190,214,255,.26); border-radius:14px; box-shadow:0 12px 32px rgba(7,12,24,.42), inset 0 1px rgba(255,255,255,.14); backdrop-filter:blur(18px) saturate(1.4); -webkit-backdrop-filter:blur(18px) saturate(1.4); z-index:3; }\n.brand { display:flex; align-items:center; gap:11px; flex:1 0 auto; }\n.brand-row { display:flex; align-items:center; gap:8px; }\n.city-switcher { background:rgba(247,206,141,.14); border:1px solid rgba(247,206,141,.42); color:var(--accent); border-radius:999px; padding:2px 8px; font-size:10px; font-weight:600; letter-spacing:.04em; transition:background .15s,transform .15s; white-space:nowrap; }\n.city-switcher:hover { background:rgba(247,206,141,.26); transform:translateY(-1px); }\n.city-stars { color:var(--accent); letter-spacing:.08em; margin-left:4px; }\n.brand-mark { width:38px; height:38px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(145deg,#fae0ab,#e8b86d); color:#2b1f14; box-shadow:0 4px 12px rgba(247,206,141,.25), inset 0 0 0 1px #fff3d6; }\n.brand-mark .icon { width:25px; height:25px; stroke-width:1.45; }\nh1 { font-size:17px; margin:0 0 2px; font-weight:700; letter-spacing:.045em; }\nh1 span { color:#a89476; font-weight:500; margin:0 2px; }\n.brand-caption { font:9px var(--mono); color:#9daac3; letter-spacing:.19em; }\n.brand-caption span { color:var(--accent); }\n.telemetry { align-self:stretch; display:flex; }\n.metric { display:flex; align-items:center; gap:9px; padding:0 clamp(11px,1.4vw,22px); background:transparent; border:0; border-left:1px solid var(--rule); color:var(--text); text-align:left; white-space:nowrap; }\nbutton.metric:hover { background:#c7dbff13; }\n.metric:last-child { border-right:1px solid var(--rule); }\n.metric-icon { width:18px; height:18px; color:#a9bad6; margin-right:1px; }\n.metric-power .metric-icon { color:#f0be83; }\n.metric-label { display:block; color:var(--muted); font-size:10px; margin-bottom:4px; }\n.metric strong { display:block; font:600 16px var(--mono); letter-spacing:-.04em; }\n.delta { color:var(--accent); font:10px var(--mono); margin-top:14px; }\n.delta.negative, .warning { color:#f4aa92; }\n.time-controls { display:flex; align-items:center; gap:14px; }\n.date { white-space:nowrap; }\n.date span { display:block; color:var(--muted); font-size:10px; margin-bottom:4px; }\n.date strong { display:block; font:12px var(--mono); }\n.speed { display:flex; align-items:center; gap:2px; background:#0c1423; border:1px solid var(--rule); border-radius:7px; padding:3px; }\n.speed button { width:29px; height:29px; border-radius:4px; border:0; background:transparent; color:#aebcd5; display:grid; place-items:center; font:600 11px var(--mono); padding:0; }\n.speed .icon { width:17px; height:17px; }\n.speed button:hover, .icon-button:hover { background:#a6c4ff26; color:var(--text); }\n.speed button[aria-pressed=true] { background:var(--accent); color:#2d2218; }\n.utilities { display:flex; gap:5px; align-items:center; }\n.icon-button { width:34px; height:34px; display:grid; place-items:center; padding:0; border:1px solid transparent; border-radius:7px; background:transparent; color:#c5d1e8; transition:background .14s,border-color .14s; }\n#lighting-button { width:auto; display:inline-flex; align-items:center; gap:5px; padding:0 9px; border-color:#b3c6ee2e; background:#19253b; }\n.util-tag { font:600 11px var(--mono); color:var(--accent); }\n#sound-button[aria-pressed=false] { opacity:.48; }\n.icon-button.panel { border-color:#b3c6ee36; background:var(--panel); }\n.icon-button.panel:hover, .icon-button[aria-expanded=true] { background:#304465; }\n.icon-button.panel[aria-pressed=true] { background:#473b31; border-color:var(--accent); color:var(--accent); }\n.icon-button .icon { width:18px; height:18px; }\n.objective { position:absolute; top:84px; left:16px; width:236px; padding:13px 14px 12px; }\n.eyebrow { color:#d5dff4; font-size:11px; font-weight:600; letter-spacing:.065em; display:flex; align-items:center; gap:6px; }\n.eyebrow .icon { width:14px; height:14px; color:var(--accent); }\n.eyebrow > span { margin-left:auto; color:#a9b8d6; font:9px var(--mono); letter-spacing:.075em; }\n.objective h2, .inspector h2 { margin:8px 0 3px; font-size:20px; letter-spacing:.05em; }\n.objective p, .inspector p { margin:0; color:var(--muted); font-size:12px; }\n.progress, .meter { border-radius:20px; background:#0c1424; box-shadow:inset 0 1px 2px #0007; overflow:hidden; }\n.progress { height:6px; margin-top:11px; }\n.progress div { height:100%; border-radius:inherit; background:linear-gradient(90deg,#f0b865,#fae0ab); width:0; transition:width .35s ease; }\n.goal-foot { display:flex; justify-content:space-between; margin-top:7px; font:10px var(--mono); color:var(--muted); }\n.goal-foot strong, #goal-percent { color:var(--accent); }\n.objective-actions { display:flex; justify-content:space-between; align-items:center; gap:6px; margin-top:5px; }\n.goal-next { border:1px solid rgba(121,197,243,.4); background:rgba(121,197,243,.14); color:#9fd8ff; border-radius:999px; font-size:10px; padding:2px 8px; font-weight:600; }\n.goal-next:hover { background:rgba(121,197,243,.26); }\n.chirper { margin-top:9px; width:100%; text-align:left; background:rgba(12,21,36,.62); border:1px solid rgba(166,207,245,.22); border-radius:8px; padding:6px 8px; display:grid; gap:2px; transition:border-color .15s,background .15s; }\n.chirper:hover { border-color:rgba(247,206,141,.5); background:rgba(19,32,52,.78); }\n.chirper-tag { font:600 9px var(--mono); color:#79c5f3; letter-spacing:.06em; display:flex; align-items:center; gap:4px; }\n.chirper-tag::before { content:\"\"; width:5px; height:5px; border-radius:50%; background:currentColor; box-shadow:0 0 6px currentColor; }\n.chirper-msg { font-size:10.5px; line-height:1.38; color:#dce6fa; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }\n.view-tag { position:absolute; right:20px; top:86px; color:#f1f5ff; font:600 10px var(--mono); letter-spacing:.12em; text-shadow:0 1px 6px #152240; pointer-events:none; z-index:2; }\n.view-tag span { display:inline-block; background:#f7ce8d; border-radius:50%; width:6px; height:6px; margin-right:4px; box-shadow:0 0 0 2px #15254150; }\n.view-tag b { color:#f3d6af; margin:0 4px; }\n.world-labels { position:absolute; inset:0; pointer-events:none; z-index:1; }\n.district { position:absolute; border-radius:4px; transform:translate(-50%,-50%); background:#19263ae0; border:1px solid #bdd1f17c; color:#eef3ff; font-size:11px; font-weight:600; padding:5px 9px; white-space:nowrap; letter-spacing:.085em; box-shadow:0 3px 9px #0c122b55; transition:opacity .18s; }\n.district span { font:9px var(--mono); color:#f3cb90; border-right:1px solid #adbcdc66; padding-right:5px; margin-right:3px; }\n.water-label { border:0; border-bottom:1px solid #e8f1ffa0; border-radius:0; background:transparent; box-shadow:none; font-size:13px; letter-spacing:.25em; text-shadow:0 1px 3px #1a325c; }\n.demand { position:absolute; left:22px; bottom:40px; width:196px; padding:12px 13px 13px; }\n.demand .eyebrow { margin-bottom:11px; }\n.demand-row { display:grid; grid-template-columns:15px 25px 1fr 22px; gap:6px; align-items:center; font-size:11px; color:#d3ddf1; }\n.demand-row+.demand-row { margin-top:7px; }\n.demand-row .icon { width:14px; height:14px; color:var(--zone); }\n.demand-row b { font:10px var(--mono); color:var(--zone); text-align:right; }\n.meter { height:5px; }\n.meter i { display:block; background:var(--zone); border-radius:inherit; height:100%; transition:width .3s; }\n.map-dock { position:absolute; right:22px; bottom:40px; display:grid; grid-template-columns:auto auto; gap:8px; align-items:end; z-index:2; }\n.map-actions { display:flex; flex-direction:column; gap:5px; }\n.map-actions .icon-button { width:33px; height:33px; }\n.layer-menu { position:absolute; bottom:184px; right:0; width:147px; padding:8px; }\n.layer-menu .eyebrow { margin:4px 5px 7px; }\n.layer-menu button { display:block; width:100%; background:transparent; border:0; text-align:left; border-radius:4px; padding:7px 8px; font-size:12px; }\n.layer-menu button:hover, .layer-menu button[aria-pressed=true] { background:#f7ce8d24; color:var(--accent); }\n.minimap { width:185px; padding:8px; }\n.minimap-head, .minimap-foot { display:flex; align-items:center; gap:5px; padding:0 3px 7px; font-size:10px; color:#e3eaf9; }\n.minimap-head .icon { width:13px; height:13px; color:#b2c5e6; }\n.minimap-head span, .minimap-foot span:last-child { margin-left:auto; font:9px var(--mono); color:var(--muted); }\n.minimap canvas { width:100%; height:auto; aspect-ratio:1/1; display:block; border:1px solid #bfd2f75f; border-radius:5px; cursor:crosshair; }\n.minimap-foot { padding:7px 3px 1px; }\n.minimap-foot i, .save-status i, .toolbox-title i, .tool-state i { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--accent); margin-right:4px; vertical-align:1px; }\n.build-dock { position:absolute; bottom:19px; left:50%; transform:translateX(-50%); width:min(584px,calc(100% - 492px)); z-index:2; }\n.tool-info { margin:0 auto 7px; display:flex; align-items:center; gap:10px; width:fit-content; max-width:100%; min-height:33px; padding:6px 10px; color:#d1dcf1; font-size:11px; border-radius:7px; }\n.tool-state { white-space:nowrap; color:var(--text); border-right:1px solid var(--rule); padding-right:8px; }\n.tool-state i { width:5px; height:5px; }\n.tool-price { white-space:nowrap; color:var(--accent); font:10px var(--mono); padding-left:4px; }\n.toolbox { padding:10px; }\n.toolbox-title { display:flex; justify-content:space-between; align-items:center; padding:0 2px 8px; gap:8px; }\n.toolbox-title span { font-size:11px; font-weight:650; letter-spacing:.06em; }\n.toolbox-title i { width:5px; height:5px; }\n.toolbox-title b { color:var(--dim); font:9px var(--mono); letter-spacing:.11em; }\n.tools { display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:5px; }\n.tool { position:relative; border-radius:8px; min-width:0; height:60px; display:grid; justify-items:center; align-content:center; gap:4px; background:linear-gradient(180deg,rgba(36,52,78,.88),rgba(25,37,58,.88)); border:1px solid rgba(183,204,242,.18); box-shadow:inset 0 2px 0 var(--tool); padding:0; transition:background .15s,border-color .15s,transform .15s; }\n.tool .icon { width:21px; height:21px; color:var(--tool); }\n.tool span { font-size:11px; color:#e1e9fc; }\n.tool kbd { position:absolute; right:5px; top:4px; color:#9baacc; font:9px var(--mono); }\n.tool .unlock-tag { position:absolute; bottom:2px; right:3px; font:600 8px var(--mono); color:#f3cb90; background:rgba(15,23,38,.85); padding:0 3px; border-radius:3px; }\n.tool:hover { background:linear-gradient(180deg,rgba(50,72,106,.92),rgba(34,50,76,.92)); border-color:rgba(195,212,247,.45); transform:translateY(-2px); }\n.tool[aria-pressed=true] { background:linear-gradient(180deg,rgba(78,63,48,.95),rgba(56,45,35,.95)); border-color:var(--accent); box-shadow:inset 0 2px 0 var(--accent), 0 4px 12px rgba(247,206,141,.2); transform:translateY(-2px); }\n.tool[aria-pressed=true] span, .tool[aria-pressed=true] kbd { color:#ffe9c6; }\n.build-footer { display:flex; justify-content:space-between; padding:8px 1px 0; gap:8px; color:#edf2ff; font-size:10px; text-shadow:0 1px 4px #142139,0 0 10px #192843; white-space:nowrap; }\n.build-footer kbd { font:9px var(--mono); background:#142541b8; border:1px solid #bccfee55; border-radius:3px; padding:1px 3px; margin-right:2px; }\n.build-footer b { margin:0 3px; color:#c5d2ea; }\n.save-status i { width:5px; height:5px; }\n.inspector { position:absolute; width:236px; left:16px; top:298px; padding:12px 13px; z-index:2; }\n.inspector .eyebrow { justify-content:space-between; }\n.inspector .icon-button { width:24px; height:24px; margin:-5px; }\n.inspect-coord { color:var(--dim); font:10px var(--mono); border-top:1px solid var(--rule); padding-top:8px; margin-top:10px; }\n#toast { position:absolute; left:50%; top:91px; z-index:5; transform:translate(-50%,-6px); color:#eef3ff; background:#202e46; border:1px solid #f7ce8d73; border-radius:7px; padding:8px 12px; font-size:12px; opacity:0; transition:opacity .16s,transform .16s; pointer-events:none; white-space:nowrap; }\n#toast.show { opacity:1; transform:translate(-50%,0); }\n#toast.error { border-color:#eaa287; color:#ffcfbc; }\n.boot { position:absolute; inset:0; background:#121b2d; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10; }\n.boot h2 { margin:14px 0 0; font-size:20px; }\n.boot p { color:var(--muted); margin:6px 0; font-size:13px; text-align:center; }\ndialog { width:min(430px,calc(100vw - 28px)); border:1px solid #b9ccf35c; border-radius:12px; background:#172238; color:var(--text); padding:21px; box-shadow:0 15px 80px #0008; }\ndialog::backdrop { background:#0a1325a8; backdrop-filter:blur(3px); }\n.dialog-top { display:flex; align-items:center; justify-content:space-between; }\n.dialog-top .icon-button { margin:-9px -8px -3px 0; }\ndialog h2 { margin:11px 0 14px; font-size:23px; }\ndialog p, dialog li { color:#d0dbef; font-size:13px; line-height:1.65; }\ndialog ol { padding-left:1.4em; }\ndialog li+li { margin-top:6px; }\n.dialog-grid { display:grid; grid-template-columns:1fr auto; gap:9px 12px; padding:10px 0 13px; border-bottom:1px solid var(--rule); font-size:13px; }\n.dialog-grid output { font:12px var(--mono); }\n.tax-row { display:flex; justify-content:space-between; align-items:center; margin-top:14px; font-size:13px; }\n.tax-range { width:100%; accent-color:#f7ce8d; margin:10px 0 5px; }\n.dialog-buttons { display:flex; gap:8px; flex-wrap:wrap; }\n.dialog-button { padding:8px 13px; background:#263752; border:1px solid #b6c9f052; border-radius:6px; font-size:12px; }\n.dialog-button:hover { background:#344c73; }\n.dialog-button.primary { color:#282015; background:var(--accent); }\n.dialog-button.danger { color:#ffd0bb; border-color:#edab925c; }\n\n.brand em, .brand-caption b { font:inherit; }\n.goal-detail { border:0; background:transparent; color:var(--accent); font-size:10px; padding:4px 0 0; }\n.goal-detail:hover { text-decoration:underline; }\n.objective .goal-detail { margin-top:5px; }\n.city-status { position:absolute; right:22px; top:120px; display:flex; gap:0; border-radius:7px; z-index:2; }\n.city-status button { display:flex; align-items:center; gap:5px; padding:7px 9px; background:transparent; border:0; font-size:10px; color:#d3ddf1; }\n.city-status button + button { border-left:1px solid var(--rule); }\n.city-status button:hover { background:#acc5fa16; }\n.city-status .icon { width:14px; height:14px; color:#a6cff5; }\n.city-status strong { margin-left:3px; color:var(--accent); font:10px var(--mono); }\n.city-status strong.warning { color:#ffab95; }\n.build-tabs { display:flex; gap:4px; flex-wrap:wrap; }\n.build-tabs button { background:transparent; border:1px solid transparent; border-radius:4px; padding:3px 7px; color:var(--muted); font-size:11px; }\n.build-tabs button:hover { color:var(--text); }\n.build-tabs button[aria-pressed=true] { color:var(--accent); border-color:#f7ce8d39; background:#f7ce8d12; }\n.tool.is-locked { border-style:dashed; }\n.tool.is-locked .icon, .tool.is-locked span { opacity:.63; }\n.tool .lock-icon { position:absolute; top:4px; right:4px; width:12px; height:12px; color:#e0be89; }\n.tools[data-group=services] { grid-template-columns:repeat(6,minmax(0,1fr)); }\n.tools[data-group=transport] { grid-template-columns:repeat(4,minmax(0,1fr)); }\n.tools[data-group=landmarks] { grid-template-columns:repeat(3,minmax(0,1fr)); }\n.tools[data-group=services] .tool span { font-size:10px; }\n.dialog-list { display:grid; gap:8px; max-height:52vh; overflow:auto; padding-right:2px; }\n.dialog-entry { border:1px solid var(--rule); background:rgba(16,26,43,.85); border-radius:8px; padding:10px 11px; }\n.dialog-entry + .dialog-buttons { margin-top:8px; }\n.dialog-entry-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px; }\n.dialog-entry h3 { margin:0; font-size:13px; }\n.trophy-pill { font:600 10px var(--mono); color:var(--accent); background:rgba(247,206,141,.14); border:1px solid rgba(247,206,141,.35); border-radius:999px; padding:1px 7px; white-space:nowrap; }\n.slot-meta { font:10px var(--mono); color:var(--muted); margin:0 0 7px; }\n.save-textarea { width:100%; min-height:64px; background:#0d1626; border:1px solid var(--rule); border-radius:6px; color:var(--text); font:10px var(--mono); padding:6px 8px; resize:vertical; margin:6px 0; }\n.dialog-entry p { margin:0 0 7px; font-size:11px; }\n.dialog-entry .dialog-buttons { gap:6px; }\n.dialog-entry .dialog-button { padding:5px 8px; font-size:11px; }\n.dialog-stat { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; padding:6px 0; border-bottom:1px solid var(--rule); }\n.dialog-stat strong { color:var(--accent); font:11px var(--mono); text-align:right; }\n.dialog-stat strong.complete { color:#92c6f5; }\n.layer-menu { max-height:min(320px,54dvh); overflow:auto; }\n\n@media(max-width:1100px) {\n  .topbar { gap:6px; padding:0 10px; left:10px; right:10px; }\n  .brand { gap:8px; }\n  .brand-mark { width:34px; height:34px; }\n  h1 { font-size:15px; white-space:nowrap; }\n  .brand-caption,.metric-icon,.date span { display:none; }\n  .time-controls { gap:5px; }\n  .metric { padding:0 7px; }\n  .metric strong { font-size:14px; }\n  .delta { display:none; }\n  .utilities { gap:3px; }\n  .icon-button { width:30px; height:30px; }\n  #lighting-button { padding:0 7px; white-space:nowrap; }\n  .build-dock { width:min(512px,calc(100% - 396px)); }\n  .minimap { width:136px; }\n  .demand { width:154px; }\n  .map-dock { right:14px; }\n  .demand,.objective,.inspector { left:14px; }\n}\n@media(max-width:850px) {\n  .brand-caption,.metric-power,.metric-icon,.date span,.util-tag { display:none; }\n  #lighting-button { width:34px; padding:0; justify-content:center; }\n  .brand { gap:8px; }\n  .brand-mark { width:31px; height:31px; }\n  .brand-mark .icon { width:20px; height:20px; }\n  h1 { font-size:14px; }\n  .topbar { height:56px; top:8px; left:10px; right:10px; }\n  .objective { top:72px; }\n  .view-tag { top:76px; }\n  #toast { top:70px; }\n  .demand,.map-dock { bottom:155px; }\n  .minimap { width:125px; }\n  .build-dock { width:min(540px,calc(100% - 30px)); }\n  .map-actions .icon-button { width:28px; height:28px; }\n  .layer-menu { bottom:171px; }\n  .city-status { right:14px; top:98px; }\n  .inspector { top:286px; }\n}\n@media(max-width:570px) {\n  .topbar { height:78px; top:6px; left:8px; right:8px; flex-wrap:wrap; align-content:space-evenly; gap:2px 4px; padding:0 9px; }\n  .brand { order:0; flex:1 1 auto; min-width:0; gap:6px; }\n  .brand-mark { width:26px; height:26px; }\n  h1 { font-size:12.5px; white-space:nowrap; }\n  .utilities { order:1; flex:0 0 auto; justify-content:flex-end; gap:2px; }\n  .city-switcher { padding:1px 5px; font-size:8.5px; }\n  .telemetry { order:2; align-self:auto; flex:1 1 52%; }\n  .metric { padding:0 8px 0 5px; border:0 !important; }\n  .metric-label { font-size:9px; margin-bottom:2px; }\n  .metric strong { font-size:12px; }\n  .time-controls { order:3; gap:5px; }\n  .date strong { font-size:9px; }\n  .speed button { width:22px; height:21px; }\n  .speed .icon { width:14px; height:14px; }\n  .utilities .icon-button { width:26px; height:26px; }\n  .objective { top:90px; left:8px; width:168px; padding:8px; }\n  .objective h2 { font-size:15px; margin-top:4px; }\n  .objective p,.goal-foot { font-size:9px; }\n  .objective-actions { gap:4px; }\n  .goal-detail,.goal-next { font-size:9px; white-space:nowrap; }\n  .progress { margin-top:5px; }\n  .chirper { margin-top:5px; padding:4px 6px; }\n  .chirper-msg { font-size:9px; -webkit-line-clamp:1; }\n  .view-tag,.minimap,.district span,.build-footer > span:first-child { display:none; }\n  .demand { left:8px; bottom:146px; width:168px; padding:6px 8px; }\n  .demand .eyebrow { display:none; }\n  .demand-row { font-size:9px; gap:4px; grid-template-columns:12px 20px 1fr 18px; }\n  .demand-row+.demand-row { margin-top:4px; }\n  .map-dock { right:8px; bottom:146px; }\n  .district { font-size:9px; }\n  .build-dock { width:calc(100% - 16px); bottom:8px; }\n  .toolbox { padding:6px; }\n  .toolbox-title { padding-bottom:6px; }\n  .tools { gap:3px; }\n  .tool { height:46px; }\n  .tool kbd { display:none; }\n  .tool .icon { width:16px; height:16px; }\n  .tool span,.tool-info { font-size:10px; }\n  .tool-info { gap:5px; padding:4px 6px; min-height:26px; }\n  .tool-price { font-size:9px; }\n  .build-footer { padding-top:5px; justify-content:flex-end; }\n  .inspector { top:264px; left:8px; width:168px; padding:8px 10px; }\n  .inspector h2 { font-size:16px; }\n  .layer-menu { bottom:1px; right:35px; }\n  #toast { top:90px; max-width:90%; white-space:normal; text-align:center; }\n  .city-status { right:8px; top:93px; flex-direction:column; }\n  .city-status button { padding:5px 6px; font-size:9px; }\n  .city-status button + button { border-left:0; border-top:1px solid var(--rule); }\n  .city-status .icon { width:12px; height:12px; }\n  .build-tabs button { padding:3px 5px; font-size:10px; }\n  .tools[data-group=services] .tool span { line-height:1.1; }\n}\n";
   document.head.appendChild(styleEl);
 
   const initialCanvas = document.getElementById('game');
@@ -4243,7 +4243,7 @@ void main() {
     initialCanvas.remove();
   }
   const wrapper = document.createElement('div');
-  wrapper.innerHTML = "<svg class=\"symbol-bank\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\">\n    <symbol id=\"city\" viewBox=\"0 0 24 24\"><path d=\"M3 20V12h5v8m0 0V5h7v15m0 0V9h6v11M2 20h20M11 8h1m-1 4h1m-1 4h1m6-4h1m-1 4h1M5 15h1\"/></symbol>\n    <symbol id=\"wallet\" viewBox=\"0 0 24 24\"><path d=\"M19 7V5H5a2 2 0 0 0 0 4h15v10H5a2 2 0 0 1-2-2V7m17 5h-5a2 2 0 0 0 0 4h5m-4-2h.01\"/></symbol>\n    <symbol id=\"people\" viewBox=\"0 0 24 24\"><circle cx=\"10\" cy=\"8\" r=\"3\"/><path d=\"M4 19v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2m1-14a3 3 0 0 1 0 6m1 2a4 4 0 0 1 3 4v2\"/></symbol>\n    <symbol id=\"bolt\" viewBox=\"0 0 24 24\"><path d=\"m13 2-9 12h7l-1 8 10-12h-7l1-8Z\"/></symbol>\n    <symbol id=\"cursor\" viewBox=\"0 0 24 24\"><path d=\"M5 3l14 9-7 1.5L9 20 5 3Zm7 11 4 6\"/></symbol>\n    <symbol id=\"road\" viewBox=\"0 0 24 24\"><path d=\"M7 3 3 21m14-18 4 18M12 4v3m0 3v4m0 3v3\"/></symbol>\n    <symbol id=\"house\" viewBox=\"0 0 24 24\"><path d=\"m2.5 11 9.5-8 9.5 8M5 10v10h14V10m-9 10v-6h4v6\"/></symbol>\n    <symbol id=\"shop\" viewBox=\"0 0 24 24\"><path d=\"M4 11v9h16v-9M3 7l2-3h14l2 3v3a2.25 2.25 0 0 1-4.5 0 2.25 2.25 0 0 1-4.5 0 2.25 2.25 0 0 1-4.5 0A2.25 2.25 0 0 1 3 10V7h18M8 20v-5h5v5m3-5h1\"/></symbol>\n    <symbol id=\"factory\" viewBox=\"0 0 24 24\"><path d=\"M3 20V10l6 3v-3l6 3V5h4l2 15H3Zm4-3h1m3 0h1m3 0h1\"/></symbol>\n    <symbol id=\"tree\" viewBox=\"0 0 24 24\"><path d=\"m12 2-5 7h2l-5 7h16l-5-7h2l-5-7Zm0 14v5m-4 0h8\"/></symbol>\n    <symbol id=\"bulldoze\" viewBox=\"0 0 24 24\"><path d=\"M3 19h17l1-7m-3 5-4-1-2-4m-8 3h8l-1-7H6v5H4v2Zm0 0a2 2 0 1 0 0 4m7-4a2 2 0 0 1 0 4m-7-2h7\"/></symbol>\n    <symbol id=\"target\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M12 2v3m0 14v3M2 12h3m14 0h3\"/></symbol>\n    <symbol id=\"layers\" viewBox=\"0 0 24 24\"><path d=\"m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5\"/></symbol>\n    <symbol id=\"help\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-1 .5-1 1.4-1 2.2m0 3h.01\"/></symbol>\n    <symbol id=\"settings\" viewBox=\"0 0 24 24\"><path d=\"m10 3-.5 2.7-2 .9-2.4-1.4-2 3.5 2.1 1.8v2.3l-2.1 1.8 2 3.5 2.4-1.4 2 .9.5 2.7h4l.5-2.7 2-.9 2.4 1.4 2-3.5-2.1-1.8v-2.3l2.1-1.8-2-3.5-2.4 1.4-2-.9L14 3h-4Z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/></symbol>\n    <symbol id=\"rotate\" viewBox=\"0 0 24 24\"><path d=\"M4 9a8 8 0 1 1 .7 8M4 4v5h5\"/></symbol>\n    <symbol id=\"plus\" viewBox=\"0 0 24 24\"><path d=\"M12 5v14M5 12h14\"/></symbol>\n    <symbol id=\"minus\" viewBox=\"0 0 24 24\"><path d=\"M5 12h14\"/></symbol>\n    <symbol id=\"pause\" viewBox=\"0 0 24 24\"><path d=\"M9 6v12m6-12v12\"/></symbol>\n    <symbol id=\"play\" viewBox=\"0 0 24 24\"><path d=\"m8 5 11 7-11 7V5Z\" fill=\"currentColor\" stroke=\"none\"/></symbol>\n    <symbol id=\"next\" viewBox=\"0 0 24 24\"><path d=\"m5 6 8 6-8 6V6Zm7 0 8 6-8 6\" fill=\"currentColor\" stroke=\"none\"/></symbol>\n    <symbol id=\"arrow\" viewBox=\"0 0 24 24\"><path d=\"M5 12h14m-5-5 5 5-5 5\"/></symbol>\n    <symbol id=\"close\" viewBox=\"0 0 24 24\"><path d=\"m6 6 12 12M18 6 6 18\"/></symbol>\n    <symbol id=\"save\" viewBox=\"0 0 24 24\"><path d=\"M4 4h13l3 3v13H4V4Zm4 0v6h8V4m-8 16v-6h8v6\"/></symbol>\n    <symbol id=\"check\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4 4L19 6\"/></symbol>\n    <symbol id=\"map\" viewBox=\"0 0 24 24\"><path d=\"m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2V6Zm6-2v14m6-12v14\"/></symbol>\n    <symbol id=\"flag\" viewBox=\"0 0 24 24\"><path d=\"M5 21V4c5-4 9 4 15 0v10c-6 4-10-4-15 0\"/></symbol>\n    <symbol id=\"water-drop\" viewBox=\"0 0 24 24\"><path d=\"M12 3c-4 5-7 8-7 12a7 7 0 0 0 14 0c0-4-3-7-7-12Zm-3.5 12a3.5 3.5 0 0 0 3.5 3.5\"/></symbol>\n    <symbol id=\"sewer\" viewBox=\"0 0 24 24\"><path d=\"M4 4h8v4a3 3 0 0 0 3 3h5v6h-6a10 10 0 0 1-10-10V4Zm0 0H2m10 0h2m6 6v8m-7 3 2-1 2 1 2-1 2 1\"/></symbol>\n    <symbol id=\"waste\" viewBox=\"0 0 24 24\"><path d=\"M4 7h16m-14 0 1.5 13h9L18 7M9 7V4h6v3m-5 4v5m4-5v5\"/></symbol>\n    <symbol id=\"school\" viewBox=\"0 0 24 24\"><path d=\"m3 10 9-6 9 6M5 9v11h14V9m-9 11v-6h4v6M12 9h.01\"/></symbol>\n    <symbol id=\"clinic\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"15\" rx=\"2\"/><path d=\"M12 8v9m-4.5-4.5h9\"/></symbol>\n    <symbol id=\"fire\" viewBox=\"0 0 24 24\"><path d=\"M12 3c1 5 6 5 7 11a7 7 0 1 1-14-1c.3-2 1.4-3.5 3-4-.4 3 .8 3.5 1.6 3.7C11 10 12 7 12 3Z\"/></symbol>\n    <symbol id=\"avenue\" viewBox=\"0 0 24 24\"><path d=\"M6 3 2 21m16-18 4 18M10 4 9 20m5-16 1 16M12 4v3m0 3v4m0 3v3\"/></symbol>\n    <symbol id=\"bus\" viewBox=\"0 0 24 24\"><rect x=\"4\" y=\"4\" width=\"16\" height=\"15\" rx=\"3\"/><path d=\"M4 12h16M7 19v2m10-2v2M7.5 15.5h.1m8.8 0h.1M9 7h6\"/></symbol>\n    <symbol id=\"ferry\" viewBox=\"0 0 24 24\"><path d=\"M4 15 6 8h12l2 7M2 18c2 1.5 4 1.5 6 0 2 1.5 4 1.5 6 0 2 1.5 4 1.5 6 0M9 8V5h6v3M3 15h18\"/></symbol>\n    <symbol id=\"metro\" viewBox=\"0 0 24 24\"><rect x=\"5\" y=\"3\" width=\"14\" height=\"15\" rx=\"4\"/><path d=\"M5 11h14M8 18l-2 3m10-3 2 3M9 14.5h.1m5.8 0h.1M9 7h6\"/></symbol>\n    <symbol id=\"wheel\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"11\" r=\"7\"/><circle cx=\"12\" cy=\"11\" r=\"1.5\"/><path d=\"M12 4v14M5 11h14M7 6l10 10m0-10L7 16m1 5 4-8 4 8\"/></symbol>\n    <symbol id=\"expo\" viewBox=\"0 0 24 24\"><path d=\"M3 20h18M5 20v-5a7 7 0 0 1 14 0v5M12 8V4m-5 11h10M9 20v-5m6 5v-5\"/></symbol>\n    <symbol id=\"tower\" viewBox=\"0 0 24 24\"><path d=\"M12 2v5m-3 3h6m-4 4h2m-5 6 4-13 4 13M7 20h10\"/><circle cx=\"12\" cy=\"10\" r=\"2.2\"/></symbol>\n    <symbol id=\"sun\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4\"/></symbol>\n    <symbol id=\"sound\" viewBox=\"0 0 24 24\"><path d=\"M11 5 6 9H3v6h3l5 4V5Zm4.5 3.5a5 5 0 0 1 0 7m2.8-9.8a9 9 0 0 1 0 12.6\"/></symbol>\n    <symbol id=\"hand\" viewBox=\"0 0 24 24\"><path d=\"M12 3v18m0-18-3 3m3-3 3 3m-3 15-3-3m3 3 3-3M3 12h18M3 12l3-3m-3 3 3 3m15-3-3-3m3 3-3 3\"/></symbol>\n    <symbol id=\"lock\" viewBox=\"0 0 24 24\"><rect x=\"5\" y=\"11\" width=\"14\" height=\"10\" rx=\"2\"/><path d=\"M8 11V7a4 4 0 1 1 8 0v4\"/></symbol>\n  </svg>\n  <main id=\"game\" aria-label=\"天际线河湾市游戏\">\n    <canvas id=\"world\" aria-label=\"河湾市 3D 地图\"></canvas>\n    <div class=\"scene-shade\"></div>\n\n    <header class=\"topbar\">\n      <div class=\"brand\">\n        <div class=\"brand-mark\"><svg class=\"icon\"><use href=\"#city\"/></svg></div>\n        <div><h1>天际线<span> / </span><em id=\"city-name\">河湾市</em></h1><div class=\"brand-caption\">SKYLINE <span>·</span> <b id=\"city-caption\">RIVER VALLEY</b></div></div>\n      </div>\n      <div class=\"telemetry\">\n        <button class=\"metric\" id=\"budget-button\" title=\"查看城市预算\">\n          <svg class=\"icon metric-icon\"><use href=\"#wallet\"/></svg><span><span class=\"metric-label\">市政资金</span><strong id=\"cash\">—</strong></span><span class=\"delta\" id=\"net\">—</span>\n        </button>\n        <div class=\"metric\">\n          <svg class=\"icon metric-icon\"><use href=\"#people\"/></svg><span><span class=\"metric-label\">城市人口</span><strong id=\"population\">—</strong></span>\n        </div>\n        <div class=\"metric metric-power\">\n          <svg class=\"icon metric-icon\"><use href=\"#bolt\"/></svg><span><span class=\"metric-label\">电力负载</span><strong id=\"power\">—</strong></span>\n        </div>\n      </div>\n      <div class=\"time-controls\">\n        <div class=\"date\"><span>市政历</span><strong id=\"date\">—</strong></div>\n        <div class=\"speed\" aria-label=\"模拟速度\">\n          <button data-speed=\"0\" aria-label=\"暂停\" title=\"暂停 · 空格\"><svg class=\"icon\"><use href=\"#pause\"/></svg></button>\n          <button data-speed=\"1\" aria-label=\"正常速度\" title=\"正常速度\"><svg class=\"icon\"><use href=\"#play\"/></svg></button>\n          <button data-speed=\"2\" aria-label=\"三倍速度\" title=\"三倍速度\"><svg class=\"icon\"><use href=\"#next\"/></svg></button>\n          <button data-speed=\"3\" aria-label=\"六倍速度\" title=\"六倍速度\">6×</button>\n        </div>\n      </div>\n      <div class=\"utilities\">\n        <button class=\"icon-button\" id=\"lighting-button\" aria-label=\"切换天色光影\" title=\"切换天色光影 (L)：晴昼 / 夕照 / 夜景 / 流转\"><svg class=\"icon\"><use href=\"#sun\"/></svg><span class=\"util-tag\" id=\"lighting-label\">晴昼</span></button>\n        <button class=\"icon-button\" id=\"sound-button\" aria-label=\"音效开关\" aria-pressed=\"true\" title=\"开关城市音效\"><svg class=\"icon\"><use href=\"#sound\"/></svg></button>\n        <button class=\"icon-button\" id=\"scenario-button\" aria-label=\"地图与挑战\" title=\"地图与挑战\"><svg class=\"icon\"><use href=\"#map\"/></svg></button>\n        <button class=\"icon-button\" id=\"help-button\" aria-label=\"玩法帮助\" title=\"玩法帮助\"><svg class=\"icon\"><use href=\"#help\"/></svg></button>\n        <button class=\"icon-button\" id=\"settings-button\" aria-label=\"存档设置\" title=\"存档设置\"><svg class=\"icon\"><use href=\"#settings\"/></svg></button>\n      </div>\n    </header>\n\n    <aside class=\"objective panel\" aria-label=\"城市里程碑\">\n      <div class=\"eyebrow\"><svg class=\"icon\"><use href=\"#flag\"/></svg> 城市里程碑 <span>01 / 04</span></div>\n      <h2 id=\"goal\">滨河小镇</h2>\n      <p id=\"goal-text\">把人口发展到 1,600 人</p>\n      <div class=\"progress\"><div id=\"goal-bar\"></div></div>\n      <div class=\"goal-foot\"><span><strong id=\"goal-count\">1,388</strong> / <span id=\"goal-target\">1,600</span> <span id=\"goal-unit\">人</span></span><span id=\"goal-percent\">69%</span></div>\n      <button class=\"goal-detail\" id=\"goal-detail\">查看里程碑解锁</button>\n    </aside>\n\n    <div class=\"world-labels\" id=\"districts\" aria-hidden=\"true\">\n      <div class=\"district water-label\" data-i=\"16\" data-j=\"14\">青　河</div>\n      <div class=\"district\" data-i=\"5\" data-j=\"32\"><span>01</span> 西岸社区</div>\n      <div class=\"district\" data-i=\"26\" data-j=\"27\"><span>02</span> 河湾中心</div>\n      <div class=\"district\" data-i=\"38\" data-j=\"16\"><span>03</span> 东部工业区</div>\n    </div>\n    <div class=\"view-tag\" id=\"view-tag\"><span></span> 青河谷地 <b>/</b> RIVER VALLEY</div>\n\n    <aside class=\"city-status panel\" aria-label=\"市政与交通\">\n      <button id=\"service-summary\" title=\"查看市政服务\"><svg class=\"icon\"><use href=\"#water-drop\"/></svg><span>水务 <strong id=\"water-status\">—</strong></span></button>\n      <button id=\"traffic-summary\" title=\"查看交通和公共交通\"><svg class=\"icon\"><use href=\"#bus\"/></svg><span>通畅度 <strong id=\"traffic-status\">—</strong></span></button>\n    </aside>\n\n    <aside class=\"demand panel\" aria-label=\"发展需求\">\n      <div class=\"eyebrow\">发展需求 <span>DEMAND</span></div>\n      <div class=\"demand-row\" style=\"--zone:#bca8fc\"><svg class=\"icon\"><use href=\"#house\"/></svg><span>住宅</span><div class=\"meter\"><i id=\"need-homes\"></i></div><b id=\"value-homes\">—</b></div>\n      <div class=\"demand-row\" style=\"--zone:#78d4eb\"><svg class=\"icon\"><use href=\"#shop\"/></svg><span>商业</span><div class=\"meter\"><i id=\"need-shops\"></i></div><b id=\"value-shops\">—</b></div>\n      <div class=\"demand-row\" style=\"--zone:#f6b26f\"><svg class=\"icon\"><use href=\"#factory\"/></svg><span>工业</span><div class=\"meter\"><i id=\"need-industry\"></i></div><b id=\"value-industry\">—</b></div>\n    </aside>\n\n    <aside class=\"map-dock\">\n      <div class=\"layer-menu panel\" id=\"layer-menu\" hidden>\n        <div class=\"eyebrow\">地图图层</div>\n        <button data-layer=\"normal\">标准地图</button><button data-layer=\"zones\">土地分区</button><button data-layer=\"power\">电力覆盖</button>\n        <button data-layer=\"water\">供水与排污</button><button data-layer=\"waste\">垃圾清运</button>\n        <button data-layer=\"school\">教育覆盖</button><button data-layer=\"clinic\">医疗覆盖</button>\n        <button data-layer=\"fire\">消防覆盖</button><button data-layer=\"metro\">轨交与航运</button><button data-layer=\"traffic\">交通流量</button>\n      </div>\n      <div class=\"map-actions\">\n        <button id=\"pan-toggle\" class=\"icon-button panel\" title=\"单指拖动视角（触屏/鼠标漫游模式）\" aria-label=\"单指拖动视角\" aria-pressed=\"false\"><svg class=\"icon\"><use href=\"#hand\"/></svg></button>\n        <button id=\"layer-button\" class=\"icon-button panel\" title=\"切换地图图层\" aria-label=\"切换地图图层\" aria-expanded=\"false\"><svg class=\"icon\"><use href=\"#layers\"/></svg></button>\n        <button id=\"home-camera\" class=\"icon-button panel\" title=\"回到初始视角\" aria-label=\"回到初始视角\"><svg class=\"icon\"><use href=\"#target\"/></svg></button>\n        <button id=\"rotate-camera\" class=\"icon-button panel\" title=\"旋转视角\" aria-label=\"旋转视角\"><svg class=\"icon\"><use href=\"#rotate\"/></svg></button>\n        <button id=\"zoom-in\" class=\"icon-button panel\" aria-label=\"放大\"><svg class=\"icon\"><use href=\"#plus\"/></svg></button>\n        <button id=\"zoom-out\" class=\"icon-button panel\" aria-label=\"缩小\"><svg class=\"icon\"><use href=\"#minus\"/></svg></button>\n      </div>\n      <div class=\"minimap panel\">\n        <div class=\"minimap-head\"><svg class=\"icon\"><use href=\"#map\"/></svg><b>区域地图</b><span>44 × 44</span></div>\n        <canvas id=\"minimap\" width=\"220\" height=\"130\" role=\"button\" tabindex=\"0\" aria-label=\"区域小地图，点击移动镜头，按回车回到初始视角\"></canvas>\n        <div class=\"minimap-foot\"><span><i></i> <b id=\"minimap-city\">河湾市</b></span><span>▲ N</span></div>\n      </div>\n    </aside>\n\n    <section class=\"inspector panel\" id=\"inspector\" aria-label=\"地块详情\" hidden>\n      <div class=\"eyebrow\">地块信息 <button class=\"icon-button\" id=\"close-inspector\" aria-label=\"关闭地块详情\"><svg class=\"icon\"><use href=\"#close\"/></svg></button></div>\n      <h2 id=\"inspect-title\"></h2><p id=\"inspect-status\"></p><div class=\"inspect-coord\" id=\"inspect-coord\"></div>\n    </section>\n\n    <div id=\"toast\" role=\"status\"></div>\n\n    <div class=\"build-dock\">\n      <div class=\"tool-info panel\" id=\"tool-info\">\n        <span class=\"tool-state\"><i></i><strong id=\"tool-title\">查看</strong></span>\n        <span id=\"tool-hint\">点击地块，查看开发状态和公共服务。</span>\n        <span class=\"tool-price\" id=\"tool-price\"></span>\n      </div>\n      <div class=\"toolbox panel\">\n        <div class=\"toolbox-title\">\n          <div class=\"build-tabs\" role=\"group\" aria-label=\"建设类别\">\n            <button data-group=\"base\">基础建设</button><button data-group=\"services\">市政设施</button><button data-group=\"transport\">交通运输</button><button data-group=\"landmarks\">城市地标</button>\n          </div>\n          <button id=\"manage-lines\" class=\"goal-detail\" hidden>线路管理</button>\n          <b id=\"build-caption\">BUILD MENU</b>\n        </div>\n        <div id=\"tools\" class=\"tools\" role=\"toolbar\" aria-label=\"城市建设工具\"></div>\n      </div>\n      <div class=\"build-footer\">\n        <span><kbd>WASD</kbd> 平移 <b>·</b> <kbd>滚轮</kbd> 缩放 <b>·</b> <kbd>Q / E</kbd> 旋转 <b>·</b> <kbd>L</kbd> 天色</span>\n        <span class=\"save-status\" id=\"save-status\"><i></i> 本地自动存档</span>\n      </div>\n    </div>\n    <div id=\"boot\" class=\"boot\"><div class=\"brand-mark\"><svg class=\"icon\"><use href=\"#city\"/></svg></div><h2>正在载入河湾市</h2><p id=\"boot-text\">准备地形与街区…</p></div>\n  </main>\n\n  <dialog id=\"dialog\" aria-labelledby=\"dialog-title\">\n    <div class=\"dialog-top\"><div class=\"eyebrow\" id=\"dialog-category\"></div><button id=\"close-dialog\" class=\"icon-button\" aria-label=\"关闭\"><svg class=\"icon\"><use href=\"#close\"/></svg></button></div>\n    <h2 id=\"dialog-title\"></h2>\n    <div id=\"dialog-body\"></div>\n  </dialog>";
+  wrapper.innerHTML = "<svg class=\"symbol-bank\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\">\n    <symbol id=\"city\" viewBox=\"0 0 24 24\"><path d=\"M3 20V12h5v8m0 0V5h7v15m0 0V9h6v11M2 20h20M11 8h1m-1 4h1m-1 4h1m6-4h1m-1 4h1M5 15h1\"/></symbol>\n    <symbol id=\"wallet\" viewBox=\"0 0 24 24\"><path d=\"M19 7V5H5a2 2 0 0 0 0 4h15v10H5a2 2 0 0 1-2-2V7m17 5h-5a2 2 0 0 0 0 4h5m-4-2h.01\"/></symbol>\n    <symbol id=\"people\" viewBox=\"0 0 24 24\"><circle cx=\"10\" cy=\"8\" r=\"3\"/><path d=\"M4 19v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2m1-14a3 3 0 0 1 0 6m1 2a4 4 0 0 1 3 4v2\"/></symbol>\n    <symbol id=\"bolt\" viewBox=\"0 0 24 24\"><path d=\"m13 2-9 12h7l-1 8 10-12h-7l1-8Z\"/></symbol>\n    <symbol id=\"cursor\" viewBox=\"0 0 24 24\"><path d=\"M5 3l14 9-7 1.5L9 20 5 3Zm7 11 4 6\"/></symbol>\n    <symbol id=\"road\" viewBox=\"0 0 24 24\"><path d=\"M7 3 3 21m14-18 4 18M12 4v3m0 3v4m0 3v3\"/></symbol>\n    <symbol id=\"house\" viewBox=\"0 0 24 24\"><path d=\"m2.5 11 9.5-8 9.5 8M5 10v10h14V10m-9 10v-6h4v6\"/></symbol>\n    <symbol id=\"shop\" viewBox=\"0 0 24 24\"><path d=\"M4 11v9h16v-9M3 7l2-3h14l2 3v3a2.25 2.25 0 0 1-4.5 0 2.25 2.25 0 0 1-4.5 0 2.25 2.25 0 0 1-4.5 0A2.25 2.25 0 0 1 3 10V7h18M8 20v-5h5v5m3-5h1\"/></symbol>\n    <symbol id=\"factory\" viewBox=\"0 0 24 24\"><path d=\"M3 20V10l6 3v-3l6 3V5h4l2 15H3Zm4-3h1m3 0h1m3 0h1\"/></symbol>\n    <symbol id=\"tree\" viewBox=\"0 0 24 24\"><path d=\"m12 2-5 7h2l-5 7h16l-5-7h2l-5-7Zm0 14v5m-4 0h8\"/></symbol>\n    <symbol id=\"bulldoze\" viewBox=\"0 0 24 24\"><path d=\"M3 19h17l1-7m-3 5-4-1-2-4m-8 3h8l-1-7H6v5H4v2Zm0 0a2 2 0 1 0 0 4m7-4a2 2 0 0 1 0 4m-7-2h7\"/></symbol>\n    <symbol id=\"target\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M12 2v3m0 14v3M2 12h3m14 0h3\"/></symbol>\n    <symbol id=\"layers\" viewBox=\"0 0 24 24\"><path d=\"m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5\"/></symbol>\n    <symbol id=\"help\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-1 .5-1 1.4-1 2.2m0 3h.01\"/></symbol>\n    <symbol id=\"settings\" viewBox=\"0 0 24 24\"><path d=\"m10 3-.5 2.7-2 .9-2.4-1.4-2 3.5 2.1 1.8v2.3l-2.1 1.8 2 3.5 2.4-1.4 2 .9.5 2.7h4l.5-2.7 2-.9 2.4 1.4 2-3.5-2.1-1.8v-2.3l2.1-1.8-2-3.5-2.4 1.4-2-.9L14 3h-4Z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/></symbol>\n    <symbol id=\"rotate\" viewBox=\"0 0 24 24\"><path d=\"M4 9a8 8 0 1 1 .7 8M4 4v5h5\"/></symbol>\n    <symbol id=\"plus\" viewBox=\"0 0 24 24\"><path d=\"M12 5v14M5 12h14\"/></symbol>\n    <symbol id=\"minus\" viewBox=\"0 0 24 24\"><path d=\"M5 12h14\"/></symbol>\n    <symbol id=\"pause\" viewBox=\"0 0 24 24\"><path d=\"M9 6v12m6-12v12\"/></symbol>\n    <symbol id=\"play\" viewBox=\"0 0 24 24\"><path d=\"m8 5 11 7-11 7V5Z\" fill=\"currentColor\" stroke=\"none\"/></symbol>\n    <symbol id=\"next\" viewBox=\"0 0 24 24\"><path d=\"m5 6 8 6-8 6V6Zm7 0 8 6-8 6\" fill=\"currentColor\" stroke=\"none\"/></symbol>\n    <symbol id=\"arrow\" viewBox=\"0 0 24 24\"><path d=\"M5 12h14m-5-5 5 5-5 5\"/></symbol>\n    <symbol id=\"close\" viewBox=\"0 0 24 24\"><path d=\"m6 6 12 12M18 6 6 18\"/></symbol>\n    <symbol id=\"save\" viewBox=\"0 0 24 24\"><path d=\"M4 4h13l3 3v13H4V4Zm4 0v6h8V4m-8 16v-6h8v6\"/></symbol>\n    <symbol id=\"check\" viewBox=\"0 0 24 24\"><path d=\"m5 12 4 4L19 6\"/></symbol>\n    <symbol id=\"map\" viewBox=\"0 0 24 24\"><path d=\"m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2V6Zm6-2v14m6-12v14\"/></symbol>\n    <symbol id=\"flag\" viewBox=\"0 0 24 24\"><path d=\"M5 21V4c5-4 9 4 15 0v10c-6 4-10-4-15 0\"/></symbol>\n    <symbol id=\"water-drop\" viewBox=\"0 0 24 24\"><path d=\"M12 3c-4 5-7 8-7 12a7 7 0 0 0 14 0c0-4-3-7-7-12Zm-3.5 12a3.5 3.5 0 0 0 3.5 3.5\"/></symbol>\n    <symbol id=\"sewer\" viewBox=\"0 0 24 24\"><path d=\"M4 4h8v4a3 3 0 0 0 3 3h5v6h-6a10 10 0 0 1-10-10V4Zm0 0H2m10 0h2m6 6v8m-7 3 2-1 2 1 2-1 2 1\"/></symbol>\n    <symbol id=\"waste\" viewBox=\"0 0 24 24\"><path d=\"M4 7h16m-14 0 1.5 13h9L18 7M9 7V4h6v3m-5 4v5m4-5v5\"/></symbol>\n    <symbol id=\"school\" viewBox=\"0 0 24 24\"><path d=\"m3 10 9-6 9 6M5 9v11h14V9m-9 11v-6h4v6M12 9h.01\"/></symbol>\n    <symbol id=\"clinic\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"15\" rx=\"2\"/><path d=\"M12 8v9m-4.5-4.5h9\"/></symbol>\n    <symbol id=\"fire\" viewBox=\"0 0 24 24\"><path d=\"M12 3c1 5 6 5 7 11a7 7 0 1 1-14-1c.3-2 1.4-3.5 3-4-.4 3 .8 3.5 1.6 3.7C11 10 12 7 12 3Z\"/></symbol>\n    <symbol id=\"avenue\" viewBox=\"0 0 24 24\"><path d=\"M6 3 2 21m16-18 4 18M10 4 9 20m5-16 1 16M12 4v3m0 3v4m0 3v3\"/></symbol>\n    <symbol id=\"bus\" viewBox=\"0 0 24 24\"><rect x=\"4\" y=\"4\" width=\"16\" height=\"15\" rx=\"3\"/><path d=\"M4 12h16M7 19v2m10-2v2M7.5 15.5h.1m8.8 0h.1M9 7h6\"/></symbol>\n    <symbol id=\"ferry\" viewBox=\"0 0 24 24\"><path d=\"M4 15 6 8h12l2 7M2 18c2 1.5 4 1.5 6 0 2 1.5 4 1.5 6 0 2 1.5 4 1.5 6 0M9 8V5h6v3M3 15h18\"/></symbol>\n    <symbol id=\"metro\" viewBox=\"0 0 24 24\"><rect x=\"5\" y=\"3\" width=\"14\" height=\"15\" rx=\"4\"/><path d=\"M5 11h14M8 18l-2 3m10-3 2 3M9 14.5h.1m5.8 0h.1M9 7h6\"/></symbol>\n    <symbol id=\"wheel\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"11\" r=\"7\"/><circle cx=\"12\" cy=\"11\" r=\"1.5\"/><path d=\"M12 4v14M5 11h14M7 6l10 10m0-10L7 16m1 5 4-8 4 8\"/></symbol>\n    <symbol id=\"expo\" viewBox=\"0 0 24 24\"><path d=\"M3 20h18M5 20v-5a7 7 0 0 1 14 0v5M12 8V4m-5 11h10M9 20v-5m6 5v-5\"/></symbol>\n    <symbol id=\"tower\" viewBox=\"0 0 24 24\"><path d=\"M12 2v5m-3 3h6m-4 4h2m-5 6 4-13 4 13M7 20h10\"/><circle cx=\"12\" cy=\"10\" r=\"2.2\"/></symbol>\n    <symbol id=\"sun\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4\"/></symbol>\n    <symbol id=\"sound\" viewBox=\"0 0 24 24\"><path d=\"M11 5 6 9H3v6h3l5 4V5Zm4.5 3.5a5 5 0 0 1 0 7m2.8-9.8a9 9 0 0 1 0 12.6\"/></symbol>\n    <symbol id=\"hand\" viewBox=\"0 0 24 24\"><path d=\"M12 3v18m0-18-3 3m3-3 3 3m-3 15-3-3m3 3 3-3M3 12h18M3 12l3-3m-3 3 3 3m15-3-3-3m3 3-3 3\"/></symbol>\n    <symbol id=\"lock\" viewBox=\"0 0 24 24\"><rect x=\"5\" y=\"11\" width=\"14\" height=\"10\" rx=\"2\"/><path d=\"M8 11V7a4 4 0 1 1 8 0v4\"/></symbol>\n  </svg>\n  <main id=\"game\" aria-label=\"天际线河湾市游戏\">\n    <canvas id=\"world\" aria-label=\"河湾市 3D 地图\"></canvas>\n    <div class=\"scene-shade\"></div>\n\n    <header class=\"topbar\">\n      <div class=\"brand\">\n        <div class=\"brand-mark\"><svg class=\"icon\"><use href=\"#city\"/></svg></div>\n        <div>\n          <div class=\"brand-row\">\n            <h1>天际线<span> / </span><em id=\"city-name\">河湾市</em></h1>\n            <button class=\"city-switcher\" id=\"city-switcher\" type=\"button\" title=\"切换三城沙盘与挑战模式\">切换城市 ▾</button>\n          </div>\n          <div class=\"brand-caption\">SKYLINE <span>·</span> <b id=\"city-caption\">RIVER VALLEY</b> <span class=\"city-stars\" id=\"city-stars\">★☆☆☆</span></div>\n        </div>\n      </div>\n      <div class=\"telemetry\">\n        <button class=\"metric\" id=\"budget-button\" title=\"查看城市预算\">\n          <svg class=\"icon metric-icon\"><use href=\"#wallet\"/></svg><span><span class=\"metric-label\">市政资金</span><strong id=\"cash\">—</strong></span><span class=\"delta\" id=\"net\">—</span>\n        </button>\n        <div class=\"metric\">\n          <svg class=\"icon metric-icon\"><use href=\"#people\"/></svg><span><span class=\"metric-label\">城市人口</span><strong id=\"population\">—</strong></span>\n        </div>\n        <div class=\"metric metric-power\">\n          <svg class=\"icon metric-icon\"><use href=\"#bolt\"/></svg><span><span class=\"metric-label\">电力负载</span><strong id=\"power\">—</strong></span>\n        </div>\n      </div>\n      <div class=\"time-controls\">\n        <div class=\"date\"><span>市政历</span><strong id=\"date\">—</strong></div>\n        <div class=\"speed\" aria-label=\"模拟速度\">\n          <button data-speed=\"0\" aria-label=\"暂停\" title=\"暂停 · 空格\"><svg class=\"icon\"><use href=\"#pause\"/></svg></button>\n          <button data-speed=\"1\" aria-label=\"正常速度\" title=\"正常速度\"><svg class=\"icon\"><use href=\"#play\"/></svg></button>\n          <button data-speed=\"2\" aria-label=\"三倍速度\" title=\"三倍速度\"><svg class=\"icon\"><use href=\"#next\"/></svg></button>\n          <button data-speed=\"3\" aria-label=\"六倍速度\" title=\"六倍速度\">6×</button>\n        </div>\n      </div>\n      <div class=\"utilities\">\n        <button class=\"icon-button\" id=\"lighting-button\" aria-label=\"切换天色光影\" title=\"切换天色光影 (L)：晴昼 / 夕照 / 夜景 / 流转\"><svg class=\"icon\"><use href=\"#sun\"/></svg><span class=\"util-tag\" id=\"lighting-label\">晴昼</span></button>\n        <button class=\"icon-button\" id=\"sound-button\" aria-label=\"音效开关\" aria-pressed=\"true\" title=\"开关城市音效\"><svg class=\"icon\"><use href=\"#sound\"/></svg></button>\n        <button class=\"icon-button\" id=\"scenario-button\" aria-label=\"地图与挑战\" title=\"地图与挑战\"><svg class=\"icon\"><use href=\"#map\"/></svg></button>\n        <button class=\"icon-button\" id=\"help-button\" aria-label=\"玩法帮助\" title=\"玩法帮助\"><svg class=\"icon\"><use href=\"#help\"/></svg></button>\n        <button class=\"icon-button\" id=\"settings-button\" aria-label=\"存档设置\" title=\"存档设置\"><svg class=\"icon\"><use href=\"#settings\"/></svg></button>\n      </div>\n    </header>\n\n    <aside class=\"objective panel\" aria-label=\"城市里程碑\">\n      <div class=\"eyebrow\"><svg class=\"icon\"><use href=\"#flag\"/></svg> 城市里程碑 <span>01 / 04</span></div>\n      <h2 id=\"goal\">滨河小镇</h2>\n      <p id=\"goal-text\">把人口发展到 1,600 人</p>\n      <div class=\"progress\"><div id=\"goal-bar\"></div></div>\n      <div class=\"goal-foot\"><span><strong id=\"goal-count\">1,388</strong> / <span id=\"goal-target\">1,600</span> <span id=\"goal-unit\">人</span></span><span id=\"goal-percent\">69%</span></div>\n      <div class=\"objective-actions\">\n        <button class=\"goal-detail\" id=\"goal-detail\">查看里程碑解锁</button>\n        <button class=\"goal-next\" id=\"next-city-button\" type=\"button\">下一座城市 →</button>\n      </div>\n      <button class=\"chirper\" id=\"chirper\" type=\"button\" title=\"点击查看对应城市图层\">\n        <span class=\"chirper-tag\" id=\"chirper-tag\">市民动态</span>\n        <span class=\"chirper-msg\" id=\"chirper-text\">河湾两岸水电充沛，沿道路划设住宅与商业区即可吸引市民迁入。</span>\n      </button>\n    </aside>\n\n    <div class=\"world-labels\" id=\"districts\" aria-hidden=\"true\">\n      <div class=\"district water-label\" data-i=\"16\" data-j=\"14\">青　河</div>\n      <div class=\"district\" data-i=\"5\" data-j=\"32\"><span>01</span> 西岸社区</div>\n      <div class=\"district\" data-i=\"26\" data-j=\"27\"><span>02</span> 河湾中心</div>\n      <div class=\"district\" data-i=\"38\" data-j=\"16\"><span>03</span> 东部工业区</div>\n    </div>\n    <div class=\"view-tag\" id=\"view-tag\"><span></span> 青河谷地 <b>/</b> RIVER VALLEY</div>\n\n    <aside class=\"city-status panel\" aria-label=\"市政与交通\">\n      <button id=\"service-summary\" title=\"查看市政服务\"><svg class=\"icon\"><use href=\"#water-drop\"/></svg><span>水务 <strong id=\"water-status\">—</strong></span></button>\n      <button id=\"traffic-summary\" title=\"查看交通和公共交通\"><svg class=\"icon\"><use href=\"#bus\"/></svg><span>通畅度 <strong id=\"traffic-status\">—</strong></span></button>\n    </aside>\n\n    <aside class=\"demand panel\" aria-label=\"发展需求\">\n      <div class=\"eyebrow\">发展需求 <span>DEMAND</span></div>\n      <div class=\"demand-row\" style=\"--zone:#bca8fc\"><svg class=\"icon\"><use href=\"#house\"/></svg><span>住宅</span><div class=\"meter\"><i id=\"need-homes\"></i></div><b id=\"value-homes\">—</b></div>\n      <div class=\"demand-row\" style=\"--zone:#78d4eb\"><svg class=\"icon\"><use href=\"#shop\"/></svg><span>商业</span><div class=\"meter\"><i id=\"need-shops\"></i></div><b id=\"value-shops\">—</b></div>\n      <div class=\"demand-row\" style=\"--zone:#f6b26f\"><svg class=\"icon\"><use href=\"#factory\"/></svg><span>工业</span><div class=\"meter\"><i id=\"need-industry\"></i></div><b id=\"value-industry\">—</b></div>\n    </aside>\n\n    <aside class=\"map-dock\">\n      <div class=\"layer-menu panel\" id=\"layer-menu\" hidden>\n        <div class=\"eyebrow\">地图图层</div>\n        <button data-layer=\"normal\">标准地图</button><button data-layer=\"zones\">土地分区</button><button data-layer=\"power\">电力覆盖</button>\n        <button data-layer=\"water\">供水与排污</button><button data-layer=\"waste\">垃圾清运</button>\n        <button data-layer=\"school\">教育覆盖</button><button data-layer=\"clinic\">医疗覆盖</button>\n        <button data-layer=\"fire\">消防覆盖</button><button data-layer=\"metro\">轨交与航运</button><button data-layer=\"traffic\">交通流量</button>\n      </div>\n      <div class=\"map-actions\">\n        <button id=\"pan-toggle\" class=\"icon-button panel\" title=\"单指拖动视角（触屏/鼠标漫游模式）\" aria-label=\"单指拖动视角\" aria-pressed=\"false\"><svg class=\"icon\"><use href=\"#hand\"/></svg></button>\n        <button id=\"layer-button\" class=\"icon-button panel\" title=\"切换地图图层\" aria-label=\"切换地图图层\" aria-expanded=\"false\"><svg class=\"icon\"><use href=\"#layers\"/></svg></button>\n        <button id=\"home-camera\" class=\"icon-button panel\" title=\"回到初始视角\" aria-label=\"回到初始视角\"><svg class=\"icon\"><use href=\"#target\"/></svg></button>\n        <button id=\"rotate-camera\" class=\"icon-button panel\" title=\"旋转视角\" aria-label=\"旋转视角\"><svg class=\"icon\"><use href=\"#rotate\"/></svg></button>\n        <button id=\"zoom-in\" class=\"icon-button panel\" aria-label=\"放大\"><svg class=\"icon\"><use href=\"#plus\"/></svg></button>\n        <button id=\"zoom-out\" class=\"icon-button panel\" aria-label=\"缩小\"><svg class=\"icon\"><use href=\"#minus\"/></svg></button>\n      </div>\n      <div class=\"minimap panel\">\n        <div class=\"minimap-head\"><svg class=\"icon\"><use href=\"#map\"/></svg><b>区域地图</b><span>44 × 44</span></div>\n        <canvas id=\"minimap\" width=\"220\" height=\"130\" role=\"button\" tabindex=\"0\" aria-label=\"区域小地图，点击移动镜头，按回车回到初始视角\"></canvas>\n        <div class=\"minimap-foot\"><span><i></i> <b id=\"minimap-city\">河湾市</b></span><span>▲ N</span></div>\n      </div>\n    </aside>\n\n    <section class=\"inspector panel\" id=\"inspector\" aria-label=\"地块详情\" hidden>\n      <div class=\"eyebrow\">地块信息 <button class=\"icon-button\" id=\"close-inspector\" aria-label=\"关闭地块详情\"><svg class=\"icon\"><use href=\"#close\"/></svg></button></div>\n      <h2 id=\"inspect-title\"></h2><p id=\"inspect-status\"></p><div class=\"inspect-coord\" id=\"inspect-coord\"></div>\n    </section>\n\n    <div id=\"toast\" role=\"status\"></div>\n\n    <div class=\"build-dock\">\n      <div class=\"tool-info panel\" id=\"tool-info\">\n        <span class=\"tool-state\"><i></i><strong id=\"tool-title\">查看</strong></span>\n        <span id=\"tool-hint\">点击地块，查看开发状态和公共服务。</span>\n        <span class=\"tool-price\" id=\"tool-price\"></span>\n      </div>\n      <div class=\"toolbox panel\">\n        <div class=\"toolbox-title\">\n          <div class=\"build-tabs\" role=\"group\" aria-label=\"建设类别\">\n            <button data-group=\"base\">基础建设</button><button data-group=\"services\">市政设施</button><button data-group=\"transport\">交通运输</button><button data-group=\"landmarks\">城市地标</button>\n          </div>\n          <button id=\"manage-lines\" class=\"goal-detail\" hidden>线路管理</button>\n          <b id=\"build-caption\">BUILD MENU</b>\n        </div>\n        <div id=\"tools\" class=\"tools\" role=\"toolbar\" aria-label=\"城市建设工具\"></div>\n      </div>\n      <div class=\"build-footer\">\n        <span><kbd>WASD</kbd> 平移 <b>·</b> <kbd>滚轮</kbd> 缩放 <b>·</b> <kbd>Q / E</kbd> 旋转 <b>·</b> <kbd>L</kbd> 天色</span>\n        <span class=\"save-status\" id=\"save-status\"><i></i> 本地自动存档</span>\n      </div>\n    </div>\n    <div id=\"boot\" class=\"boot\"><div class=\"brand-mark\"><svg class=\"icon\"><use href=\"#city\"/></svg></div><h2>正在载入河湾市</h2><p id=\"boot-text\">准备地形与街区…</p></div>\n  </main>\n\n  <dialog id=\"dialog\" aria-labelledby=\"dialog-title\">\n    <div class=\"dialog-top\"><div class=\"eyebrow\" id=\"dialog-category\"></div><button id=\"close-dialog\" class=\"icon-button\" aria-label=\"关闭\"><svg class=\"icon\"><use href=\"#close\"/></svg></button></div>\n    <h2 id=\"dialog-title\"></h2>\n    <div id=\"dialog-body\"></div>\n  </dialog>";
   while (wrapper.firstChild) {
     document.body.appendChild(wrapper.firstChild);
   }
@@ -4409,7 +4409,7 @@ function trafficSurvey(city,graph,households,workplaces,roadCapacity,entry,trans
 
 return { BUS_COST, BUS_UPKEEP, BUS_CAPACITY, MAX_LINES, roadRoute, trafficSurvey };
 })();
-  const { SIZE, TILE, EDGE, WATER, ENTRY, SAVE_KEY, MAPS, MODES, CHALLENGE_DAYS, TOOLS, ZONES, NAMES, COST, GOALS, hash, idAt, coord, world, grid, river, riverWidth, waterDist, landKind, elevation, adjacent, freshCity, coast, loadCity, saveCity, facilityCoverage, survey, growthBlock, tick, challengeTargets, advance, addBus, footprint, plan, build } = (() => {
+  const { SIZE, TILE, EDGE, WATER, ENTRY, SAVE_KEY, MAPS, MODES, CHALLENGE_DAYS, TOOLS, ZONES, NAMES, COST, GOALS, hash, idAt, coord, world, grid, river, riverWidth, waterDist, landKind, elevation, adjacent, freshCity, coast, loadCity, getCityProgress, getScenarioSummaries, saveCity, listManualSlots, saveManualSlot, loadManualSlot, deleteManualSlot, exportCityJson, importCityJson, facilityCoverage, survey, growthBlock, tick, challengeTargets, advance, addBus, footprint, plan, build } = (() => {
 const SIZE = 44;
 const TILE = 3.4;
 const EDGE = SIZE * TILE / 2;
@@ -4417,6 +4417,9 @@ const WATER = -.8;
 const ENTRY = 24 * SIZE;
 const SAVE_KEY = 'riverbend-city-v1';
 const SESSION_KEY = 'riverbend-active-scenario';
+const SAVE_INDEX_KEY = 'riverbend-save-index-v1';
+const MANUAL_SLOTS_KEY = 'riverbend-manual-slots-v1';
+const TROPHIES_KEY = 'riverbend-trophies-v1';
 const MAPS = {
   river: {name:'河湾市', region:'青河谷地', english:'RIVER VALLEY', description:'从成熟河港出发，连接两岸社区与滨水CBD。', labels:[[16,14,'青　河'],[5,32,'西岸社区'],[26,27,'河湾中心'],[38,16,'东部工业区']]},
   cape: {name:'松岬湾', region:'松岬海湾', english:'PINE INLET', description:'狭长港湾将临港工业和丘陵住宅分开。', labels:[[15,12,'松岬湾'],[5,31,'西岸渔镇'],[29,23,'新市中心'],[37,29,'南岸港区']]},
@@ -4510,12 +4513,19 @@ function adjacent(id) {
   if (j < SIZE - 1) ids.push(id + SIZE);
   return ids;
 }
-function freshCity(map='river',mode='sandbox') {
-  const city = {version:2,map,mode,cash:mode==='challenge'?25800:58640,day:mode==='challenge'?0:37,tax:9,
+function freshCity(map='river',mode='sandbox',blank=false) {
+  const baseCash = mode==='challenge' ? 25800 : 58640;
+  const city = {version:2,map,mode,cash:blank ? baseCash+12000 : baseCash,day:mode==='challenge'||blank?0:37,tax:9,
     stage:0,result:null,lines:[],nextLine:1,tiles:Array(MAX_TILE).fill(null)};
   const put = (i,j,type,level=0) => city.tiles[idAt(i,j)] = {type,level};
   const row = (j,a,b) => { for(let i=a; i<=b; i++) put(i,j,'road'); };
   const col = (i,a,b) => { for(let j=a; j<=b; j++) put(i,j,'road'); };
+  if (blank) {
+    row(24,0,20);
+    if (landKind(4,23,map)==='land') put(4,23,'power');
+    grantUtilities(city, true);
+    return city;
+  }
   if (map==='cape' || map==='island') {
     if (map==='island') {
       row(24,0,39); row(18,20,38); row(29,20,38); row(28,3,10);
@@ -4582,12 +4592,12 @@ function network(city) {
   return graph;
 }
 
-function grantUtilities(city) {
+function grantUtilities(city, minimal=false) {
   const graph=network(city);
   const candidates=city.tiles.flatMap((tile,id)=>!tile && coast(id,city.map) &&
     landKind(...coord(id),city.map)==='land' && adjacent(id).some(road=>graph.has(road)) ? [id] : []);
   candidates.sort((a,b)=>Math.abs(a-(ENTRY+16))-Math.abs(b-(ENTRY+16)));
-  const initialTypes = city.mode === 'sandbox' ? ['water','sewer','pier','wheel'] : ['water','sewer'];
+  const initialTypes = (!minimal && city.mode === 'sandbox') ? ['water','sewer','pier','wheel'] : ['water','sewer'];
   for(const type of initialTypes) {
     const id=candidates.shift();
     if (id!==undefined) city.tiles[id]={type,level:0};
@@ -4596,6 +4606,31 @@ function grantUtilities(city) {
 
 function slotKey(map,mode) {
   return map==='river' && mode==='sandbox' ? SAVE_KEY : SAVE_KEY+'/'+map+'/'+mode;
+}
+
+function validateCityObject(city, fallbackMap='river', fallbackMode='sandbox') {
+  if (!city || typeof city !== 'object') return null;
+  const map = known(MAPS, city.map, fallbackMap);
+  const mode = known(MODES, city.mode, fallbackMode);
+  const validTiles=Array.isArray(city?.tiles) && city.tiles.length===MAX_TILE && city.tiles.every((tile,id)=>
+    tile===null || (tileTypes.has(tile?.type) && (tile.type==='road' || landKind(...coord(id),map)==='land') &&
+    Number.isInteger(tile.level) && tile.level>=0 && tile.level<=3));
+  if ((city?.version===1 || city?.version===2) && validTiles && city.tiles[ENTRY]?.type==='road' &&
+      Number.isFinite(city.cash) && Number.isInteger(city.day) && city.day>=0 &&
+      Number.isInteger(city.tax) && city.tax>=4 && city.tax<=16) {
+    const legacy=city.version===1;
+    city.version=2;
+    city.map=map;
+    city.mode=mode;
+    city.stage=Number.isInteger(city.stage) ? Math.min(GOALS.length,Math.max(0,city.stage)) : 0;
+    city.result=['won','lost'].includes(city.result) ? city.result : null;
+    city.lines=(Array.isArray(city.lines)?city.lines:[]).filter(line=>Number.isInteger(line?.id) &&
+      line.id>0 && validId(line.from) && validId(line.to) && line.from!==line.to).slice(0,MAX_LINES);
+    city.nextLine=Math.max(0,...city.lines.map(line=>line.id),Number.isInteger(city.nextLine)?city.nextLine-1:0)+1;
+    if (legacy) grantUtilities(city);
+    return city;
+  }
+  return null;
 }
 function loadCity(map,mode) {
   try {
@@ -4606,34 +4641,123 @@ function loadCity(map,mode) {
     }
     map=known(MAPS,map,'river');
     mode=known(MODES,mode,'sandbox');
-    const city=JSON.parse(localStorage.getItem(slotKey(map,mode)));
-    const validTiles=Array.isArray(city?.tiles) && city.tiles.length===MAX_TILE && city.tiles.every((tile,id)=>
-      tile===null || (tileTypes.has(tile?.type) && (tile.type==='road' || landKind(...coord(id),map)==='land') &&
-      Number.isInteger(tile.level) && tile.level>=0 && tile.level<=3));
-    if ((city?.version===1 || city?.version===2) && validTiles && city.tiles[ENTRY]?.type==='road' &&
-        Number.isFinite(city.cash) && Number.isInteger(city.day) && city.day>=0 &&
-        Number.isInteger(city.tax) && city.tax>=4 && city.tax<=16) {
-      const legacy=city.version===1;
-      city.version=2;
-      city.map=map;
-      city.mode=mode;
-      city.stage=Number.isInteger(city.stage) ? Math.min(GOALS.length,Math.max(0,city.stage)) : 0;
-      city.result=['won','lost'].includes(city.result) ? city.result : null;
-      city.lines=(Array.isArray(city.lines)?city.lines:[]).filter(line=>Number.isInteger(line?.id) &&
-        line.id>0 && validId(line.from) && validId(line.to) && line.from!==line.to).slice(0,MAX_LINES);
-      city.nextLine=Math.max(0,...city.lines.map(line=>line.id),Number.isInteger(city.nextLine)?city.nextLine-1:0)+1;
-      if (legacy) grantUtilities(city);
-      return city;
-    }
+    const raw=JSON.parse(localStorage.getItem(slotKey(map,mode)));
+    if (raw) raw.map = map, raw.mode = mode;
+    const valid = validateCityObject(raw, map, mode);
+    if (valid) return valid;
   } catch {}
   return freshCity(known(MAPS,map,'river'),known(MODES,mode,'sandbox'));
 }
-function saveCity(city) {
+function getCityProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(TROPHIES_KEY)) || {};
+  } catch { return {}; }
+}
+function getScenarioSummaries() {
+  try {
+    return JSON.parse(localStorage.getItem(SAVE_INDEX_KEY)) || {};
+  } catch { return {}; }
+}
+function saveCity(city, stats=null) {
   try {
     localStorage.setItem(slotKey(city.map,city.mode),JSON.stringify(city));
     localStorage.setItem(SESSION_KEY,JSON.stringify({map:city.map,mode:city.mode}));
+    const pop = stats ? stats.population : city.tiles.reduce((acc,t)=>acc+(t && occupancy[t.type] ? occupancy[t.type][t.level]||0 : 0), 0);
+    const index = getScenarioSummaries();
+    index[city.map+'/'+city.mode] = {
+      map: city.map,
+      mode: city.mode,
+      population: pop,
+      cash: city.cash,
+      day: city.day,
+      stage: city.stage,
+      result: city.result,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(SAVE_INDEX_KEY, JSON.stringify(index));
+    const trophies = getCityProgress();
+    const prev = trophies[city.map] || { bestPop: 0, maxStage: 0, sandboxCleared: false, challengeWon: false };
+    trophies[city.map] = {
+      bestPop: Math.max(prev.bestPop || 0, pop),
+      maxStage: Math.max(prev.maxStage || 0, city.stage || 0),
+      sandboxCleared: Boolean(prev.sandboxCleared || city.stage >= GOALS.length),
+      challengeWon: Boolean(prev.challengeWon || (city.mode === 'challenge' && city.result === 'won')),
+    };
+    localStorage.setItem(TROPHIES_KEY, JSON.stringify(trophies));
     return true;
   } catch { return false; }
+}
+function listManualSlots() {
+  let raw = {};
+  try { raw = JSON.parse(localStorage.getItem(MANUAL_SLOTS_KEY)) || {}; } catch {}
+  return ['slot-1', 'slot-2', 'slot-3', 'slot-4'].map((id, idx) => ({
+    id,
+    title: '存档槽 0' + (idx + 1),
+    entry: raw[id] || null,
+  }));
+}
+function saveManualSlot(slotId, label, city, stats=null) {
+  try {
+    const raw = JSON.parse(localStorage.getItem(MANUAL_SLOTS_KEY) || '{}');
+    const pop = stats ? stats.population : 0;
+    raw[slotId] = {
+      label: label || (MAPS[city.map]?.name + ' · ' + MODES[city.mode]),
+      meta: {
+        map: city.map,
+        mode: city.mode,
+        population: pop,
+        cash: city.cash,
+        day: city.day,
+        stage: city.stage,
+        savedAt: new Date().toISOString(),
+      },
+      city: JSON.parse(JSON.stringify(city)),
+    };
+    localStorage.setItem(MANUAL_SLOTS_KEY, JSON.stringify(raw));
+    return true;
+  } catch { return false; }
+}
+function loadManualSlot(slotId) {
+  try {
+    const raw = JSON.parse(localStorage.getItem(MANUAL_SLOTS_KEY) || '{}');
+    const entry = raw[slotId];
+    if (!entry?.city) return null;
+    return validateCityObject(entry.city, entry.meta?.map || 'river', entry.meta?.mode || 'sandbox');
+  } catch { return null; }
+}
+function deleteManualSlot(slotId) {
+  try {
+    const raw = JSON.parse(localStorage.getItem(MANUAL_SLOTS_KEY) || '{}');
+    delete raw[slotId];
+    localStorage.setItem(MANUAL_SLOTS_KEY, JSON.stringify(raw));
+    return true;
+  } catch { return false; }
+}
+function exportCityJson(city, stats=null) {
+  const pop = stats ? stats.population : 0;
+  return JSON.stringify({
+    magic: 'riverbend-skyline-save',
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    meta: {
+      map: city.map,
+      mapName: MAPS[city.map]?.name,
+      mode: city.mode,
+      modeName: MODES[city.mode],
+      population: pop,
+      cash: city.cash,
+      day: city.day,
+      stage: city.stage,
+    },
+    city,
+  }, null, 2);
+}
+function importCityJson(rawText) {
+  try {
+    const parsed = JSON.parse(rawText);
+    const candidate = parsed?.city && typeof parsed.city === 'object' ? parsed.city : parsed;
+    return validateCityObject(candidate, candidate?.map || 'river', candidate?.mode || 'sandbox');
+  } catch { return null; }
 }
 
 function reachableRoads(graph,start,radius) {
@@ -4901,7 +5025,7 @@ function build(city,tool,proposal) {
   return true;
 }
 
-return { SIZE, TILE, EDGE, WATER, ENTRY, SAVE_KEY, MAPS, MODES, CHALLENGE_DAYS, TOOLS, ZONES, NAMES, COST, GOALS, hash, idAt, coord, world, grid, river, riverWidth, waterDist, landKind, elevation, adjacent, freshCity, coast, loadCity, saveCity, facilityCoverage, survey, growthBlock, tick, challengeTargets, advance, addBus, footprint, plan, build };
+return { SIZE, TILE, EDGE, WATER, ENTRY, SAVE_KEY, MAPS, MODES, CHALLENGE_DAYS, TOOLS, ZONES, NAMES, COST, GOALS, hash, idAt, coord, world, grid, river, riverWidth, waterDist, landKind, elevation, adjacent, freshCity, coast, loadCity, getCityProgress, getScenarioSummaries, saveCity, listManualSlots, saveManualSlot, loadManualSlot, deleteManualSlot, exportCityJson, importCityJson, facilityCoverage, survey, growthBlock, tick, challengeTargets, advance, addBus, footprint, plan, build };
 })();
   const { createView } = (() => {
 
@@ -5849,7 +5973,8 @@ for(const tool of TOOLS) {
   button.style.setProperty('--tool',tool.color);
   button.setAttribute('aria-label',tool.name);
   button.title=tool.name+' · '+tool.price;
-  const badge=tool.key ? '<kbd>'+tool.key+'</kbd>' : '<span class="lock-icon" hidden>'+icon('lock')+'</span>';
+  const unlockLabel = tool.stage ? (GOALS[tool.stage - 1].target / 1000).toFixed(1) + 'k' : '';
+  const badge=tool.key ? '<kbd>'+tool.key+'</kbd>' : '<span class="lock-icon" hidden>'+icon('lock')+'</span>' + (unlockLabel ? '<em class="unlock-tag" hidden>'+unlockLabel+'</em>' : '');
   button.innerHTML=icon(tool.icon)+'<span>'+tool.name+'</span>'+badge;
   button.addEventListener('click',()=>selectTool(tool.id));
   toolButtons.append(button);
@@ -5863,7 +5988,7 @@ function toast(message,error=false) {
 }
 
 function persist() {
-  const saved=saveCity(city);
+  const saved=saveCity(city, stats);
   $('save-status').lastChild.nodeValue=saved?' 本地自动存档':' 本地存档不可用';
   return saved;
 }
@@ -5935,13 +6060,68 @@ function updateHUD() {
     button.classList.toggle('is-locked',locked);
     const lock=button.querySelector('.lock-icon');
     if(lock) lock.hidden=!locked;
+    const unlockTag=button.querySelector('.unlock-tag');
+    if(unlockTag) unlockTag.hidden=!locked;
     button.title=tool.name+' · '+(locked?num(GOALS[tool.stage-1].target)+' 人解锁':tool.price);
   }
+  const mapOrder = Object.keys(MAPS);
+  const nextMapId = mapOrder[(mapOrder.indexOf(city.map) + 1) % mapOrder.length];
+  if ($('next-city-button')) {
+    set('next-city-button', '下一城：' + MAPS[nextMapId].name + ' →');
+  }
+  if ($('city-stars')) {
+    const prog = getCityProgress()[city.map] || {};
+    const stageCount = Math.max(city.stage || 0, prog.maxStage || 0);
+    const stars = '★'.repeat(Math.min(4, stageCount)) + '☆'.repeat(Math.max(0, 4 - stageCount));
+    set('city-stars', stars + (prog.challengeWon ? ' 🏆' : ''));
+  }
+  updateChirper(utility);
   for(const zone of ZONES) {
     set('value-'+zone,stats.demand[zone]);
     $('need-'+zone).style.width=stats.demand[zone]+'%';
   }
   if (inspected!==null) updateInspector();
+}
+
+let chirperTargetLayer = 'zones';
+function updateChirper(utility) {
+  if (!$('chirper-tag') || !$('chirper-text')) return;
+  let tag = '市民心声';
+  let msg = '河湾两岸水电充沛、道路通畅，沿道路继续划设住宅与商业区吧！';
+  chirperTargetLayer = 'zones';
+  if (stats.demandMW > stats.power) {
+    tag = '电力局急报';
+    msg = '全市供电缺口 ' + (stats.demandMW - stats.power) + ' MW，请尽快在道路旁增建风力电站！';
+    chirperTargetLayer = 'power';
+  } else if (utility <= 0) {
+    tag = '水务处预警';
+    msg = '供水或排污容量告急，请沿河岸道路增设供水泵站与排污处理站。';
+    chirperTargetLayer = 'water';
+  } else if (stats.traffic.flow < 0.78) {
+    tag = '交通台播报';
+    msg = '跨河主干道车流密集，建议升级主干道或建设渡轮码头、地铁站分流。';
+    chirperTargetLayer = 'traffic';
+  } else if (city.stage >= 1 && stats.coverage.waste.size < 16) {
+    tag = '社区居委会';
+    msg = '部分街区缺少垃圾转运站覆盖，影响了庭院住宅向高密度公寓升级。';
+    chirperTargetLayer = 'waste';
+  } else if (city.stage >= 1 && stats.coverage.school.size < 16) {
+    tag = '学区家长来信';
+    msg = '市民期盼更多市立学校或市立科技馆，覆盖后商业与住宅将加速升至高楼。';
+    chirperTargetLayer = 'school';
+  } else if (stats.landmarkRevenue > 0) {
+    tag = '河湾观光日报';
+    msg = '城市地标游人如织，每月为市政厅贡献 ' + money(stats.landmarkRevenue) + ' 观光财政收入！';
+    chirperTargetLayer = 'normal';
+  }
+  set('chirper-tag', tag);
+  set('chirper-text', msg);
+}
+if ($('chirper')) {
+  $('chirper').addEventListener('click', () => {
+    setLayer(chirperTargetLayer);
+    toast('已切换至「' + ($('chirper-tag')?.textContent || '诊断') + '」对应视图');
+  });
 }
 
 function drawMapBase() {
@@ -6289,19 +6469,52 @@ function enterScenario(next) {
   dialog.close();
 }
 
-$('scenario-button').addEventListener('click',()=>{
-  const scenarios=Object.entries(MAPS).map(([id,map])=>
-    '<section class="dialog-entry"><h3>'+map.name+' · '+map.region+'</h3><p>'+map.description+'</p><div class="dialog-buttons">'+
-    Object.entries(MODES).map(([mode,label])=>{
-      const current=city.map===id && city.mode===mode;
-      return '<button class="dialog-button'+(current?' primary':'')+'" data-map="'+id+'" data-mode="'+mode+'">'+label+(current?' · 当前':'')+'</button>';
-    }).join('')+'</div></section>').join('');
-  openDialog('区域档案','地图与挑战','<p>三张地形沙盘、两种模式均有独立存档。挑战限期 '+CHALLENGE_DAYS+' 天，起始资金较少。</p>'+
-    '<div class="dialog-list">'+scenarios+'</div>');
-  for(const button of dialog.querySelectorAll('[data-map]')) button.addEventListener('click',()=>{
+function openScenarioDialog() {
+  persist();
+  const summaries = getScenarioSummaries();
+  const trophies = getCityProgress();
+  const scenarios = Object.entries(MAPS).map(([id, map], idx) => {
+    const prog = trophies[id] || { bestPop: 0, maxStage: 0, sandboxCleared: false, challengeWon: false };
+    const stageStars = '★'.repeat(Math.min(4, prog.maxStage || 0)) + '☆'.repeat(Math.max(0, 4 - (prog.maxStage || 0)));
+    const sbSum = summaries[id + '/sandbox'];
+    const chSum = summaries[id + '/challenge'];
+    const sbInfo = sbSum ? ('存档 ' + num(sbSum.population) + ' 人 · ' + money(sbSum.cash)) : '尚未开档';
+    const chInfo = chSum ? ('挑战 ' + num(chSum.population) + ' 人' + (chSum.result === 'won' ? ' · 已通关' : '')) : '360天限时';
+    return '<section class="dialog-entry">' +
+      '<div class="dialog-entry-head"><h3>0' + (idx + 1) + ' · ' + map.name + '（' + map.region + '）</h3>' +
+      '<span class="trophy-pill">' + stageStars + (prog.challengeWon ? ' · 🏆挑战通关' : prog.sandboxCleared ? ' · 🏆天际线达成' : '') + '</span></div>' +
+      '<p>' + map.description + '</p>' +
+      '<div class="slot-meta">自由建设：' + sbInfo + ' ｜ 紧凑挑战：' + chInfo + '</div>' +
+      '<div class="dialog-buttons">' +
+      '<button class="dialog-button' + (city.map === id && city.mode === 'sandbox' ? ' primary' : '') + '" data-map="' + id + '" data-mode="sandbox">自由建设' + (city.map === id && city.mode === 'sandbox' ? ' · 当前' : '') + '</button>' +
+      '<button class="dialog-button" data-map="' + id + '" data-mode="sandbox" data-blank="1">从零开荒（空地）</button>' +
+      '<button class="dialog-button' + (city.map === id && city.mode === 'challenge' ? ' primary' : '') + '" data-map="' + id + '" data-mode="challenge">360天挑战' + (city.map === id && city.mode === 'challenge' ? ' · 当前' : '') + '</button>' +
+      '</div></section>';
+  }).join('');
+  openDialog('三城巡回 · 区域档案', '选择城市沙盘与挑战目标',
+    '<p>三座城市沙盘（河湾市 / 松岬湾 / 双洲岛）各自拥有独立自动存档与星级勋章。达成 6,800 人终极里程碑或赢下 360 天挑战即可点亮城市奖杯。</p>' +
+    '<div class="dialog-list">' + scenarios + '</div>');
+  for (const button of dialog.querySelectorAll('[data-map]')) button.addEventListener('click', () => {
     persist();
-    enterScenario(loadCity(button.dataset.map,button.dataset.mode));
+    const targetMap = button.dataset.map;
+    const targetMode = button.dataset.mode;
+    if (button.dataset.blank === '1') {
+      enterScenario(freshCity(targetMap, targetMode, true));
+      toast('已开启「' + MAPS[targetMap].name + '」纯空地开荒模式（附赠 ¥12,000 启动金）');
+    } else {
+      enterScenario(loadCity(targetMap, targetMode));
+      toast('已进入「' + MAPS[targetMap].name + ' · ' + MODES[targetMode] + '」');
+    }
   });
+}
+$('scenario-button').addEventListener('click', openScenarioDialog);
+if ($('city-switcher')) $('city-switcher').addEventListener('click', openScenarioDialog);
+if ($('next-city-button')) $('next-city-button').addEventListener('click', () => {
+  persist();
+  const mapOrder = Object.keys(MAPS);
+  const nextMapId = mapOrder[(mapOrder.indexOf(city.map) + 1) % mapOrder.length];
+  enterScenario(loadCity(nextMapId, city.mode));
+  toast('已前往下一座城市：' + MAPS[nextMapId].name + '（原城市进度已自动保存）');
 });
 
 $('service-summary').addEventListener('click',()=>{
@@ -6374,27 +6587,122 @@ $('help-button').addEventListener('click',()=>openDialog('市长手册','从一�
   '<li>交通图层会标出拥堵路段。可以修主干道、开通公交、沿河建渡轮码头，或建设地铁站大幅分流私家车。</li>'+
   '<li>建设滨河摩天轮、市立科技馆和天际线塔等城市地标，既能增加月度观光财政收入，也能提升全城发展需求。</li></ol>'+
   '<p>拖动查看地图，滚轮缩放，Q / E 旋转，L 切换晴昼/夕照/夜景，空格暂停，数字 1–8 切换基础工具。手机触屏支持双指平移缩放，也可点右侧手型按钮单指漫游。</p>'));
-$('settings-button').addEventListener('click',()=>{
-  openDialog('市政档案','存档设置',
-    '<p>这座城市会自动保存到当前浏览器。重新打开游戏可以接着建设。</p>'+
-    '<div class="dialog-buttons"><button class="dialog-button primary" id="save-now">立即保存</button>'+
-    '<button class="dialog-button danger" id="reset-open">重开当前城市</button></div>');
-  $('save-now').addEventListener('click',()=>{
-    dialog.close();
-    const ok=persist();
-    toast(ok?'城市已保存。':'浏览器未允许本地存档。',!ok);
+function openSaveCenterDialog() {
+  const slots = listManualSlots();
+  const slotCards = slots.map(({ id, title, entry }) => {
+    const meta = entry?.meta;
+    const desc = meta
+      ? (MAPS[meta.map]?.name || '河湾市') + ' · ' + (MODES[meta.mode] || '自由建设') + ' ｜ 人口 ' + num(meta.population || 0) + ' ｜ 资金 ' + money(meta.cash || 0) + ' ｜ 第 ' + (meta.day || 0) + ' 天'
+      : '空存档槽 · 可随时备份当前城市路网与财政状态';
+    return '<section class="dialog-entry">' +
+      '<div class="dialog-entry-head"><h3>' + title + (entry?.label ? ' · ' + entry.label : '') + '</h3>' +
+      (meta ? '<span class="trophy-pill">' + (meta.savedAt ? meta.savedAt.slice(5, 16).replace('T', ' ') : '已备份') + '</span>' : '') + '</div>' +
+      '<div class="slot-meta">' + desc + '</div>' +
+      '<div class="dialog-buttons">' +
+      '<button class="dialog-button primary" data-save-slot="' + id + '">保存当前至此槽</button>' +
+      (entry ? '<button class="dialog-button" data-load-slot="' + id + '">读取此槽</button><button class="dialog-button danger" data-del-slot="' + id + '">删除</button>' : '') +
+      '</div></section>';
+  }).join('');
+
+  openDialog('市政档案中心', '浏览器存档管理与导入导出',
+    '<div class="dialog-list">' +
+    '<section class="dialog-entry">' +
+      '<div class="dialog-entry-head"><h3>当前城市：' + MAPS[city.map].name + ' · ' + MODES[city.mode] + '</h3><span class="trophy-pill">自动保存已开启</span></div>' +
+      '<div class="slot-meta">当前人口 ' + num(stats.population) + ' 人 ｜ 资金 ' + money(city.cash) + ' ｜ 里程碑 0' + city.stage + '/0' + GOALS.length + '</div>' +
+      '<div class="dialog-buttons">' +
+        '<button class="dialog-button primary" id="save-now">立即保存自动档</button>' +
+        '<button class="dialog-button" id="reset-starter">重开（保留初始街区）</button>' +
+        '<button class="dialog-button danger" id="reset-blank">从零开荒（纯空地）</button>' +
+      '</div>' +
+    '</section>' +
+    slotCards +
+    '<section class="dialog-entry">' +
+      '<div class="dialog-entry-head"><h3>跨设备分享 · 导出 / 导入存档 JSON</h3></div>' +
+      '<p>可将城市导出为 .json 文件发给朋友，或粘贴 JSON 存档码直接还原城市。</p>' +
+      '<textarea class="save-textarea" id="save-json-box" placeholder="在此粘贴存档 JSON 即可导入，或点击下方「生成存档码」复制分享…"></textarea>' +
+      '<input type="file" id="save-json-file" accept=".json,application/json" hidden>' +
+      '<div class="dialog-buttons">' +
+        '<button class="dialog-button primary" id="export-json-btn">下载 .json 存档</button>' +
+        '<button class="dialog-button" id="copy-json-btn">生成并复制存档码</button>' +
+        '<button class="dialog-button" id="import-json-btn">从文本框导入</button>' +
+        '<button class="dialog-button" id="import-file-btn">选择 .json 文件导入</button>' +
+      '</div>' +
+    '</section>' +
+    '</div>');
+
+  $('save-now').addEventListener('click', () => {
+    const ok = persist();
+    toast(ok ? '已保存至浏览器自动存档。' : '浏览器未允许本地存档。', !ok);
+    openSaveCenterDialog();
   });
-  $('reset-open').addEventListener('click',()=>{
-    openDialog('重开城市','回到初始街区？','<p>当前城市的建设与进度会被初始存档覆盖。</p>'+
-      '<div class="dialog-buttons"><button class="dialog-button" id="reset-cancel">返回</button>'+
-      '<button class="dialog-button danger" id="reset-confirm">确认重开</button></div>');
-    $('reset-cancel').addEventListener('click',()=>$('settings-button').click());
-    $('reset-confirm').addEventListener('click',()=>{
-      enterScenario(freshCity(city.map,city.mode));
-      toast('初始街区已就绪。');
-    });
+  $('reset-starter').addEventListener('click', () => {
+    enterScenario(freshCity(city.map, city.mode, false));
+    toast('已重置为初始街区。');
   });
-});
+  $('reset-blank').addEventListener('click', () => {
+    enterScenario(freshCity(city.map, city.mode, true));
+    toast('已开启纯空地从零开荒模式（附赠 ¥12,000 启动金）！');
+  });
+  for (const btn of dialog.querySelectorAll('[data-save-slot]')) btn.addEventListener('click', () => {
+    const slotId = btn.dataset.saveSlot;
+    const ok = saveManualSlot(slotId, MAPS[city.map].name + ' (' + num(stats.population) + '人)', city, stats);
+    toast(ok ? '已备份至 ' + slotId.replace('slot-', '存档槽 0') : '保存失败', !ok);
+    openSaveCenterDialog();
+  });
+  for (const btn of dialog.querySelectorAll('[data-load-slot]')) btn.addEventListener('click', () => {
+    const loaded = loadManualSlot(btn.dataset.loadSlot);
+    if (!loaded) { toast('无法读取该存档槽', true); return; }
+    enterScenario(loaded);
+    toast('已读取手动存档：' + MAPS[loaded.map].name);
+  });
+  for (const btn of dialog.querySelectorAll('[data-del-slot]')) btn.addEventListener('click', () => {
+    deleteManualSlot(btn.dataset.delSlot);
+    toast('已清空该存档槽');
+    openSaveCenterDialog();
+  });
+  $('export-json-btn').addEventListener('click', () => {
+    const json = exportCityJson(city, stats);
+    $('save-json-box').value = json;
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'riverbend-skyline-' + city.map + '-day' + city.day + '.json';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('已导出城市存档 JSON 文件');
+  });
+  $('copy-json-btn').addEventListener('click', async () => {
+    const json = exportCityJson(city, stats);
+    $('save-json-box').value = json;
+    try {
+      await navigator.clipboard.writeText(json);
+      toast('存档 JSON 已复制到剪贴板！');
+    } catch {
+      $('save-json-box').select();
+      toast('已在文本框生成存档 JSON，请按 Ctrl/Cmd+C 复制');
+    }
+  });
+  $('import-json-btn').addEventListener('click', () => {
+    const raw = $('save-json-box').value.trim();
+    if (!raw) { toast('请先在文本框中粘贴存档 JSON', true); return; }
+    const imported = importCityJson(raw);
+    if (!imported) { toast('存档 JSON 格式无效或已损坏', true); return; }
+    enterScenario(imported);
+    toast('成功导入城市存档：' + MAPS[imported.map].name + '！');
+  });
+  $('import-file-btn').addEventListener('click', () => $('save-json-file').click());
+  $('save-json-file').addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    const imported = importCityJson(text);
+    if (!imported) { toast('所选 JSON 文件不是有效的天际线存档', true); return; }
+    enterScenario(imported);
+    toast('成功从文件导入城市存档：' + MAPS[imported.map].name + '！');
+  });
+}
+$('settings-button').addEventListener('click', openSaveCenterDialog);
 
 function setLayer(next) {
   layer=next;
@@ -6470,7 +6778,7 @@ function stepSimulation(dt) {
   const cw = canvas.clientWidth, ch = canvas.clientHeight;
   for(const label of labels) {
     const {x,y,visible}=view.project(world(Number(label.dataset.i)),.7,world(Number(label.dataset.j)));
-    const inLeftHUD = x < 268 && (y < 360 || y > ch - 185);
+    const inLeftHUD = x < 276 && (y < 395 || y > ch - 185);
     const inRightHUD = x > cw - 245 && (y < 175 || y > ch - 235);
     const inBottomDock = y > ch - 165 && x > cw * 0.22 && x < cw * 0.78;
     const inToast = $('toast').classList.contains('show') && y < 142 && Math.abs(x - cw * 0.5) < 165;
