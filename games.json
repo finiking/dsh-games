@@ -3,7 +3,7 @@
   "version": 1,
   "name": "finiking 的小游戏",
   "author": "finiking",
-  "updatedAt": "2026-11-09T12:33:22.658Z",
+  "updatedAt": "2026-11-09T12:49:49.101Z",
   "games": [
     {
       "slug": "riverbend-skyline",
@@ -12,7 +12,7 @@
       "cover": "riverbend-skyline/cover.jpg",
       "dimension": "3d",
       "orientation": "landscape",
-      "publishedAt": "2026-11-09T12:33:22.658Z"
+      "publishedAt": "2026-11-09T12:49:49.101Z"
     },
     {
       "slug": "gem-blast",
