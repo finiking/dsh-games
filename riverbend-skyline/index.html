@@ -5956,7 +5956,7 @@ function createView(canvas) {
     rotate(delta) { angle+=delta; cameraUpdate(); },
     reset() { angle=angleHome; zoom=1; target.set(4,0,-1); cameraUpdate(); },
     center(i,j) { target.set(world(i),0,world(j)); cameraUpdate(); },
-    get focus() { return {i:grid(target.x),j:grid(target.z),angle,zoom}; },
+    get focus() { return {i:grid(target.x),j:grid(target.z),fx:target.x/TILE,fz:target.z/TILE,angle,zoom}; },
   };
 }
 
@@ -6039,8 +6039,10 @@ const speeds=[0,1,3,6];
 const labels=[...$('districts').children];
 const map=$('minimap');
 const mapContext=map.getContext('2d');
+const MAP_PAD=12;
+const MAP_SPAN=SIZE+MAP_PAD*2;
 const mapBase=document.createElement('canvas');
-mapBase.width=map.width; mapBase.height=map.height;
+mapBase.width=Math.round(map.width*MAP_SPAN/SIZE); mapBase.height=Math.round(map.height*MAP_SPAN/SIZE);
 const mapBaseContext=mapBase.getContext('2d');
 const dialog=$('dialog');
 const toolButtons=$('tools');
@@ -6212,8 +6214,9 @@ if ($('chirper')) {
 
 function drawMapBase() {
   const stepX=map.width/SIZE, stepY=map.height/SIZE;
-  for(let j=0;j<SIZE;j++) for(let i=0;i<SIZE;i++) {
-    const id=idAt(i,j), tile=city.tiles[id];
+  for(let j=-MAP_PAD;j<SIZE+MAP_PAD;j++) for(let i=-MAP_PAD;i<SIZE+MAP_PAD;i++) {
+    const inGrid=i>=0&&i<SIZE&&j>=0&&j<SIZE;
+    const id=inGrid?idAt(i,j):-1, tile=inGrid?city.tiles[id]:null;
     const ground=landKind(i,j,city.map);
     let fill=ground==='water'?'#548f88':ground==='hill'?'#586f48':'#7f9661';
     if (tile?.type==='road') {
@@ -6230,22 +6233,30 @@ function drawMapBase() {
         :stats.coverage[layer]?.has(id);
       fill=cover===undefined?zonePaint[tile.type]:coverageColor(cover);
     }
+    const px=(i+MAP_PAD)*stepX, py=(j+MAP_PAD)*stepY;
     mapBaseContext.fillStyle=fill;
-    mapBaseContext.fillRect(Math.floor(i*stepX),Math.floor(j*stepY),Math.ceil((i+1)*stepX)-Math.floor(i*stepX),Math.ceil((j+1)*stepY)-Math.floor(j*stepY));
+    mapBaseContext.fillRect(Math.floor(px),Math.floor(py),Math.ceil(px+stepX)-Math.floor(px),Math.ceil(py+stepY)-Math.floor(py));
   }
   mapKey='';
 }
 
 function drawMap() {
-  const {i,j,angle,zoom}=view.focus;
-  const key=[i,j,angle,zoom].join(',');
+  const {fx=0,fz=0,angle,zoom}=view.focus;
+  const key=[fx.toFixed(2),fz.toFixed(2),angle.toFixed(3),zoom.toFixed(2)].join(',');
   if(key===mapKey) return;
   mapKey=key;
-  mapContext.drawImage(mapBase,0,0);
   mapContext.save();
-  mapContext.translate((i+.5)/SIZE*map.width,(j+.5)/SIZE*map.height);
+  mapContext.translate(map.width/2,map.height/2);
+  mapContext.rotate(angle);
+  mapContext.drawImage(mapBase,-mapBase.width/2,-mapBase.height/2);
+  mapContext.restore();
+
+  const sx=(fx*Math.cos(angle)-fz*Math.sin(angle))*(map.width/SIZE);
+  const sy=(fx*Math.sin(angle)+fz*Math.cos(angle))*(map.height/SIZE);
+  mapContext.save();
+  mapContext.translate(map.width/2+sx,map.height/2+sy);
   const w=44/zoom, h=30/zoom;
-  mapContext.fillStyle='rgba(248, 223, 181, 0.12)';
+  mapContext.fillStyle='rgba(248, 223, 181, 0.14)';
   mapContext.fillRect(-w,-h,w*2,h*2);
   mapContext.strokeStyle='#f8dfb5';
   mapContext.lineWidth=1.5;
@@ -6487,7 +6498,12 @@ canvas.addEventListener('wheel',e=>{
 
 map.addEventListener('click',e=>{
   const box=map.getBoundingClientRect();
-  view.center(Math.floor((e.clientX-box.left)/box.width*SIZE),Math.floor((e.clientY-box.top)/box.height*SIZE));
+  const sx=((e.clientX-box.left)/box.width-.5)*SIZE;
+  const sy=((e.clientY-box.top)/box.height-.5)*SIZE;
+  const {angle}=view.focus;
+  const fx=sx*Math.cos(angle)+sy*Math.sin(angle);
+  const fz=-sx*Math.sin(angle)+sy*Math.cos(angle);
+  view.center(Math.floor(fx+SIZE/2),Math.floor(fz+SIZE/2));
 });
 map.addEventListener('keydown',e=>{
   if(e.key==='Enter' || e.key===' ') { e.preventDefault(); view.reset(); }
