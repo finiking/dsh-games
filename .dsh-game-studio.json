@@ -104,15 +104,15 @@
     "strait-command": {
       "title": "海峡指挥官 · 全息海战",
       "source": "dfc86899be86690e",
-      "publishedAt": "2026-11-11T07:52:31.387Z",
-      "buildId": "757f77e6f51b",
+      "publishedAt": "2026-11-11T08:24:21.400Z",
+      "buildId": "82a09f67b2fc",
       "dimension": "3d",
       "orientation": "landscape",
       "cover": "strait-command/cover.jpg"
     }
   },
   "wall": {
-    "publishedAt": "2026-11-11T07:52:31.387Z",
+    "publishedAt": "2026-11-11T08:24:21.400Z",
     "games": 12
   }
 }
