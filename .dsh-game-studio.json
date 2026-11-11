@@ -100,10 +100,19 @@
       "dimension": "3d",
       "orientation": "landscape",
       "cover": "riverbend-skyline/cover.jpg"
+    },
+    "strait-command": {
+      "title": "海峡指挥官 · 全息海战",
+      "source": "dfc86899be86690e",
+      "publishedAt": "2026-11-11T03:32:18.384Z",
+      "buildId": "3e3e8190301a",
+      "dimension": "3d",
+      "orientation": "landscape",
+      "cover": "strait-command/cover.jpg"
     }
   },
   "wall": {
-    "publishedAt": "2026-11-09T16:10:09.469Z",
-    "games": 11
+    "publishedAt": "2026-11-11T03:32:18.384Z",
+    "games": 12
   }
 }
