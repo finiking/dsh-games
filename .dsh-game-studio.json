@@ -109,10 +109,19 @@
       "dimension": "3d",
       "orientation": "landscape",
       "cover": "strait-command/cover.jpg"
+    },
+    "skarwind-flight-sim": {
+      "title": "裂风 XF-99 · 隐身空战",
+      "source": "519c65c6ae4385b0",
+      "publishedAt": "2026-11-12T07:45:01.423Z",
+      "buildId": "78ef7c3795b6",
+      "dimension": "3d",
+      "orientation": "landscape",
+      "cover": "skarwind-flight-sim/cover.jpg"
     }
   },
   "wall": {
-    "publishedAt": "2026-11-11T08:24:21.400Z",
-    "games": 12
+    "publishedAt": "2026-11-12T07:45:01.423Z",
+    "games": 13
   }
 }
